@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js Slide Transition</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .slide-enter-active,
+        .slide-leave-active {
+            transition: all 0.5s ease;
+        }
+        .slide-enter-from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .slide-leave-to {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .slide-back-enter-active,
+        .slide-back-leave-active {
+            transition: all 0.5s ease;
+        }
+        .slide-back-enter-from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .slide-back-leave-to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-purple-600 to-blue-500">
+    <div id="app" class="w-full max-w-6xl">
+        <transition :name="transitionName" mode="out-in">
+            <!-- Dashboard Page -->
+            <div v-if="currentPage === 'dashboard'" key="dashboard" class="bg-white rounded-2xl shadow-2xl overflow-hidden h-[85vh] flex flex-col">
+                <!-- Header -->
+                <div class="p-8 border-b border-gray-200">
+                    <h1 class="text-3xl font-bold text-gray-800">Purchase Orders Dashboard</h1>
+                </div>
+                
+                <!-- Content -->
+                <div class="flex-1 p-8 overflow-y-auto">
+                    <!-- Cards Grid -->
+                    <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+                        <div class="p-6 transition-all duration-300 border-l-4 border-blue-500 bg-blue-50 rounded-xl hover:-translate-y-1 hover:shadow-lg">
+                            <h3 class="mb-2 text-xl font-semibold text-gray-800">Pending Approval</h3>
+                            <p class="text-gray-600">5 orders waiting for your approval</p>
+                        </div>
+                        <div class="p-6 transition-all duration-300 border-l-4 border-green-500 bg-green-50 rounded-xl hover:-translate-y-1 hover:shadow-lg">
+                            <h3 class="mb-2 text-xl font-semibold text-gray-800">This Month</h3>
+                            <p class="text-gray-600">12 orders created this month</p>
+                        </div>
+                        <div class="p-6 transition-all duration-300 border-l-4 border-purple-500 bg-purple-50 rounded-xl hover:-translate-y-1 hover:shadow-lg">
+                            <h3 class="mb-2 text-xl font-semibold text-gray-800">Total Value</h3>
+                            <p class="text-gray-600">$45,670 in purchase orders</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Create Button -->
+                    <div class="mb-8 text-center">
+                        <button 
+                            @click="goToPage('create')" 
+                            class="flex items-center justify-center px-8 py-3 mx-auto font-semibold text-white transition-all duration-300 transform bg-green-500 hover:bg-green-600 rounded-xl hover:-translate-y-1 hover:shadow-lg"
+                        >
+                            <i class="mr-2 fas fa-plus"></i>
+                            Create New Purchase Order
+                        </button>
+                    </div>
+                    
+                    <!-- Info Box -->
+                    <div class="p-6 border-l-4 border-blue-500 bg-blue-50 rounded-xl">
+                        <h3 class="mb-3 text-xl font-semibold text-gray-800">About Vue.js Transitions</h3>
+                        <p class="text-gray-600">
+                            This sliding page effect is implemented using Vue.js <code class="px-1 bg-blue-100 rounded">transition</code> component 
+                            with Tailwind CSS for styling. Vue transitions provide a declarative way to apply enter/leave animations 
+                            to elements using CSS classes that are automatically applied during the transition lifecycle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Create Page -->
+            <div v-else-if="currentPage === 'create'" key="create" class="bg-white rounded-2xl shadow-2xl overflow-hidden h-[85vh] flex flex-col">
+                <!-- Header -->
+                <div class="flex items-center justify-between p-8 border-b border-gray-200">
+                    <h1 class="text-3xl font-bold text-gray-800">Create Purchase Order</h1>
+                    <button 
+                        @click="goToPage('dashboard')" 
+                        class="flex items-center px-4 py-2 font-semibold text-white transition-all duration-300 bg-gray-500 rounded-lg hover:bg-gray-600"
+                    >
+                        <i class="mr-2 fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+                
+                <!-- Form Content -->
+                <div class="flex-1 p-8 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Order Information -->
+                        <div class="mb-8">
+                            <h2 class="pb-2 mb-4 text-2xl font-semibold text-gray-800 border-b border-gray-200">Order Information</h2>
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div>
+                                    <label class="block mb-2 font-medium text-gray-700">Date Ordered</label>
+                                    <input 
+                                        type="date" 
+                                        v-model="formData.orderDate"
+                                        class="w-full p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-medium text-gray-700">Supplier</label>
+                                    <select 
+                                        v-model="formData.supplier"
+                                        class="w-full p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                        <option value="">Select Supplier</option>
+                                        <option value="1">Tech Supplies Inc.</option>
+                                        <option value="2">Office Equipment Co.</option>
+                                        <option value="3">Global Electronics</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Items -->
+                        <div class="mb-8">
+                            <h2 class="pb-2 mb-4 text-2xl font-semibold text-gray-800 border-b border-gray-200">Order Items</h2>
+                            <div class="space-y-4">
+                                <div 
+                                    v-for="(item, index) in formData.items" 
+                                    :key="index"
+                                    class="flex flex-col gap-4 p-4 rounded-lg md:flex-row bg-gray-50"
+                                >
+                                    <div class="flex-1">
+                                        <label class="block mb-2 font-medium text-gray-700">Item Name</label>
+                                        <input 
+                                            type="text" 
+                                            v-model="item.name"
+                                            class="w-full p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Enter item name"
+                                        >
+                                    </div>
+                                    <div class="w-32">
+                                        <label class="block mb-2 font-medium text-gray-700">Quantity</label>
+                                        <input 
+                                            type="number" 
+                                            v-model="item.quantity"
+                                            class="w-full p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            min="1"
+                                        >
+                                    </div>
+                                    <div class="w-32">
+                                        <label class="block mb-2 font-medium text-gray-700">Price</label>
+                                        <input 
+                                            type="number" 
+                                            v-model="item.price"
+                                            class="w-full p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            min="0"
+                                            step="0.01"
+                                        >
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button 
+                                            @click="removeItem(index)"
+                                            class="p-3 text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
+                                        >
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <button 
+                                    @click="addItem"
+                                    class="flex items-center px-4 py-2 font-medium text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600"
+                                >
+                                    <i class="mr-2 fas fa-plus"></i>
+                                    Add Item
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Remarks -->
+                        <div class="mb-8">
+                            <h2 class="pb-2 mb-4 text-2xl font-semibold text-gray-800 border-b border-gray-200">Remarks</h2>
+                            <textarea 
+                                v-model="formData.remarks"
+                                class="w-full h-32 p-3 transition-colors border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Add any remarks or special instructions..."
+                            ></textarea>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="flex justify-end pt-6 space-x-4 border-t border-gray-200">
+                            <button 
+                                @click="goToPage('dashboard')" 
+                                class="flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 bg-gray-500 rounded-lg hover:bg-gray-600"
+                            >
+                                <i class="mr-2 fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button 
+                                @click="savePurchaseOrder" 
+                                class="flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg"
+                            >
+                                <i class="mr-2 fas fa-save"></i>
+                                Save Purchase Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue;
+        
+        createApp({
+            setup() {
+                const currentPage = ref('dashboard');
+                const transitionName = ref('slide');
+                const formData = ref({
+                    orderDate: '',
+                    supplier: '',
+                    items: [
+                        { name: '', quantity: 1, price: 0 }
+                    ],
+                    remarks: ''
+                });
+                
+                const goToPage = (page) => {
+                    // Determine transition direction
+                    transitionName.value = (page === 'create') ? 'slide' : 'slide-back';
+                    currentPage.value = page;
+                };
+                
+                const addItem = () => {
+                    formData.value.items.push({ name: '', quantity: 1, price: 0 });
+                };
+                
+                const removeItem = (index) => {
+                    if (formData.value.items.length > 1) {
+                        formData.value.items.splice(index, 1);
+                    }
+                };
+                
+                const savePurchaseOrder = () => {
+                    // Simple validation
+                    if (!formData.value.orderDate || !formData.value.supplier) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+                    
+                    // In a real app, you would send data to an API here
+                    console.log('Form data:', formData.value);
+                    alert('Purchase order created successfully!');
+                    
+                    // Reset form and go back to dashboard
+                    formData.value = {
+                        orderDate: '',
+                        supplier: '',
+                        items: [
+                            { name: '', quantity: 1, price: 0 }
+                        ],
+                        remarks: ''
+                    };
+                    
+                    goToPage('dashboard');
+                };
+                
+                return {
+                    currentPage,
+                    transitionName,
+                    formData,
+                    goToPage,
+                    addItem,
+                    removeItem,
+                    savePurchaseOrder
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

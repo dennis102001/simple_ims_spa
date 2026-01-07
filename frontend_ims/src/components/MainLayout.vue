@@ -1,0 +1,159 @@
+<template>
+    
+    <div  class="flex flex-row h-screen">
+
+        
+        <aside class="sidebar pb-4 z-50 overflow-y-auto overflow-x-hidden
+            absolute h-full
+            sm:static 
+            flex-col flex 
+            bg-darkgray-pri shadow-md
+            transform transition-all duration-500"
+            :class="isSidebarVisible ? 'w-72' : 'w-0 '"
+        >
+            <div class="sticky top-0 w-full mb-4 bg-darkgray-pri px-4 z-10">
+                <h3 class="text-warmyellow-pri font-bold text-center border-b py-2 xl:py-3">IMS</h3>
+            </div>
+            <router-link :to="{ name: 'Dashboard' }" :class="route.name === 'Dashboard' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-house size-5"></i>
+                <span class="">Dashboard</span>
+            </router-link>
+
+            <div 
+                @click="arePOBtnsVisible = !arePOBtnsVisible" 
+                :class="arePOBtnsVisible ? 'font-bold' : ''" 
+                class="flex flex-row items-center justify-between sidebar sidebarBtn"
+            >
+                <div class="flex">
+                    <i class="flex items-center justify-center mr-2 fa-solid fa-file-arrow-down size-5"></i>
+                    <span>Purchase Order</span>
+                </div>
+                <i class="transition-all transform fa-solid fa-caret-down" :class="arePOBtnsVisible ? '-rotate-180 ' : ''"></i>
+            </div>
+
+            <div :class="arePOBtnsVisible ? 'scale-y-100 opacity-100 h-[88px]' : 'scale-y-0 opacity-0 h-0'"  class="flex flex-col pl-4 transition-all duration-300 origin-top transform">
+                <router-link :to="{ name: 'CreatePO' }" :class="route.name === 'CreatePO' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">Create PO</router-link>
+                <router-link :to="{ name: 'ManagePO' }" :class="route.name === 'ManagePO' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">Manage PO</router-link>
+            </div>
+            
+            <div 
+                @click="areSOBtnsVisible = !areSOBtnsVisible" 
+                :class="areSOBtnsVisible ? 'font-bold' : ''" 
+                class="flex flex-row items-center justify-between sidebar sidebarBtn"
+            >
+                <div class="flex">
+                    <i class="flex items-center justify-center mr-2 fa-solid fa-file-arrow-up size-5"></i>
+                    <span>Sale Order</span>
+                </div>
+                <i class="transition-all transform fa-solid fa-caret-down" :class="areSOBtnsVisible ? '-rotate-180 ' : ''"></i>
+            </div>
+
+            <div :class="areSOBtnsVisible ? 'scale-y-100 opacity-100 h-[88px]' : 'scale-y-0 opacity-0 h-0'"  class="flex flex-col pl-4 transition-all duration-300 origin-top transform">
+                <router-link :to="{ name: 'CreateSO' }" :class="route.name === 'CreateSO' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">Create SO</router-link>
+                <router-link :to="{ name: 'ManageSO' }" :class="route.name === 'ManageSO' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">Manage SO</router-link>
+            </div>
+            
+            <router-link :to="{ name: 'Items' }" :class="route.name === 'Items' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-boxes-stacked size-5"></i>
+                <span class="">Items</span>
+            </router-link>
+            <router-link :to="{ name: 'Suppliers' }" :class="route.name === 'Suppliers' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-industry size-5"></i>
+                <span class="">Suppliers</span>
+            </router-link>
+            <router-link :to="{ name: 'Customers' }" :class="route.name === 'Customers' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-users size-5"></i>
+                <span class="">Customers</span>
+            </router-link>
+            <router-link :to="{ name: 'Attributes' }" :class="route.name === 'Attributes' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-tag size-5"></i>
+                <span class="">Attributes</span>
+            </router-link>
+            <router-link v-if="user?.role == 'admin'" :to="{ name: 'Users' }" :class="route.name === 'Users' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-user size-5"></i>
+                <span class="">Users</span>
+            </router-link>
+            <router-link :to="{ name: 'Settings' }" :class="route.name === 'Settings' ? 'activeSidebarBtn' : 'sidebarBtn'" class="sidebar">
+                <i class="flex items-center justify-center mr-2 fa-solid fa-gear size-5"></i>
+                <span class="">Settings</span>
+            </router-link>
+        </aside>
+
+        <div class="flex flex-col w-full overflow-hidden">
+
+        <nav class="relative z-40 flex flex-row justify-between w-full px-6 py-2 bg-white shadow-md xl:py-3">
+            <!-- menu bar -->
+            <button @click="isSidebarVisible = !isSidebarVisible" class="px-4 text-2xl rounded-md menu-button hover:bg-gray-50">
+                <i class="menu-button fa-solid fa-bars "></i>
+            </button>
+
+            <!-- <span class="sm:hidden">below sm</span>
+            <span class="hidden sm:inline md:hidden">sm to</span>
+            <span class="hidden md:inline lg:hidden">md to</span>
+            <span class="hidden lg:inline xl:hidden">lg to</span>
+            <span class="hidden xl:inline ">xl above</span> -->
+
+            <button @click="logout" title="Logout" type="button" class="px-4 text-2xl rounded-md hover:bg-gray-50 ">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+
+        </nav>
+
+            <main class="py-4 px-2 sm:px-3 md:px-4 h-[calc(100vh-48px)] xl:h-[calc(100vh-56px)] w-full overflow-auto ">
+                <!-- child routes or pages will display here -->
+                <router-view></router-view>
+            </main>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { usePopUpTransition } from '../composables/useTransition';
+import axiosClient from '../axios';
+import router from '../router';
+import useUserStore from '../store/user';
+
+const route = useRoute()
+const isSidebarVisible = ref(false)
+const arePOBtnsVisible = ref(false)
+const areSOBtnsVisible = ref(false)
+const popUp = usePopUpTransition()
+
+const userStore = useUserStore()
+const user = computed(() => userStore.user)
+console.log('from main')
+console.log(user.value)
+console.log(user.value.role)
+
+function handleClickOutside(e) {
+  if(!e.target.closest('.sidebar') && !e.target.closest('.menu-button') && (window.innerWidth < 640)){
+    isSidebarVisible.value = false 
+  }
+}
+
+function logout(){
+    axiosClient.post('/logout')
+        .then(response => {
+            userStore.logoutUser()
+            router.push({name: 'Login'})
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
+
+onMounted(() => {
+    window.addEventListener("click", handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener("click", handleClickOutside)
+})
+
+</script>
+
+<style scoped>
+
+</style>

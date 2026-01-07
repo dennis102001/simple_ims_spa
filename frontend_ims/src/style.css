@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+
+    .label-style-one{
+        @apply mb-1  text-gray-500 text-sm
+        ml-2 font-semibold tracking-wider 
+    }
+
+    .label-style-two{
+        @apply text-xs font-semibold tracking-wide text-gray-500 uppercase
+    }
+
+    .value-style{
+        @apply px-3 py-1.5 w-full block 
+        bg-gray-50 rounded-md
+        text-base
+        outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 
+        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 
+    }
+
+    .sidebarBtn{
+        @apply px-3 py-1.5 mx-4 my-1 tracking-wider  rounded-md text-white
+        hover:bg-white/10 hover:text-white text-nowrap text-sm/6 cursor-pointer
+        flex flex-row items-center justify-start
+    }
+
+    .activeSidebarBtn{
+        @apply px-4 py-1.5 mx-4 my-1 font-semibold tracking-wider rounded-md  text-nowrap cursor-pointer
+        text-white text-sm/6
+        bg-white/10
+        focus-visible:outline-1 focus-visible:outline-offset-2  focus-visible:outline-indigo-600
+        transition-all duration-300  transform
+        flex flex-row items-center justify-start
+    }
+
+    .profileBtn{
+        @apply w-full p-2 text-left my-1 font-semibold tracking-wide rounded-md  
+        hover:text-yellow_primary hover:bg-black_secondary
+        active:text-yellow_primary active:bg-black_secondary
+       transition-all scale-[0.99] duration-100 ease-linear
+    }
+
+    .head-row{
+        @apply w-full py-2 text-sm font-semibold  text-gray-600 rounded
+        bg-gray-100 sticky top-0 overflow-hidden z-20 
+
+    }
+    .head-data{
+        @apply flex items-center px-4 overflow-hidden text-ellipsis
+    }
+
+    .body-row{
+        @apply grid w-full py-2 my-3 rounded-md bg-white items-center
+        shadow-[0_1px_4px_rgba(0,0,0,0.1)] relative overflow-hidden 
+        hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition transform duration-200 
+    }
+    .body-data{
+        @apply px-4 py-1 overflow-hidden whitespace-nowrap h-fit
+    }
+
+    .search-bar{
+        @apply w-full px-4 py-2 text-sm font-medium tracking-widest bg-white mx-1 border border-gray-400 rounded-full outline-none placeholder:text-gray-400  
+    }
+
+    .hover-up-effect{
+        @apply hover:-translate-y-1 hover:shadow-[0px_4px_10px_rgba(0,0,0,0.2)] transition duration-300
+    }
+
+    .hover-scale-effect{
+        @apply hover:scale-[101%] transition duration-300
+    }
+
+    h1{
+        @apply text-4xl
+    }
+
+    h2{
+        @apply text-3xl
+    }
+
+    h3{
+        @apply text-2xl
+    }
+
+    h4{
+        @apply text-xl
+    }
+
+    h5{
+        @apply text-lg
+    }
+
+    h6{
+        @apply text-base
+    }
+
+    .item-name-style-wide{
+        @apply text-lg font-semibold truncate
+    }
+    .item-sku-style-wide{
+        @apply text-xs text-gray-500 truncate
+    }
+    .item-category-style-wide{
+        @apply text-base truncate
+    }
+    .item-price-style-wide{
+        @apply text-base
+    }
+    .item-cost-style-wide{
+        @apply text-base
+    }
+    .item-quantity-style-wide{
+        @apply px-3 py-1 text-sm font-semibold rounded text-white text-nowrap w-fit
+    }
+    .item-subtotal-style-wide{
+        @apply text-base
+    }
+
+    .item-name-style-narrow{
+        @apply text-lg font-semibold truncate
+    }
+    .item-sku-style-narrow{
+        @apply text-xs font-medium text-gray-500 truncate
+    }
+    .item-category-style-narrow{
+        @apply text-sm truncate
+    }
+    .item-price-style-narrow{
+        @apply font-semibold text-green-600 text-sm
+    }
+    .item-cost-style-narrow{
+        @apply font-semibold text-green-600 text-sm
+    }
+    .item-quantity-style-narrow{
+        @apply px-3 py-1 text-sm font-semibold rounded text-white text-nowrap
+    }
+    .item-subtotal-style-narrow{
+        @apply font-semibold text-green-600 text-sm
+    }
+
+
+
+    .po-number-style-wide{
+        @apply font-semibold
+    }
+    .po-date-style-wide{
+        @apply text-base
+    }
+    .po-remarks-style-wide{
+        @apply bg-gray-100 italic text-sm text-gray-500 h-fit text-wrap rounded-md w-full p-1 text-ellipsis line-clamp-2
+    }
+
+    .po-number-style-narrow{
+        @apply font-semibold 
+    }
+    .po-date-style-narrow{
+        @apply text-sm
+    }
+    .po-remarks-style-narrow{
+        @apply bg-gray-100 italic text-gray-500 h-fit w-full text-ellipsis truncate
+        p-2 text-xs border-l-4 border-gray-400 rounded-r mt-3
+    }
+
+
+    .so-number-style-wide{
+        @apply font-semibold
+    }
+    .so-date-style-wide{
+        @apply text-base
+    }
+    .so-remarks-style-wide{
+        @apply bg-gray-100 italic text-sm text-gray-500 h-fit rounded-md w-full p-1 text-ellipsis truncate
+    }
+
+    .so-number-style-narrow{
+        @apply font-semibold 
+    }
+    .so-date-style-narrow{
+        @apply text-sm
+    }
+    .so-remarks-style-narrow{
+        @apply bg-gray-100 italic text-gray-500 h-fit w-full text-ellipsis truncate
+        p-2 text-xs border-l-4 border-gray-400 rounded-r mt-3
+    }
+
+
+    .style-wide-supplier-name{
+        @apply text-lg font-semibold truncate
+    }
+    .style-wide-supplier-email{
+        @apply text-sm text-gray-500 truncate
+    }
+    .style-wide-supplier-phone{
+        @apply text-base truncate
+    }
+    .style-wide-supplier-contact{
+        @apply text-base truncate
+    }
+    .style-wide-supplier-address{
+        @apply text-base truncate
+    }
+
+    .style-narrow-supplier-name{
+        @apply text-lg font-semibold truncate
+    }
+    .style-narrow-supplier-email{
+        @apply text-base font-medium w-full truncate
+    }
+    .style-narrow-supplier-phone{
+        @apply text-base font-medium w-full truncate 
+    }
+    .style-narrow-supplier-contact{
+        @apply text-base font-medium w-full truncate  
+    }
+    .style-narrow-supplier-address{
+        @apply text-base font-medium w-full truncate  
+    }
+
+
+    .style-wide-customer-name{
+        @apply text-lg font-semibold truncate
+    }
+    .style-wide-customer-email{
+        @apply text-sm text-gray-500 truncate
+    }
+    .style-wide-customer-phone{
+        @apply text-base truncate
+    }
+    .style-wide-customer-address{
+        @apply text-base truncate
+    }
+
+    .style-narrow-customer-name{
+        @apply text-lg font-semibold truncate
+    }
+    .style-narrow-customer-email{
+        @apply text-base font-medium w-full truncate
+    }
+    .style-narrow-customer-phone{
+        @apply text-base font-medium w-full truncate 
+    }
+    .style-narrow-customer-address{
+        @apply text-base font-medium w-full truncate 
+    }
+}

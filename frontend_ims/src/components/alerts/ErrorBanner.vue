@@ -5,10 +5,12 @@
             <span class="font-bold">
                 <slot name="title"></slot> 
             </span>
+
             <span class="ml-1">
                 <slot name="body"></slot>
             </span>
         </div>
+        
         <button @click="closeBanner" type="button" class="size-[32px] bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 ">
             <i class="text-lg fa-solid fa-xmark"></i>
         </button>

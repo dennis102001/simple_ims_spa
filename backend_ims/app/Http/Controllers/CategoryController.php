@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
 
-    // checked
     public function getCategories()
     {
         $categories_list = Category::all()->map(function ($category) {
@@ -26,7 +25,6 @@ class CategoryController extends Controller
         ]);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -53,7 +51,6 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request, $id)
     {
         $validations = Validator::make($request->all(), [
@@ -82,7 +79,6 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    // checked
     public function destroy($id)
     {
         $category = Category::findOrFail($id);

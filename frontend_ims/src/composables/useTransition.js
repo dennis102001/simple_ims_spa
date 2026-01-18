@@ -24,12 +24,12 @@ export function useItemsListTransition(){
 
 export function usePopUpTransition(){
     return {
-        enterFrom: "scale-75 opacity-0",
+        enterFrom: "scale-90 opacity-0",
         enterTo: "scale-100 opacity-100",
-        enterActive: "transition duration-400 ease-out",
+        enterActive: "transform transition duration-200 ease-out",
         leaveFrom: "scale-100 opacity-100",
-        leaveTo: "scale-75 opacity-0",
-        leaveActive: "transition duration-400 ease-in",
+        leaveTo: "scale-90 opacity-0",
+        leaveActive: "transform transition duration-200 ease-in",
     }
 }
 
@@ -46,7 +46,7 @@ export function useAlertLoadingTransition() {
 
 export function useMainContentTransition(){
     return ref({
-        enterFrom: "opacity-0 -translate-x-1/2",
+        enterFrom: "opacity-0 ",
         enterTo: "translate-x-0 opacity-100",
         enterActive: "transition  duration-300 ease-out",
         leaveFrom: "translate-x-0 opacity-100",
@@ -68,11 +68,11 @@ export function useFormTransition(){
 
 export function useAuthFormTransition() {
     return {
-        enterFrom: "-translate-y-20 opacity-0",
+        enterFrom: "-translate-y-10 opacity-0",
         enterTo: "translate-y-0 opacity-100",
-        enterActive: "transition duration-1000 ease transform",
+        enterActive: "transition duration-700  ease transform",
         leaveFrom: "translate-y-0 opacity-100",
-        leaveTo: "-translate-y-20 opacity-0",
-        leaveActive: "transition duration-1000 ease transform",
+        leaveTo: "-translate-y-10 opacity-0",
+        leaveActive: "transition duration-500 ease transform",
     }
 }

@@ -15,25 +15,24 @@ use Illuminate\Validation\Rule;
 
 class PurchaseOrderController extends Controller
 {
-    // checked
     public function getPOs()
     {
-        $hdrs = PurchaseOrderHdr::orderBy('id', 'desc')->get();
-
+        
         $suppliers = Supplier::all()->map(function ($supplier){
             return [
                 'id' => $supplier->id,
                 'name' => $supplier->name,
             ];
         });
-
+        
         $posListData = [];
-
+        
+        $hdrs = PurchaseOrderHdr::orderBy('id', 'desc')->get();
         foreach($hdrs as $hdr){
             $items = PurchaseOrderDtl::join('items', 'purchase_order_dtls.item_id', '=', 'items.id')->where('hdr_id', $hdr->id)->get()->pluck('item_name')->implode(', ');
-            $created_by_name = User::where('id', $hdr->created_by)->pluck('name')->first();
-            $received_by_name = User::where('id', $hdr->received_by)->pluck('name')->first();
-            $supplier_name = Supplier::where('id', $hdr->supplier_id)->pluck('name')->first();
+            $created_by_name = User::withTrashed()->where('id', $hdr->created_by)->pluck('name')->first();
+            $received_by_name = User::withTrashed()->where('id', $hdr->received_by)->pluck('name')->first();
+            $supplier_name = Supplier::withTrashed()->where('id', $hdr->supplier_id)->pluck('name')->first();
 
             $posListData[] = [
                 'hdrId' => $hdr->id,
@@ -59,7 +58,6 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function getPODtlsPending(Request $request)
     {
         $PODtls = PurchaseOrderDtl::where('purchase_order_dtls.hdr_id', $request->query('hdrId'))->get()->map(function($dtl){
@@ -86,7 +84,6 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function getPODtlsReceived(Request $request)
     {
         $PODtls = PurchaseOrderDtl::where('purchase_order_dtls.hdr_id', $request->query('hdrId'))->get()->map(function($dtl){
@@ -114,7 +111,6 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -136,14 +132,12 @@ class PurchaseOrderController extends Controller
             ], 422);
         }
 
-        // FOR PO NUMBER
+        // Get or generate yearly sequential PO number (PO-YYYY-XXXX)
         $year = now()->year;
-
         $sequence = PoSequence::firstOrCreate(
             ['year' => $year],
             ['last_number' => 0]
         );
-
         $sequence->increment('last_number');
         $poNumber = 'PO-' . $year . '-' . str_pad($sequence->last_number, 4, '0', STR_PAD_LEFT);
 
@@ -172,7 +166,6 @@ class PurchaseOrderController extends Controller
         
     }
 
-    // checked
     public function receivePO(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -225,10 +218,8 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function updateReceivedPO (Request $request) 
     {
-        //validations
         $validations = Validator::make($request->all(), [
             'remarks' => ['string', 'nullable', 'max:255'],
             'hdrId' => ['integer', 'required', 'exists:purchase_order_hdrs,id'],
@@ -246,14 +237,14 @@ class PurchaseOrderController extends Controller
             ], 422);
         }
 
-        // validate quantities 
+        // Validate received quantities and stock rollback rules
         foreach($request->selectedItemsList as $dtl){
             $orderedQty = PurchaseOrderDtl::where('id', $dtl['dtlId'])->value('ordered_qty');
             $oldQty = PurchaseOrderDtl::where('id', $dtl['dtlId'])->value('received_qty');
             $newQty = $dtl['receivedQty'];
             $currentQty = Item::withTrashed()->where('id', $dtl['itemId'])->value('quantity');
 
-            // received quantity cannot exceed ordered quantity
+            // Received quantity cannot exceed ordered quantity
             if ($orderedQty < $newQty){
                 return response()->json([
                     'success' => false,
@@ -261,7 +252,7 @@ class PurchaseOrderController extends Controller
                 ], 422);
             }
 
-            // old quantity greater than new quantity should deduct the difference to the current quantity of the item
+            // If received quantity is reduced, ensure enough stock exists to roll back the difference
             if($oldQty > $newQty){
                 $diff = $oldQty - $newQty;
 
@@ -271,7 +262,7 @@ class PurchaseOrderController extends Controller
                         'message' => 'Cannot update: one or more items have insufficient stock to roll back'
                     ], 422);
                 }else{
-                    // deduct the diff to the item's quantity
+                    // Deduct the difference from the item's current stock
                 }
             }
         }
@@ -306,10 +297,8 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function updatePendingPO(Request $request)
     {
-        //validations
         $validations = Validator::make($request->all(), [
             'hdrId' => ['integer', 'required', 'exists:purchase_order_hdrs,id'],
             'remarks' => ['string', 'nullable', 'max:255'],
@@ -328,18 +317,15 @@ class PurchaseOrderController extends Controller
             ], 422);
         }
 
-        //SAVE UPDATED PURCHASE ORDER HEADER
         PurchaseOrderHdr::where('id', $request->hdrId)->update([
             'remarks' => $request->remarks,
             'supplier_id' => $request->supplierId,
         ]);
 
-        //FOR REMOVED ITEMS
         foreach($request->removedDtlIds as $dtlId){
             PurchaseOrderDtl::destroy($dtlId);
         }
 
-        //SAVE UPDATED AND ADDED ITEMS
         foreach($request->selectedItemsList as $dtl){
             if($dtl['dtlId']){
                 PurchaseOrderDtl::where('id', $dtl['dtlId'])->update([
@@ -362,7 +348,6 @@ class PurchaseOrderController extends Controller
         ], 200);
     }
 
-    // checked
     public function cancelPO(Request $request)
     {
         $validations = Validator::make($request->all(), [

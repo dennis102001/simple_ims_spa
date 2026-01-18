@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDtl;
 use App\Models\PurchaseOrderHdr;
 use Illuminate\Support\Facades\DB;
-use App\Models\StockTransactionDtl;
-use App\Models\StockTransactionHdr;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SaleController;
@@ -21,7 +19,6 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\UnitMeasurementController;
-use App\Http\Controllers\StockTransactionController;
 use Carbon\CarbonPeriod;
 
 Route::middleware(['auth:sanctum'])->group(function() {
@@ -33,7 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         $totalItems = Item::count();
         $totalCategories = Category::count();
         $zeroStock = Item::where('quantity', '<=', 0)->count();
-        $lowStock = Item::whereColumn('quantity', '<=', 'reorder_level')->count();
+        $lowStock = Item::whereColumn('quantity', '<=', 'reorder_level')->where('quantity', '>', 0)->count();
 
         $recentOrders = PurchaseOrderHdr::orderByDesc('id')->limit(5)->get()->map(function ($po){
             return [
@@ -132,16 +129,6 @@ Route::middleware(['auth:sanctum'])->group(function() {
         Route::delete('/delete-item/{id}', 'destroy');
     });
 
-    Route::controller(StockTransactionController::class)->group(function(){
-        Route::post('/stock-in', 'storeStockIn');
-        Route::post('/stock-out', 'storeStockOut');
-        Route::get('/stock-report', 'getStockReport');
-        Route::get('/stock-report-specified', 'getStockReportSpecified');
-        Route::get('/stock-transaction-details', 'getStockTransactionDetails');
-        Route::put('/update-transaction/{id}', 'update');
-        Route::delete('/delete-transaction/{id}', 'delete');
-    });
-
     Route::controller(CategoryController::class)->group(function(){
         Route::get('/categories-list', 'getCategories');
         Route::post('/add-category', 'store');
@@ -198,8 +185,10 @@ Route::middleware(['auth:sanctum'])->group(function() {
     });
 
     Route::middleware('isAdmin')->group(function() {
-        Route::get('/users-list', function() {
-            return User::all()->map(function($user) {
+        Route::get('/users-list', function(Request $request) {
+            return User::where('id', '!=', $request->user()->id)
+                ->get()
+                ->map(function($user) {
                 return [
                     'id' => $user->id,
                     'name' => $user->name,

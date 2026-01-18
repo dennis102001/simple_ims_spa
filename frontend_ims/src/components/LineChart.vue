@@ -1,16 +1,12 @@
 <template>
-    <div class="relative p-2
-    w-full 
-    h-[300px]"
-    >
+    <div class="relative p-2 w-full h-[300px]">
         <Line 
-        class="relative w-[100%] h-[100%]" 
-        id="my-chart-id"
-        :options="chartOptions"
-        :data="toRaw(chartData)"
+            class="relative w-[100%] h-[100%]" 
+            id="my-chart-id"
+            :options="chartOptions"
+            :data="toRaw(chartData)"
         />
     </div>
-    
 </template>
 
 <script setup>
@@ -25,8 +21,8 @@ const props = defineProps({
 })
 
 const chartOptions = ref({
-  responsive: true,
-  maintainAspectRatio: false
+    responsive: true,
+    maintainAspectRatio: false
 })
 
 </script>

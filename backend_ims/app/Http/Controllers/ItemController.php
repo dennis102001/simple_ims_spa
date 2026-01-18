@@ -14,12 +14,11 @@ use Illuminate\Support\Facades\Validator;
 
 class ItemController extends Controller
 {
-    // checked
     public function getItems()
     {
         $itemsList = Item::all()->map(function ($item){
-            $category = Category::where('id', $item->category_id)->get()->pluck('category_name')->first();
-            $unit = UnitMeasurement::where('id', $item->unit_id)->get()->pluck('unit_name')->first();
+            $category = Category::withTrashed()->where('id', $item->category_id)->get()->pluck('category_name')->first();
+            $unit = UnitMeasurement::withTrashed()->where('id', $item->unit_id)->get()->pluck('unit_name')->first();
 
             return [
                 'id' => $item->id,
@@ -82,7 +81,6 @@ class ItemController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validation = Validator::make($request->all(), [
@@ -122,7 +120,6 @@ class ItemController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request, string $id)
     {
         $validation = Validator::make($request->all(), [
@@ -163,7 +160,6 @@ class ItemController extends Controller
         ], 200);
     }
 
-    // checked
     public function destroy(int $id)
     {
         $item = Item::findOrFail($id);

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 class ColorController extends Controller
 {
 
-    // checked
     public function getColors()
     {
         $colorsListData = Color::all()->map(function($color){
@@ -27,7 +26,6 @@ class ColorController extends Controller
         ], 200);
     }
 
-    // checked
     public function setColor(Request $request)
     {
         $validations = Validator::make($request->all(), [

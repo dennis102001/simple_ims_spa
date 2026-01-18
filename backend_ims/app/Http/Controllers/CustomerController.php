@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
-    // checked
     public function getCustomers()
     {
         $customers = Customer::orderBy('id', 'desc')->get()->map(function ($customer) {
@@ -27,7 +26,6 @@ class CustomerController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -58,7 +56,6 @@ class CustomerController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request, $id)
     {
         $validations = Validator::make($request->all(), [
@@ -90,7 +87,6 @@ class CustomerController extends Controller
         ], 200);
     }
 
-    // checked
     public function destroy($id)
     {
         $customer = Customer::findOrFail($id);

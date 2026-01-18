@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 class UnitMeasurementController extends Controller
 {
 
-    // checked
     public function getUnits()
     {
         $units = UnitMeasurement::all()->map(function ($unit) {
@@ -26,7 +25,6 @@ class UnitMeasurementController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -53,7 +51,6 @@ class UnitMeasurementController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request, $id)
     {
         $validations = Validator::make($request->all(), [
@@ -82,7 +79,6 @@ class UnitMeasurementController extends Controller
         ], 200);
     }
 
-    // checked
     public function destroy($id)
     {
         $unitMeasurement = UnitMeasurement::findOrFail($id);

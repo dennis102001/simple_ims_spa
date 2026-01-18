@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 class SupplierController extends Controller
 {
 
-    // checked
     public function getSuppliers()
     {
         $suppliers = Supplier::orderBy('id', 'desc')->get()->map(function ($supplier) {
@@ -29,7 +28,6 @@ class SupplierController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -62,7 +60,6 @@ class SupplierController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request, $id)
     {
         $validations = Validator::make($request->all(), [
@@ -96,7 +93,6 @@ class SupplierController extends Controller
         ], 200);
     }
 
-    // checked
     public function destroy($id)
     {
         $supplier = Supplier::findOrFail($id);

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Validator;
 class SaleController extends Controller
 {
 
-    // checked
     public function getSales()
     {
         $hdrs = SaleHdr::orderBy('id', 'desc')->get();
@@ -29,9 +28,9 @@ class SaleController extends Controller
 
         foreach($hdrs as $hdr){
             $items = SaleDtl::join('items', 'sale_dtls.item_id', '=', 'items.id')->where('hdr_id', $hdr->id)->get()->pluck('item_name')->implode(', ');
-            $created_by_name = User::where('id', $hdr->created_by)->pluck('name')->first();
-            $confirmed_by_name = User::where('id', $hdr->confirmed_by)->pluck('name')->first();
-            $customer_name = Customer::where('id', $hdr->customer_id)->pluck('name')->first();
+            $created_by_name = User::withTrashed()->where('id', $hdr->created_by)->pluck('name')->first();
+            $confirmed_by_name = User::withTrashed()->where('id', $hdr->confirmed_by)->pluck('name')->first();
+            $customer_name = Customer::withTrashed()->where('id', $hdr->customer_id)->pluck('name')->first();
 
             $salesListData[] = [
                 'hdrId' => $hdr->id,
@@ -57,7 +56,6 @@ class SaleController extends Controller
         ], 200);
     }
 
-    // checked
     public function store(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -79,7 +77,7 @@ class SaleController extends Controller
             ], 422);
         }
 
-        //CHECK ITEMS' QUANTITY
+        // Validate item quantities against available stock
         foreach($request->selectedItemsList as $selectedItem){
             $itemQty = Item::where('id', $selectedItem['id'])->pluck('quantity')->first();
 
@@ -91,17 +89,14 @@ class SaleController extends Controller
             }
         }
 
-        // FOR SALE ORDER NUMBER
+        // Get or generate yearly sequential SO number (SO-YYYY-XXXX)
         $year = now()->year;
-
         $sequence = SoSequence::firstOrCreate(
             ['year' => $year],
             ['last_number' => 0]
         );
-
         $sequence->increment('last_number');
         $soNumber = 'SO-' . $year . '-' . str_pad($sequence->last_number, 4, '0', STR_PAD_LEFT);
-
 
         $hdr = SaleHdr::create([
             'so_number' => $soNumber,
@@ -130,7 +125,6 @@ class SaleController extends Controller
 
     }
 
-    // checked
     public function getSalesDtls(Request $request)
     {
         $SaleDtls = SaleDtl::where('sale_dtls.hdr_id', $request->query('hdrId'))->get()->map(function($dtl){
@@ -156,7 +150,6 @@ class SaleController extends Controller
         ], 200);
     }
 
-    // checked
     public function update(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -185,16 +178,18 @@ class SaleController extends Controller
             ], 400);
         }
 
-        //CHECK ITEMS' QUANTITY
+        // Validate item quantities and stock adjustments for updated and new sale details
         foreach($request->selectedItemsList as $dtl){
 
             if($dtl['dtlId']){
+
+                // Existing sale detail: validate stock adjustments when quantity is updated
                 $itemQty = Item::withTrashed()->where('id', $dtl['itemId'])->pluck('quantity')->first();
                 $oldQty = SaleDtl::where('id', $dtl['dtlId'])->pluck('quantity')->first();
                 $newQty = $dtl['quantity'];
                 
                 if($oldQty > $newQty){
-                    //return diff
+                    // Return stock when quantity is reduced
                 }
                 elseif($newQty > $oldQty){
                     $diff = ($newQty - $oldQty);
@@ -206,7 +201,7 @@ class SaleController extends Controller
                         ], 400);
                     }
                     else {
-                        //subtract the diff from item's quantity
+                        // Deduct additional stock when quantity is increased
                     }
                 }
             }
@@ -221,7 +216,6 @@ class SaleController extends Controller
             }
         }
 
-        //FOR REMOVED ITEMS
         foreach($request->removedDtlIds as $dtlId){
             $dtl = SaleDtl::where('id', $dtlId)->first();
 
@@ -275,7 +269,6 @@ class SaleController extends Controller
         ], 200);
     }
 
-    // checked
     public function cancelSale(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -318,7 +311,6 @@ class SaleController extends Controller
         
     }
 
-    // checked
     public function paySale(Request $request)
     {
         $validations = Validator::make($request->all(), [
@@ -357,7 +349,6 @@ class SaleController extends Controller
         
     }
 
-    // checked
     public function returnSale(Request $request)
     {
         $validations = Validator::make($request->all(), [

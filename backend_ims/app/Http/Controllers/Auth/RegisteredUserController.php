@@ -20,41 +20,13 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
-    {
-        $validation = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        if ($validation->fails()){
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validation->errors(),
-            ], 422);
-        }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return response()->noContent();
-    }
-
-    // checked
     public function addUser(Request $request)
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $request->id],
+            'role' => ['required', 'string'],
             'password' => ['required', 'confirmed', Password::defaults()]
         ]);
 
@@ -69,18 +41,19 @@ class RegisteredUserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role,
             'password' => Hash::make($request->string('password'))
         ]);
 
         return response()->noContent();
     }
 
-    // checked
     public function updateUser(Request $request, $id)
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $id],
+            'role' => ['required', 'string'],
             'password' => ['nullable', 'confirmed', Password::defaults()]
         ]);
 
@@ -97,6 +70,7 @@ class RegisteredUserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role
         ];
 
         if ($request->filled('password')){

@@ -8,9 +8,8 @@
             leave-to-class="opacity-0"
             leave-active-class="transition duration-500 ease-in-out transform"
         >
-            <div v-if="inUse" class="modal fixed top-0 z-50 w-full h-full overflow-hidden bg-black/30 ">
+            <div v-show="inUse" class="modal fixed top-0 z-50 w-full h-full overflow-hidden bg-black/30 ">
                 <div @click.self="closeModal" class="p-2 sm:p-4 md:p-6 lg:p-8 size-full overflow-auto grid place-items-center">
-
                     <transition
                         :enter-from-class="popUpTransition.enterFrom"
                         :enter-to-class="popUpTransition.enterTo"
@@ -29,22 +28,18 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
 import { usePopUpTransition } from '../composables/useTransition';
 
+const popUpTransition = usePopUpTransition()
+const emit = defineEmits(['close'])
 
-//const inUse = ref(null)
 defineProps({
     inUse: {type: Boolean, required: true},
 })
 
-const emit = defineEmits(['close'])
-
 function closeModal(){
     emit('close')
 }
-
-const popUpTransition = usePopUpTransition()
 
 </script>
 

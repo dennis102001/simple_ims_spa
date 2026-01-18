@@ -10,27 +10,33 @@
             :leave-active-class="mainContentTransition.leaveActive"
             @after-leave="changeContent(pageContent)"
         >
-            <div v-show="viewingPOsList" class="h-full flex flex-col max-h-[1200px] min-h-[580px] w-full max-w-[1300px] mx-auto">
+            <section v-show="viewingPOsList" class="h-full flex flex-col max-h-[1200px] min-h-[750px] lg:min-h-[500px] w-full max-w-[1300px] mx-auto">
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
                     <h3 class="font-semibold tracking-wider">Manage Purchase Orders</h3>
                 </div>
 
                 <div class="flex flex-1 p-2 overflow-hidden">
-
-                    <div class="flex flex-col flex-1 overflow-hidden min-h-[350px] bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.1)] p-6">
+                    <div class="flex flex-col flex-1 overflow-hidden min-h-[350px] bg-white rounded-xl shadow-[0px_1px_4px_rgba(0,0,0,0.1)] p-6">
+                        
+                        <!-- Search bar -->
                         <div class="flex mb-4">
-                            <input v-model="searchPOValue" type="text" placeholder="Search by PO number or status" class="search-bar">
+                            <input 
+                                v-model="searchPOValue" 
+                                type="text" 
+                                placeholder="Search by PO number or status" 
+                                class="search-bar"
+                            >
                         </div>
                         
                         <div class="flex flex-col flex-1 pb-2 overflow-hidden">
 
-                            <!-- div-based table for large screen -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                                 
                                 <div class="flex-1 px-1 overflow-auto ">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[25%_20%_25%_20%_10%] head-row">
                                         <div class="head-data">PO Number</div>
                                         <div class="head-data">Ordered Date</div>
@@ -38,30 +44,44 @@
                                         <div class="head-data">Status</div>
                                         <div class="justify-center head-data">Action</div>
                                     </div>
-                                    <!-- body -->
+
                                     <div v-if="dataStatus" class="flex items-center justify-center w-full py-3">
                                         <p>{{ dataStatus }}</p>
                                     </div>
+
                                     <div v-if="!dataStatus" v-for="po in filteredPOsListData" class="grid grid-cols-[25%_20%_25%_20%_10%] body-row">
-                                        <div class="body-data po-number-style-wide">{{ po.poNumber }}</div>
-                                        <div class="body-data po-date-style-wide">{{ formatDate(po.orderDate) }}</div>
+                                        <div class="body-data po-number-style-wide">
+                                            {{ po.poNumber }}
+                                        </div>
+                                        <div class="body-data po-date-style-wide">
+                                            {{ formatDate(po.orderDate) }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="po-remarks-style-wide" :title="po.remarks">
                                                 {{ po.remarks ?? 'no remarks' }}
                                             </div>
                                         </div>
                                         <div class="body-data">
-                                            <div :class="['px-3 py-1 w-fit text-xs font-medium rounded text-nowrap h-fit uppercase', 
-                                                po.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
-                                                po.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
-                                                po.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
-                                                po.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
+                                            <div 
+                                                :class="['px-3 py-1 w-fit text-xs font-medium rounded text-nowrap h-fit uppercase', 
+                                                    po.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
+                                                    po.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
+                                                    po.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
+                                                    po.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
                                                 ]"
                                             >
                                                 {{ po.status }}
                                             </div>
                                         </div>
                                         <div class="flex justify-center items-center body-data">
+                                            <button 
+                                                @click="toggleMoreActions(po.hdrId)" 
+                                                class="px-4 py-1 mx-auto rounded-md btnActions hover:bg-gray-300"
+                                                type="button"
+                                            >
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+
                                             <Transition
                                                 enter-from-class="translate-x-full opacity-0 "
                                                 enter-to-class="translate-x-0 opacity-100"
@@ -72,6 +92,7 @@
                                             >
                                                 <div v-if="currentPOId == po.hdrId" class="absolute inset-0 flex items-center justify-end w-full h-full ">
                                                     <div class="bg-gradient-to-r flex-1 h-full from-[rgba(0,0,0,0.01)] to-darkgray-pri "></div>
+                                                    
                                                     <div class="flex items-center justify-end h-full p-2 bg-darkgray-pri w-fit btnActions">
                                                         <button
                                                             @click="showPODetails(po)"
@@ -82,102 +103,115 @@
                                                         >
                                                             View
                                                         </button>
+
                                                         <button 
                                                             v-if="po.status == 'Pending'"
-                                                            type="button"
                                                             @click="showReceivingForm(po)"
-                                                            title="Receive"
                                                             class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-darkgray-sec"
+                                                            type="button"
+                                                            width="full" 
+                                                            title="Receive"
                                                         >
                                                             Receive
                                                         </button>
+
                                                         <button 
                                                             v-if="po.status == 'Pending'"
-                                                            type="button"
                                                             @click="showPendingUpdateForm(po)"
-                                                            title="Update"
                                                             class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-darkgray-sec"
+                                                            type="button"
+                                                            width="full" 
+                                                            title="Update"
                                                         >
                                                             Update
                                                         </button>
+
                                                         <button
                                                             v-if="po.status == 'Pending'"
                                                             @click="showCancelForm(po)"
-                                                            type="button" 
-                                                            title="Cancel"
                                                             class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-red-700 "
+                                                            type="button" 
+                                                            width="full" 
+                                                            title="Cancel"
                                                         >
                                                             Cancel
                                                         </button>
+
                                                         <button 
                                                             v-if="po.status == 'Received'"
-                                                            type="button"
                                                             @click="showReceivedUpdateForm(po)"
-                                                            title="Update"
                                                             class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-darkgray-sec"
+                                                            type="button"
+                                                            width="full" 
+                                                            title="Update"
                                                         >
                                                             Update
                                                         </button>
+
                                                         <button
                                                             v-if="po.status == 'Received'"
                                                             @click="showReturnForm(po)"
-                                                            type="button" 
-                                                            title="Return"
                                                             class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-red-700 "
+                                                            type="button"
+                                                            width="full"  
+                                                            title="Return"
                                                         >
                                                             Return
                                                         </button>
                                                     </div>
                                                 </div>
                                             </Transition>
-                                            <button @click="toggleMoreActions(po.hdrId)" class="px-4 py-1 mx-auto rounded-md btnActions hover:bg-gray-300">
-                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
+
                                     <div v-if="dataStatus" class="flex items-center justify-center w-full py-3">
                                         <p>{{ dataStatus }}</p>
                                     </div>
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
                                     
-                                        <!-- grid items -->
-                                        <div v-if="!dataStatus" v-for="po in filteredPOsListData" class="relative flex flex-col rounded-lg shadow-emerald-300 shadow-[0_2px_4px] max-h-full">
+                                        <!-- Card items -->
+                                        <div v-if="!dataStatus" v-for="po in filteredPOsListData" class="relative flex flex-col rounded-lg shadow-[0px_1px_4px_rgba(0,0,0,0.1)] max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                             
-                                            <!-- card head -->
+                                            <!-- Card head -->
                                             <div class="flex flex-col items-start justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="flex items-center w-full ">
-                                                    <h5 class="po-number-style-narrow">{{ po.poNumber }}</h5>
+                                                    <h5 class="po-number-style-narrow">
+                                                        {{ po.poNumber }}
+                                                    </h5>
+
                                                     <button 
-                                                        type="button"
                                                         @click="toggleMoreActions(po.hdrId)" 
                                                         class="px-4 py-1 ml-auto rounded-md btnActions hover:bg-gray-300"
+                                                        type="button"
                                                     >
                                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5 cursor-default">
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <div class="label-style-two">Status:</div> 
-                                                    <div :class="['px-3 py-1 w-fit text-xs font-medium rounded text-nowrap uppercase ml-auto', 
-                                                        po.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
-                                                        po.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
-                                                        po.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
-                                                        po.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
+                                                    <div 
+                                                        :class="['px-3 py-1 w-fit text-xs font-medium rounded text-nowrap uppercase ml-auto', 
+                                                            po.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
+                                                            po.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
+                                                            po.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
+                                                            po.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
                                                         ]"
                                                     >
                                                         {{ po.status }}
@@ -187,7 +221,9 @@
 
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <div class="label-style-two">Date ordered:</div> 
-                                                    <div class="ml-auto po-date-style-narrow">{{ formatDate(po.orderDate) }}</div>
+                                                    <div class="ml-auto po-date-style-narrow">
+                                                        {{ formatDate(po.orderDate) }}
+                                                    </div>
                                                 </div>
                                                 
                                                 <div class="po-remarks-style-narrow" :title="po.remarks">
@@ -195,7 +231,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Action Buttons -->
+                                            <!-- More actions -->
                                             <Transition
                                                 enter-from-class="opacity-0"
                                                 enter-to-class="opacity-100 "
@@ -204,83 +240,86 @@
                                                 leave-to-class="opacity-0"
                                                 leave-active-class="transition duration-200 ease-in"
                                             >
-                                            <div v-if="currentPOId == po.hdrId" class="absolute flex flex-col items-center justify-center w-full h-full gap-1 rounded-lg bg-black/60 ">
-                                                <div class="grid w-3/5 grid-cols-1 gap-1 btnActions min-w-[150px]">
-                                                    <button
-                                                        @click="showPODetails(po)"
-                                                        class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70"
-                                                        type="button"
-                                                        width="full" 
-                                                        title="View Details"
-                                                    >
-                                                        View Details
-                                                    </button>
-                                                    <button
-                                                        @click="showReceivingForm(po)"
-                                                        class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
-                                                        v-if="po.status == 'Pending'"
-                                                        type="button"
-                                                        width="full"
-                                                        title="Receive"
-                                                    >
-                                                        Recieve
-                                                    </button>
-                                                    <button
-                                                        @click="showPendingUpdateForm(po)"
-                                                        class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
-                                                        v-if="po.status == 'Pending'"
-                                                        type="button"
-                                                        width="full"
-                                                        title="Update"
-                                                    >
-                                                        Update
-                                                    </button>
-                                                    <button
-                                                        v-if="po.status == 'Pending'"
-                                                        @click="showCancelForm(po)"
-                                                        class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
-                                                        type="button"
-                                                        width="full" 
-                                                        title="Cancel"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        @click="showReceivedUpdateForm(po)"
-                                                        class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
-                                                        v-if="po.status == 'Received'"
-                                                        type="button"
-                                                        width="full"
-                                                        title="Update"
-                                                    >
-                                                        Update
-                                                    </button>
-                                                    <button
-                                                        v-if="po.status == 'Received'"
-                                                        @click="showReturnForm(po)"
-                                                        type="button" 
-                                                        title="Return"
-                                                        class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
-                                                    >
-                                                        Return
-                                                    </button>
+                                                <div v-if="currentPOId == po.hdrId" class="absolute flex flex-col items-center justify-center w-full h-full gap-1 rounded-lg bg-black/60 ">
+                                                    <div class="grid w-3/5 grid-cols-1 gap-1 btnActions min-w-[150px]">
+                                                        <button
+                                                            @click="showPODetails(po)"
+                                                            class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70"
+                                                            type="button"
+                                                            width="full" 
+                                                            title="View Details"
+                                                        >
+                                                            View Details
+                                                        </button>
+
+                                                        <button
+                                                            v-if="po.status == 'Pending'"
+                                                            @click="showReceivingForm(po)"
+                                                            class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
+                                                            type="button"
+                                                            width="full"
+                                                            title="Receive"
+                                                        >
+                                                            Recieve
+                                                        </button>
+
+                                                        <button
+                                                            v-if="po.status == 'Pending'"
+                                                            @click="showPendingUpdateForm(po)"
+                                                            class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
+                                                            type="button"
+                                                            width="full"
+                                                            title="Update"
+                                                        >
+                                                            Update
+                                                        </button>
+
+                                                        <button
+                                                            v-if="po.status == 'Pending'"
+                                                            @click="showCancelForm(po)"
+                                                            class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
+                                                            type="button"
+                                                            width="full" 
+                                                            title="Cancel"
+                                                        >
+                                                            Cancel
+                                                        </button>
+
+                                                        <button
+                                                            v-if="po.status == 'Received'"
+                                                            @click="showReceivedUpdateForm(po)"
+                                                            class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
+                                                            type="button"
+                                                            width="full"
+                                                            title="Update"
+                                                        >
+                                                            Update
+                                                        </button>
+
+                                                        <button
+                                                            v-if="po.status == 'Received'"
+                                                            @click="showReturnForm(po)"
+                                                            class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
+                                                            type="button" 
+                                                            width="full"
+                                                            title="Return"
+                                                        >
+                                                            Return
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
                                             </Transition>
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
-            </div>
+            </section>
         </transition>
 
-        <!-- UPDATE FORM           /// -->
+        <!-- Update form -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -290,20 +329,18 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingPendingUpdateForm" class="flex flex-col w-full max-h-[1200px] min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingPendingUpdateForm" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="updatePendingPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-
-                        <section class="flex flex-row items-center mb-8 px-1">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
+                        
+                        <div class="flex flex-row items-center mb-8 px-1">
                             <h3 class="font-bold tracking-wide">Update Purchase Order</h3>
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + pendingUpdateFormData.status }}
                             </p>
-                        </section>
+                        </div>
 
-                        <!-- DATE ORDERED AND SELECT SUPPLIER -->
-                        <section class="flex flex-wrap mb-6 gap-x-6 gap-y-4 px-1">
+                        <div class="flex flex-wrap mb-6 gap-x-6 gap-y-4 px-1">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -313,56 +350,60 @@
                                 </div>
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">{{ formatDate(pendingUpdateFormData.orderDate) }}</p>
+                                    <p class="cursor-default value-style">
+                                        {{ formatDate(pendingUpdateFormData.orderDate) }}
+                                    </p>
                                 </div>
                             </div>
+
                             <div class="flex flex-col flex-1 w-full">
                                 <p class="label-style-one">Supplier:</p>
                                 <div @click="viewingSuppliersMenu = !viewingSuppliersMenu" class="relative cursor-pointer value-style suppliers-dropdown">
                                     <div class="flex">
-                                        <p v-if="pendingUpdateFormData.supplierName">{{ pendingUpdateFormData.supplierName }}</p>
-                                        <p v-else class="text-gray-400 ">--select supplier--</p>
+                                        <p v-if="pendingUpdateFormData.supplierName">
+                                            {{ pendingUpdateFormData.supplierName }}
+                                        </p>
+                                        <p v-else class="text-gray-400 ">
+                                            --select supplier--
+                                        </p>
                                         <span class="ml-auto">
                                             <i class="transition-all transform fa-solid fa-caret-down" :class="viewingSuppliersMenu ? '-rotate-180 ' : ''"></i>
                                         </span>
                                     </div>
                                     
                                     <Transition
-                                    enter-from-class="-translate-y-[20px] opacity-0"
-                                    enter-to-class="translate-y-0 opacity-100"
-                                    enter-active-class="transition duration-300 transform"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                    leave-active-class="duration-300 transform transtion"
+                                        enter-from-class="opacity-0"
+                                        enter-to-class="opacity-100"
+                                        enter-active-class="transition duration-200 transform"
+                                        leave-from-class="opacity-100"
+                                        leave-to-class="opacity-0"
+                                        leave-active-class="duration-200 transform transtion"
                                     >
-                                        <div v-if="viewingSuppliersMenu" class="z-30 p-3 absolute flex-col flex w-full max-h-40 bg-white rounded-md shadow-[0px_2px_4px_rgba(0,0,0,0.1)] -translate-x-3 translate-y-3 overflow-auto">
-                                            <div class="max-h-[150px] overflow-auto">
-                                                <div 
-                                                    @click="selectSupplier()"
-                                                    class="p-2 hover:bg-gray-50 cursor-pointer"
-                                                >
+                                        <div v-if="viewingSuppliersMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] -translate-x-3 translate-y-3 overflow-auto">
+                                            <ul class=" max-h-40 overflow-auto">
+                                                <li @click="selectSupplier()" class="p-2 hover:bg-gray-50 cursor-pointer">
                                                     None
-                                                </div>
-                                                <div
+                                                </li>
+
+                                                <li
                                                     v-for="supplier in suppliersListData"
                                                     @click="selectSupplier(supplier)"
                                                     class="p-2 hover:bg-gray-50 cursor-pointer"
                                                 >
                                                     {{ supplier.name }}
-                                                </div>
-                                            </div>
+                                                </li>
+                                            </ul>
                                         </div>
                                     </Transition> 
                                 </div>
                             </div>
-                            
-                        </section>
+                        </div>
 
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
 
                             <div class="flex flex-row flex-wrap items-end justify-between py-3 px-1 gap-y-2">
-                                <h4 class="label-style-one">Ordered Items</h4>
+                                <p class="label-style-one text-lg">Ordered Items</p>
+
                                 <ButtonDark type="button" @click="showItemsListModal">
                                     <div class="relative flex flex-row items-center w-fit ">
                                         <span class="text-sm px-2">
@@ -373,13 +414,13 @@
                                 </ButtonDark>
                             </div>
                             
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                             
                                 <div class="flex-1 px-1 overflow-auto">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[auto_20%_25%_20%_80px] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
@@ -387,13 +428,19 @@
                                         <div class="head-data">Subtotal</div>
                                         <div class="justify-center head-data">Action</div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in pendingUpdateFormData.selectedItemsList" class="grid grid-cols-[auto_20%_25%_20%_80px] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="flex flex-row w-full border border-gray-300 rounded-lg">
                                                 <input 
@@ -407,12 +454,14 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="body-data item-subtotal-style-wide">₱{{ (item.cost * item.orderedQty).toFixed(2)  }}</div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.cost * item.orderedQty).toFixed(2)  }}
+                                        </div>
                                         <div class="justify-center body-data">
                                             <button 
-                                                type="button" 
-                                                class="flex items-center justify-center text-white bg-red-500 rounded-full size-12"
                                                 @click="toggleSelectItem(item.dtlId, item.itemId, item.itemName, item.cost, item.unit, item.sku)" 
+                                                class="flex items-center justify-center text-white bg-red-500 rounded-full size-12"
+                                                type="button" 
                                             >
                                                 <i class="rotate-45 fa-solid fa-plus"></i>
                                             </button>
@@ -421,57 +470,60 @@
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in pendingUpdateFormData.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in pendingUpdateFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
+                                            <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
+
                                                 <div class="justify-center ml-auto w-fit">
                                                     <button 
-                                                        type="button" 
-                                                        class="flex items-center justify-center text-white bg-red-500 rounded-full size-12"
                                                         @click="toggleSelectItem(item.dtlId, item.itemId, item.itemName, item.cost, item.unit, item.sku)" 
+                                                        class="flex items-center justify-center text-white bg-red-500 rounded-full size-12"
+                                                        type="button" 
                                                     >
                                                         <i class="rotate-45 fa-solid fa-plus"></i>
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                    <label class="w-1/2 label-style-two">
-                                                        Quantity
-                                                    </label>
-
-                                                    <div class="flex items-center justify-between w-1/2 transition bg-white border border-gray-300 rounded-md shadow-sm">
+                                                    <p class="w-1/2 label-style-two">Quantity</p>
+                                                    <div class="flex items-center justify-between w-1/2 transition bg-white border border-gray-300 rounded-md">
                                                         <input 
                                                             v-model="item.orderedQty"
-                                                            type="number"
                                                             class="flex-1 min-w-0 px-1 py-1.5 text-right text-sm bg-transparent"
+                                                            type="number"
                                                             placeholder="0"
                                                         >
                                                         <span class="px-3 text-sm text-gray-500 border-l border-gray-200 whitespace-nowrap">
@@ -480,56 +532,54 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">Subtotal</p>
-                                                    <p class="ml-auto item-subtotal-style-narrow">₱{{ (item.cost * item.orderedQty).toFixed(2) }}</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.cost * item.orderedQty).toFixed(2) }}
+                                                    </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY -->
-                        <section class="flex flex-col w-full mb-2 px-1">
+                        <div class="flex flex-col w-full mb-2 px-1">
                             <div class="flex flex-col flex-1 mb-4">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea v-model="pendingUpdateFormData.remarks" id="remarks" class="h-20 value-style"></textarea>
+                                <label for="remarks-update-pending" class="label-style-one">Remarks:</label>
+                                <textarea 
+                                    v-model="pendingUpdateFormData.remarks" 
+                                    id="remarks-update-pending" 
+                                    class="h-20 value-style"
+                                >
+                                </textarea>
                             </div>
                             <div class="flex flex-col flex-1">
                                 <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style" >{{ pendingUpdateFormData.createdByName }}</p>                            
+                                <p class="cursor-default value-style" >
+                                    {{ pendingUpdateFormData.createdByName }}
+                                </p>                            
                             </div>
-                        </section>
-                        
-                    </div>
+                        </div>
+                    </section>
                     
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
                             <ButtonYellow width="full" type="submit">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Save</span>
-                                </div>
+                                Save
                             </ButtonYellow>
+
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Cancel</span>
-                                </div>
+                                Cancel
                             </ButtonWhite>
                         </div>
                     </div>
                 </form>
-                
             </div>
         </transition>
 
-        <!-- CANCEL FORM           /// -->
+        <!-- Cancel form -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -539,20 +589,18 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingCancelForm" class="flex flex-col w-full max-h-[1200px] min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingCancelForm" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="cancelPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
 
-                        <section class="flex flex-row items-center px-2 mb-8">
+                        <div class="flex flex-row items-center px-1 mb-8">
                             <h3 class="font-bold tracking-wide">Cancel Purchase Order</h3>
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + cancelFormData.status }}
                             </p>
-                        </section>
+                        </div>
 
-                        <!-- DATE ORDERED AND SELECTED SUPPLIER -->
-                        <section class="flex flex-wrap px-2 mb-6 gap-x-6 gap-y-4">
+                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -560,90 +608,109 @@
                                         {{ cancelFormData.poNumber }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">{{ formatDate(cancelFormData.orderDate) }}</p>
+                                    <p class="cursor-default value-style">
+                                        {{ formatDate(cancelFormData.orderDate) }}
+                                    </p>
                                 </div>
-                                
                             </div>
+
                             <div class="flex flex-col flex-1 w-full">
                                 <p class="label-style-one">Supplier:</p>
                                 <p v-if="cancelFormData.supplierName" class="cursor-default value-style">
                                     {{ cancelFormData.supplierName }}
                                 </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">No supplier selected</p>
+                                <p v-else class="text-gray-500 cursor-default value-style">
+                                    No supplier selected
+                                </p>
                             </div>
-                        </section>
+                        </div>
 
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
 
                             <div class="flex flex-row flex-wrap items-end justify-between py-3 gap-y-2">
-                                <h4 class="label-style-one">Ordered Items</h4>
+                                <p class="label-style-one text-lg">Ordered Items</p>
                             </div>
                             
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                             
                                 <div class="flex-1 px-1 overflow-auto">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[40%_20%_20%_20%] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
                                         <div class="head-data">Quantity</div>
                                         <div class="head-data">Subtotal</div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in cancelFormData.selectedItemsList" class="grid grid-cols-[40%_20%_20%_20%] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="flex flex-row text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
-                                        <div class="body-data item-subtotal-style-wide">₱{{ (item.cost * item.orderedQty).toFixed(2)  }}</div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.cost * item.orderedQty).toFixed(2)  }}
+                                        </div>
                                     </div>                            
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in cancelFormData.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in cancelFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
+                                            <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
                                                 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Ordered</p>
                                                     <p class="w-1/2 ml-auto text-sm px-3 py-1.5  text-gray-500 text-right bg-gray-100 rounded-md">
@@ -651,56 +718,54 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">Subtotal</p>
-                                                    <p class="ml-auto item-subtotal-style-narrow">₱{{ (item.cost * item.orderedQty).toFixed(2) }}</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.cost * item.orderedQty).toFixed(2) }}
+                                                    </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY -->
-                        <section class="flex flex-col w-full mb-2">
+                        <div class="flex flex-col w-full mb-2 px-1">
                             <div class="flex flex-col flex-1 mb-4">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea v-model="cancelFormData.remarks" id="remarks" class="h-20 value-style"></textarea>
+                                <label for="remarks-cancel" class="label-style-one">Remarks:</label>
+                                <textarea 
+                                    v-model="cancelFormData.remarks" 
+                                    id="remarks-cancel" 
+                                    class="h-20 value-style"
+                                >
+                                </textarea>
                             </div>
                             <div class="flex flex-col flex-1">
                                 <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style" >{{ cancelFormData.createdByName }}</p>                            
+                                <p class="cursor-default value-style" >
+                                    {{ cancelFormData.createdByName }}
+                                </p>                            
                             </div>
-                        </section>
-                        
-                    </div>
+                        </div>
+                    </section>
                     
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
                             <ButtonRed width="full" type="submit">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Cancel PO</span>
-                                </div>
+                                Cancel PO
                             </ButtonRed>
+
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Keep PO</span>
-                                </div>
+                                Keep PO
                             </ButtonWhite>
                         </div>
                     </div>
                 </form>
-                
             </div>
         </transition>
 
-        <!-- RECEIVE FORM          /// -->
+        <!-- Receive form -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -710,20 +775,18 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReceiveForm" class="flex flex-col w-full max-h-[1200px] min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingReceiveForm" class="flex flex-col w-full max-h-[1600px] min-h-[1450px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="receivePO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
                         
-                        <section class="flex flex-row items-center px-2 mb-8">
+                        <div class="flex flex-row items-center px-1 mb-8">
                             <h3 class="font-bold tracking-wide">Receive Purchase Order</h3>
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + receivingFormData.status }}
                             </p>
-                        </section>
+                        </div>
 
-                        <!-- PO NUMBER - SUPPLIER - DATE ORDERED -->
-                        <section class="flex flex-wrap px-2 mb-6 gap-x-6 gap-y-4">
+                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -731,33 +794,36 @@
                                         {{ receivingFormData.poNumber }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">{{ formatDate(receivingFormData.orderDate) }}</p>
+                                    <p class="cursor-default value-style">
+                                        {{ formatDate(receivingFormData.orderDate) }}
+                                    </p>
                                 </div>
-                                
                             </div>
+
                             <div class="flex flex-col flex-1 w-full">
                                 <p class="label-style-one">Supplier:</p>
                                 <p v-if="receivingFormData.supplierName" class="cursor-default value-style">
                                     {{ receivingFormData.supplierName }}
                                 </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">No supplier selected</p>
+                                <p v-else class="text-gray-500 cursor-default value-style">
+                                    No supplier selected
+                                </p>
                             </div>
-                            
-                        </section>
+                        </div>
                         
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <h4 class="label-style-one">Ordered Items</h4>
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                            <p class="label-style-one text-lg">Ordered Items</p>
 
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
 
                                 <div class="flex-1 px-1 overflow-auto">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[30%_15%_20%_20%_15%] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
@@ -765,16 +831,24 @@
                                         <div class="head-data">Received Qty</div>
                                         <div class="head-data">Received Subtotal</div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in receivingFormData.selectedItemsList" class="grid grid-cols-[30%_15%_20%_20%_15%] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="body-data">
@@ -789,43 +863,50 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="body-data item-subtotal-style-wide">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                        </div>
                                     </div>                            
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in receivingFormData.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in receivingFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
+                                            <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Ordered</p>
                                                     <p class="w-1/2 text-sm px-3 py-1.5  text-gray-500 text-right bg-gray-100 rounded-md">
@@ -833,17 +914,13 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                    <label class="w-1/2 label-style-two">
-                                                        Received 
-                                                    </label>
-
+                                                    <p class="w-1/2 label-style-two">Received</p>
                                                     <div class="flex items-center justify-between w-1/2 bg-white border border-gray-300 rounded-md">
                                                         <input 
                                                             v-model="item.receivedQty"
-                                                            type="number"
                                                             class="w-full min-w-0 px-1 py-1.5 text-right text-sm bg-transparent"
+                                                            type="number"
                                                             placeholder="0"
                                                         >
                                                         <span class="px-3 text-sm text-gray-500 border-l border-gray-200 whitespace-nowrap">
@@ -852,63 +929,64 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- received subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">Received Subtotal</p>
-                                                    <p class="ml-auto item-subtotal-style-narrow">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                                    </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY RECEIVEDBY -->
-                        <section class="flex flex-col w-full gap-4 mb-2">
+                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
                             <div class="flex flex-col flex-1">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea v-model="receivingFormData.remarks" id="remarks" class="h-20 value-style"></textarea>
+                                <label for="remarks-receive" class="label-style-one">Remarks:</label>
+                                <textarea 
+                                    v-model="receivingFormData.remarks" 
+                                    id="remarks-receive" 
+                                    class="h-20 value-style"
+                                >
+                                </textarea>
                             </div>
+
                             <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
                                 <div class="flex flex-col flex-1 ">
                                     <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">{{ receivingFormData.createdByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ receivingFormData.createdByName }}
+                                    </p>                            
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">{{ receivingFormData.userName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ receivingFormData.userName }}
+                                    </p>                            
                                 </div>
                             </div>
-                        </section>
-                    
-                    </div>
+                        </div>
+                    </section>
 
-                    <!-- SAVE CANCEL -->
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
                             <ButtonYellow width="full" type="submit">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Receive</span>
-                                </div>
+                                Receive
                             </ButtonYellow>
+
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Cancel</span>
-                                </div>
+                                Cancel
                             </ButtonWhite>
                         </div>
                     </div>
                 </form>
-                
             </div>
         </transition>
 
-        <!-- RETURN FORM           /// -->
+        <!-- Return form -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -918,21 +996,18 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReturnForm" class="flex flex-col w-full max-h-[1200px] min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingReturnForm" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="returnPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
                         
-                        <section class="flex flex-row items-center px-2 mb-8">
+                        <div class="flex flex-row items-center px-1 mb-8">
                             <h3 class="font-bold tracking-wide">Return Purchase Order</h3>
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + returnFormData.status }}
                             </p>
-                        </section>
+                        </div>
 
-                        <!-- DATE ORDERED AND SELECT SUPPLIER -->
-                         <section class="flex flex-wrap px-2 mb-6 gap-x-6 gap-y-4">
-
+                         <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -940,12 +1015,15 @@
                                         {{ returnFormData.poNumber }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Supplier:</p>
                                     <p v-if="returnFormData.supplierName" class="cursor-default value-style">
                                         {{ returnFormData.supplierName }}
                                     </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">No supplier selected</p>
+                                    <p v-else class="text-gray-500 cursor-default value-style">
+                                        No supplier selected
+                                    </p>
                                 </div>
                             </div>
 
@@ -956,6 +1034,7 @@
                                         {{ formatDate(returnFormData.orderDate) }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Received:</p>
                                     <p class="cursor-default value-style">
@@ -963,20 +1042,18 @@
                                     </p>
                                 </div>
                             </div>
-                            
-                        </section>
+                        </div>
 
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <h4 class="label-style-one">Ordered Items</h4>
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                            <p class="label-style-one text-lg">Ordered Items</p>
 
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
 
                                 <div class="flex-1 px-1 overflow-auto">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[30%_15%_20%_20%_15%] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
@@ -984,60 +1061,77 @@
                                         <div class="head-data">Received Qty</div>
                                         <div class="head-data">Received Subtotal</div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in returnFormData.selectedItemsList" class="grid grid-cols-[30%_15%_20%_20%_15%] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.receivedQty + " " + (item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.receivedQty + " " + (item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
-                                        <div class="body-data item-subtotal-style-wide">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                        </div>
                                     </div>                            
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in returnFormData.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in returnFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
-                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
+                                            <!-- Card head -->
+                                            <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Ordered</p>
                                                     <p class="w-1/2 ml-auto px-3 py-1.5 text-sm text-gray-500 text-right bg-gray-100 rounded-md">
@@ -1045,7 +1139,6 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Received</p>
                                                     <p class="w-1/2 ml-auto px-3 py-1.5 text-sm text-gray-500 text-right bg-gray-100 rounded-md">
@@ -1053,63 +1146,63 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">Received Subtotal</p>
-                                                    <p class="ml-auto item-subtotal-style-narrow">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                                    </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY RECEIVEDBY -->
-                        <section class="flex flex-col w-full gap-4 mb-2">
+                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
                             <div class="flex flex-col flex-1">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea v-model="returnFormData.remarks" id="remarks" class="h-20 value-style"></textarea>
+                                <label for="remarks-return" class="label-style-one">Remarks:</label>
+                                <textarea 
+                                    v-model="returnFormData.remarks" 
+                                    id="remarks-return" 
+                                    class="h-20 value-style"
+                                >
+                                </textarea>
                             </div>
                             <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
                                 <div class="flex flex-col flex-1 ">
                                     <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">{{ returnFormData.createdByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ returnFormData.createdByName }}
+                                    </p>                            
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">{{ returnFormData.receivedByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ returnFormData.receivedByName }}
+                                    </p>                            
                                 </div>
                             </div>
-                        </section>
-                    
-                    </div>
+                        </div>
+                    </section>
 
-                    <!-- SAVE CANCEL -->
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
                             <ButtonRed width="full" type="submit">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Confirm return</span>
-                                </div>
+                                Confirm return
                             </ButtonRed>
+
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Cancel</span>
-                                </div>
+                                Cancel
                             </ButtonWhite>
                         </div>
                     </div>
                 </form>
-                
             </div>
         </transition>
 
-        <!-- UPDATE RECEIVED FORM  /// -->
+        <!-- Update received form -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -1119,21 +1212,18 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReceivedUpdateForm" class="flex flex-col w-full max-h-[1200px] min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingReceivedUpdateForm" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="updateReceivedPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
                     
-                        <section class="flex flex-row items-center px-2 mb-8">
+                        <div class="flex flex-row items-center px-1 mb-8">
                             <h3 class="font-bold tracking-wide">Update Purchase Order</h3>
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + receivedUpdateFormData.status }}
                             </p>
-                        </section>
+                        </div>
                         
-                        <!-- DATE ORDERED - DATE RECEIVED - SUPPLIER -->
-                        <section class="flex flex-wrap px-2 mb-6 gap-x-6 gap-y-4">
-
+                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -1141,12 +1231,15 @@
                                         {{ receivedUpdateFormData.poNumber }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Supplier:</p>
                                     <p v-if="receivedUpdateFormData.supplierName" class="cursor-default value-style">
                                         {{ receivedUpdateFormData.supplierName }}
                                     </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">No supplier selected</p>
+                                    <p v-else class="text-gray-500 cursor-default value-style">
+                                        No supplier selected
+                                    </p>
                                 </div>
                             </div>
 
@@ -1157,6 +1250,7 @@
                                         {{ formatDate(receivedUpdateFormData.orderDate) }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Received:</p>
                                     <p class="cursor-default value-style">
@@ -1164,20 +1258,18 @@
                                     </p>
                                 </div>
                             </div>
-                            
-                        </section>
+                        </div>
 
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <h4 class="label-style-one">Ordered Items</h4>
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                            <p class="label-style-one text-lg">Ordered Items</p>
 
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                             
                                 <div class="flex-1 px-1 overflow-auto ">
-                                    <!-- head -->
                                     <div class="grid grid-cols-[30%_15%_20%_20%_15%] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
@@ -1185,16 +1277,24 @@
                                         <div class="head-data">Received Qty</div>
                                         <div class="head-data">Received Subtotal</div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in receivedUpdateFormData.selectedItemsList" class="grid grid-cols-[30%_15%_20%_20%_15%] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="body-data">
@@ -1209,43 +1309,50 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="body-data item-subtotal-style-wide">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                        </div>
                                     </div>                            
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in receivedUpdateFormData.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in receivedUpdateFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
+                                            <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Ordered</p>
                                                     <p class="w-1/2 ml-auto text-sm px-3 py-1.5  text-gray-500 text-right bg-gray-100 rounded-md">
@@ -1253,83 +1360,79 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                    <label class="w-1/2 label-style-two">
-                                                        Received
-                                                    </label>
-
-                                                    <div class="flex items-center justify-between w-1/2 transition bg-white border border-gray-300 rounded-md shadow-sm">
+                                                    <p class="w-1/2 label-style-two">Received</p>
+                                                    <div class="flex items-center justify-between w-1/2 transition bg-white border border-gray-300 rounded-md">
                                                         <input 
-                                                        v-model="item.receivedQty"
-                                                        type="number"
-                                                        class="flex-1 min-w-0 px-1 py-1.5 text-right text-sm bg-transparent"
-                                                        placeholder="0"
+                                                            v-model="item.receivedQty"
+                                                            class="flex-1 min-w-0 px-1 py-1.5 text-right text-sm bg-transparent"
+                                                            type="number"
+                                                            placeholder="0"
                                                         >
                                                         <span class="px-3 text-sm text-gray-500 border-l border-gray-200 whitespace-nowrap">
-                                                        {{ item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units') }}
+                                                            {{ item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units') }}
                                                         </span>
                                                     </div>
                                                 </div>
 
-                                                <!-- received subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">Received Subtotal</p>
-                                                    <p class="ml-auto item-subtotal-style-narrow">₱{{ (item.cost * item.receivedQty).toFixed(2) }}</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.cost * item.receivedQty).toFixed(2) }}
+                                                    </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY RECEIVEDBY -->
-                        <section class="flex flex-col w-full gap-4 mb-2">
+                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
                             <div class="flex flex-col flex-1">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea v-model="receivedUpdateFormData.remarks" id="remarks" class="h-20 value-style"></textarea>
+                                <label for="remarks-update-received" class="label-style-one">Remarks:</label>
+                                <textarea 
+                                    v-model="receivedUpdateFormData.remarks" 
+                                    id="remarks-update-received" 
+                                    class="h-20 value-style"
+                                >
+                                </textarea>
                             </div>
+
                             <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
                                 <div class="flex flex-col flex-1 ">
                                     <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">{{ receivedUpdateFormData.createdByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ receivedUpdateFormData.createdByName }}
+                                    </p>                            
                                 </div>
+                                
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">{{ receivedUpdateFormData.receivedByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ receivedUpdateFormData.receivedByName }}
+                                    </p>                            
                                 </div>
                             </div>
-                        </section>
+                        </div>
+                    </section>
 
-                    </div>
-
-                    <!-- SAVE CANCEL -->
                     <div class="flex items-end justify-end w-full">
                          <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
                             <ButtonYellow width="full" type="submit">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Save</span>
-                                </div>
-                                
+                                Save
                             </ButtonYellow>
+
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Cancel</span>
-                                </div>
+                                Cancel
                             </ButtonWhite>
                         </div>
                     </div>
                 </form>
-                
             </div>
         </transition>
 
-        <!-- VIEW ONLY             /// -->
+        <!-- View PO details -->
         <transition
             :enter-from-class="formTransition.enterFrom"
             :enter-to-class="formTransition.enterTo"
@@ -1339,27 +1442,25 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingPODetails" class="flex flex-col w-full max-h-[1200px] min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
-                
+            <div v-show="viewingPODetails" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
                 <div class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <div class="shadow-[0px_2px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
                     
-                        <section class="flex flex-row items-center px-2 mb-8">
+                        <div class="flex flex-row items-center px-1 mb-8">
                             <h3 class="font-bold tracking-wide">Purchase Order Details</h3>
-                            <p :class="['px-3 py-1 w-fit font-medium rounded text-nowrap ml-auto', 
-                                poDetails.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
-                                poDetails.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
-                                poDetails.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
-                                poDetails.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
+                            <p 
+                                :class="['px-3 py-1 w-fit font-medium rounded text-nowrap ml-auto', 
+                                    poDetails.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
+                                    poDetails.status == 'Received' ? 'bg-blue-100 text-blue-600' : '',
+                                    poDetails.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
+                                    poDetails.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
                                 ]"
                             >
                                 {{ "Status: " + poDetails.status }}
                             </p>
-                        </section>
+                        </div>
                         
-                        <!-- PO NUMBER - SUPPLIER - DATE ORDERED - DATE RECEIVED -->
-                        <section class="flex flex-wrap px-2 mb-6 gap-x-6 gap-y-4">
-
+                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">PO Number:</p>
@@ -1367,42 +1468,48 @@
                                         {{ poDetails.poNumber }}
                                     </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Supplier:</p>
                                     <p v-if="poDetails.supplierName" class="cursor-default value-style">
                                         {{ poDetails.supplierName }}
                                     </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">No supplier selected</p>
+                                    <p v-else class="text-gray-500 cursor-default value-style">
+                                        No supplier selected
+                                    </p>
                                 </div>
                             </div>
 
                             <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">{{ formatDate(poDetails.orderDate) }}</p>
+                                    <p class="cursor-default value-style">
+                                        {{ formatDate(poDetails.orderDate) }}
+                                    </p>
                                 </div>
+
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Date Received:</p>
                                     <p v-if="poDetails.receivedDate" class="cursor-default value-style">
                                         {{ formatDate(poDetails.receivedDate) }}
                                     </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">-</p>
+                                    <p v-else class="text-gray-500 cursor-default value-style">
+                                        -
+                                    </p>
                                 </div>
                             </div>
-                            
-                        </section>
+                        </div>
 
-                        <!-- ORDERED ITEMS -->
-                        <section class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <h4 class="label-style-one">Ordered Items</h4>
+                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                            <p class="label-style-one text-lg">Ordered Items</p>
 
-                            <!-- div-based table -->
+                            <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlay -->
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                             
-                                <div class="flex-1 px-1 overflow-auto ">
-                                    <!-- head -->
+                                <div class="flex-1 px-1 overflow-auto">
                                     <div class="grid grid-cols-[30%_15%_20%_20%_15%] head-row">
                                         <div class="head-data">Item</div>
                                         <div class="head-data">Cost</div>
@@ -1417,22 +1524,34 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <!-- body -->
+                                    
                                     <div v-for="item in poDetails.selectedItemsList" class="grid grid-cols-[30%_15%_20%_20%_15%] body-row">
                                         <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
                                         </div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
+                                        <div class="body-data item-cost-style-wide">
+                                            ₱{{ item.cost }}
+                                        </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p class="grid px-3  py-1.5 place-items-center">{{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}</p>
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.orderedQty + " " + (item.unit ?? (item.orderedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="body-data">
                                             <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                                <p v-if="item.receivedQty" class="grid px-3  py-1.5 place-items-center">{{ item.receivedQty + " " + (item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units')) }}</p>
-                                                <p v-else class="grid px-3  py-1.5 place-items-center">-</p>
+                                                <p v-if="item.receivedQty" class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.receivedQty + " " + (item.unit ?? (item.receivedQty < 2 ? 'unit' : 'units')) }}
+                                                </p>
+                                                <p v-else class="grid px-3  py-1.5 place-items-center">
+                                                    -
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="body-data item-subtotal-style-wide">
@@ -1442,38 +1561,43 @@
                                 </div>
                             </div>
 
-                            <!-- grid items for small screen -->
+                            <!-- Mobile card layout -->
                             <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
+                                
+                                <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
-                                    <!-- grid - margin 2 for gradient overlays -->
+                                    <!-- Card grid -->
                                     <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
 
-                                        <!-- grid items -->
-                                        <div v-for="item in poDetails.selectedItemsList" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
+                                        <!-- Card items -->
+                                        <div v-for="item in poDetails.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
                                         
-                                            <!-- card header -->
+                                            <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
                                                 <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow" :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
                                                 </div>
                                             </div>
 
-                                            <!-- card body -->
+                                            <!-- Card body -->
                                             <div class="grid gap-2 px-5 pt-2 pb-5">
 
-                                                <!-- cost -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
+                                                    <p class="ml-auto item-cost-style-narrow">
+                                                        ₱{{ item.cost }}
+                                                    </p>
                                                 </div>
 
-                                                <!-- ordered quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Ordered</p>
                                                     <p class="w-1/2 ml-auto text-sm px-3 py-1.5  text-gray-500 text-right bg-gray-100 rounded-md">
@@ -1481,7 +1605,6 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received quantity -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
                                                     <p class="w-1/2 label-style-two">Received</p>
                                                     <p v-if="item.receivedQty" class="w-1/2 ml-auto text-sm px-3 py-1.5  text-gray-500 text-right bg-gray-100 rounded-md h-fit">
@@ -1492,7 +1615,6 @@
                                                     </p>
                                                 </div>
 
-                                                <!-- received subtotal -->
                                                 <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
                                                     <p class="label-style-two">
                                                         <span v-if="['Pending', 'Cancelled'].includes(poDetails.status)">
@@ -1506,282 +1628,293 @@
                                                         ₱{{ (item.cost * (item.receivedQty || item.orderedQty)).toFixed(2) }}
                                                     </p>
                                                 </div>
-
                                             </div>
-
                                         </div>
-                            
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
-
-                        <!-- REMARKS CREATEDBY RECEIVEDBY -->
-                        <section class="flex flex-col w-full gap-4 mb-2">
+                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
                             <div class="flex flex-col flex-1">
                                 <p class="label-style-one">Remarks:</p>
-                                <p class="line-clamp-4 min-h-[60px] cursor-default value-style">{{ poDetails.remarks }}</p>
+                                <p class="line-clamp-4 min-h-[60px] cursor-default value-style">
+                                    {{ poDetails.remarks }}
+                                </p>
                             </div>
                             <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
                                 <div class="flex flex-col flex-1 ">
                                     <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">{{ poDetails.createdByName }}</p>                            
+                                    <p class="cursor-default value-style">
+                                        {{ poDetails.createdByName }}
+                                    </p>                            
                                 </div>
                                 <div class="flex flex-col flex-1">
                                     <p class="label-style-one">Received by:</p>
                                     <p v-if="poDetails.receivedByName" class="cursor-default value-style">
                                         {{ poDetails.receivedByName }}
                                     </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">-</p>
+                                    <p v-else class="text-gray-500 cursor-default value-style">
+                                        -
+                                    </p>
                                 </div>
                             </div>
-                        </section>
+                        </div>
+                    </section>
 
-                    </div>
-
-                    <!-- BACK -->
                     <div class="flex items-end justify-end w-full">
                          <div class="flex flex-row justify-between w-full md:w-[200px]">
                             <ButtonWhite @click="showPOsList" width="full" type="button">
-                                <div class="relative flex flex-row items-center w-full">
-                                    <span class="mx-auto">Back</span>
-                                </div>
+                                Back
                             </ButtonWhite>
                         </div>
                     </div>
                 </div>
-                
             </div>
         </transition>
-
     </div>
 
     <Modal :inUse="viewingItemsListModal" @close="viewingItemsListModal = false">
-        <transition
-            :enter-from-class="popUpTransition.enterFrom "
-            :enter-to-class="popUpTransition.enterTo"
-            :enter-active-class="popUpTransition.enterActive"
-            :leave-from-class="popUpTransition.leaveFrom"
-            :leave-to-class="popUpTransition.leaveTo"
-            :leave-active-class="popUpTransition.leaveActive"
-        >
-            <div v-show="viewingItemsListModal" class="w-full mb-4 bg-white shadow-md rounded-xl h-full max-h-[500px] max-w-[1000px]">
-                <div class="flex flex-col size-full">
-                    <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-white bg-darkgray-pri rounded-t-xl border-b">
-                        <h4 class="font-semibold tracking-wide">Add More Items</h4>
-                        <div @click="viewingItemsListModal = false" class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" title="close">
-                            <i class="fa-solid fa-xmark"></i>
-                        </div>
+        <div v-show="viewingItemsListModal" class="w-full mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl h-full max-h-[500px] max-w-[1000px]">
+            <div class="flex flex-col size-full">
+                
+                <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-white bg-darkgray-pri rounded-t-xl border-b">
+                    <h4 class="font-semibold tracking-wide">Add More Items</h4>
+
+                    <button 
+                        @click="viewingItemsListModal = false" 
+                        class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
+                        title="close"
+                        type="button"
+                    >
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex flex-col flex-1 overflow-hidden px-5 py-6">
+                    
+                    <!-- Seach bar -->
+                    <div class="flex flex-col items-end justify-between px-1 mb-2 space-y-2 sm:space-y-0 sm:flex-row">
+                        <input 
+                            v-model="searchItemValue" 
+                            type="text" 
+                            placeholder="Search by item name or SKU"
+                            class="search-bar"
+                        >
                     </div>
 
-                    <div class="flex flex-col flex-1 overflow-hidden px-5 py-6">
-                        <!-- search and proceed -->
-                        <div class="flex flex-col items-end justify-between px-1 mb-2 space-y-2 sm:space-y-0 sm:flex-row">
-                            <input v-model="searchItemValue" type="text" placeholder="Search by item name or SKU" class="search-bar">
-                        </div>
+                    <div class="flex flex-col flex-1 overflow-hidden">
 
-                        <div class="flex flex-col flex-1 overflow-hidden">
+                        <!-- Desktop table layout -->
+                        <div class="relative flex-1 hidden overflow-hidden lg:flex">
+                            
+                            <!-- Gradient overlay -->
+                            <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
 
-                            <!-- div-based table for large screen -->
-                            <div class="relative flex-1 hidden overflow-hidden lg:flex">
-                                <!-- gradient overlays -->
-                                <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
+                            <div class="flex-1 px-1 overflow-auto">
+                                <div class="grid grid-cols-[auto_25%_15%_15%_80px] head-row">
+                                    <div class="head-data">Item</div>
+                                    <div class="head-data">Category</div>
+                                    <div class="head-data">Cost</div>
+                                    <div class="head-data">Quantity</div>
+                                    <div class="justify-center head-data">Action</div>
+                                </div>
+                                
+                                <div v-if="itemsListDataStatus" class="flex items-center justify-center w-full py-3">
+                                    <p>{{ itemsListDataStatus }}</p>
+                                </div>
 
-                                <!-- div-based table -->
-                                <div class="flex-1 px-1 overflow-auto">
-                                    <!-- head -->
-                                    <div class="grid grid-cols-[auto_25%_15%_15%_80px] head-row">
-                                        <div class="head-data">Item</div>
-                                        <div class="head-data">Category</div>
-                                        <div class="head-data">Cost</div>
-                                        <div class="head-data">Quantity</div>
-                                        <div class="justify-center head-data">Action</div>
+                                <div v-if="!itemsListDataStatus" v-for="item in filteredItemsListData" class="grid grid-cols-[auto_25%_15%_15%_80px] body-row">
+                                    <div class="grid body-data">
+                                        <p class="item-name-style-wide" :title="item.itemName">
+                                            {{ item.itemName }}
+                                        </p>
+                                        <p class="item-sku-style-wide" :title="item.sku">
+                                            {{ item.sku }}
+                                        </p>
                                     </div>
-                                    <!-- body -->
-                                    <div v-if="itemsListDataStatus" class="flex items-center justify-center w-full py-3">
-                                        <p>{{ itemsListDataStatus }}</p>
+                                    <div class="body-data item-category-style-wide" :title="item.category">
+                                        {{ item.category }}
                                     </div>
-                                    <div v-if="!itemsListDataStatus" v-for="item in filteredItemsListData" class="grid grid-cols-[auto_25%_15%_15%_80px] body-row">
-                                        <div class="grid body-data">
-                                            <p class="item-name-style-wide" :title="item.itemName">{{ item.itemName }}</p>
-                                            <p class="item-sku-style-wide" :title="item.sku">{{ item.sku }}</p>
+                                    <div class="body-data item-cost-style-wide">
+                                        ₱{{ item.cost }}
+                                    </div>
+                                    <div class="body-data">
+                                        <div class="item-quantity-style-wide"
+                                            :class="getStockColor(item)"
+                                        >
+                                            {{ item.quantity + ' ' + (item.unit ?? ( item.quantity < 2 ? 'unit' : 'units') ) }}
                                         </div>
-                                        <div class="body-data item-category-style-wide" :title="item.category">{{ item.category }}</div>
-                                        <div class="body-data item-cost-style-wide">₱{{ item.cost }}</div>
-                                        <div class="body-data">
-                                            <div class="item-quantity-style-wide"
-                                                :class="{
-                                                    [colors.zero]: item.quantity < 1,
-                                                    [colors.low]: item.quantity >= 0 && item.quantity <= item.reorderLevel,
-                                                    'bg-emerald-500': item.quantity > item.reorderLevel
-                                                }"
-                                            >
-                                                {{ item.quantity + ' ' + (item.unit ?? ( item.quantity < 2 ? 'unit' : 'units') ) }}
-                                            </div>
-                                        </div>
-                                        <div class="justify-center body-data">
-                                            <button 
+                                    </div>
+                                    <div class="justify-center body-data">
+                                        <button 
                                             @click="toggleSelectItem(null, item.id, item.itemName, item.cost, item.unit, item.sku, item.category)" 
-                                            :class=" selectedItemIds.includes(item.id) ? 'bg-red-500 text-white' : 'border-2 border-[#45a049] text-[#45a049] bg-[#eef3ee]' " class="flex items-center justify-center rounded-full size-12">
-                                                <i :class="{'rotate-45': selectedItemIds.includes(item.id)}" class="transition duration-500 transform fa-solid fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            <!-- grid items for small screen -->
-                            <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                                <!-- gradient overlays -->
-                                <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
-                    
-                                <div class="flex flex-1 overflow-auto">
-                                    
-                                    <!-- grid - margin 2 for gradient overlays -->
-                                    <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
-                                    
-                                        <!-- grid items -->
-                                        <div v-for="item in filteredItemsListData" class="cursor-default flex flex-col shadow-emerald-300 shadow-[0_2px_4px] rounded-lg max-h-full">
-                                        
-                                            <!-- card header -->
-                                            <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
-                                                <div class="overflow-hidden">
-                                                    <h5 class="item-name-style-narrow" :title="item.itemName">{{ item.itemName }}</h5>
-                                                    <p class="item-sku-style-narrow"  :title="item.sku">{{ item.sku ?? 'Not set' }}</p>
-                                                </div>
-                                                <div class="justify-center ml-auto w-fit">
-                                                    <button
-                                                        type="button" 
-                                                        @click="toggleSelectItem(null, item.id, item.itemName, item.cost, item.unit, item.sku, item.category)"
-                                                        :class=" selectedItemIds.includes(item.id) ? 'text-white bg-red-500' : 'border-2  border-[#45a049] text-[#45a049] bg-[#eef3ee]' " class="flex items-center justify-center rounded-full size-12"
-                                                    >
-                                                        <i :class="{'rotate-45': selectedItemIds.includes(item.id)}" class="text-lg transition duration-500 transform fa-solid fa-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <!-- card body -->
-                                            <div class="grid gap-2 px-5 pt-2 pb-5 cursor-default">
-
-                                                <!-- quantity -->
-                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                    <p class="label-style-two">Quantity</p>
-                                                    
-                                                    <span class="item-quantity-style-narrow ml-auto"
-                                                        :class="{
-                                                            [colors.zero]: item.quantity < 1,
-                                                            [colors.low]: item.quantity >= 0 && item.quantity <= item.reorderLevel,
-                                                            'bg-emerald-500': item.quantity > item.reorderLevel
-                                                        }"
-                                                    >
-                                                        {{ item.quantity + ' ' + (item.unit ?? ( item.quantity < 2 ? 'unit' : 'units') ) }}
-                                                    </span>
-                                                </div>
-                                                
-
-                                                <!-- cost -->
-                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                    <p class="label-style-two">Cost</p>
-                                                    <p class="ml-auto item-cost-style-narrow">₱{{ item.cost }}</p>
-                                                </div>
-                                                
-                                                <!-- category -->
-                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center ">
-                                                    <p class="label-style-two">Category</p>
-                                                    <p class="ml-auto item-category-style-narrow" :title="item.category">{{ item.category ?? 'Not Set' }}</p>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
+                                            :class=" selectedItemIds.includes(item.id) ? 'bg-red-500 text-white' : 'border-2 border-[#45a049] text-[#45a049] bg-[#eef3ee]' " 
+                                            class="flex items-center justify-center rounded-full size-12"
+                                            type="button"
+                                        >
+                                            <i :class="{'rotate-45': selectedItemIds.includes(item.id)}" class="transition duration-500 transform fa-solid fa-plus"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        
                         </div>
 
+                        <!-- Mobile card layout -->
+                        <div class="relative flex flex-1 overflow-hidden lg:hidden">
+                            
+                            <!-- Gradient overlays -->
+                            <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
+                
+                            <div class="flex flex-1 overflow-auto">
+                                
+                                <div v-if="itemsListDataStatus" class="flex items-center justify-center w-full py-3">
+                                    <p>{{ itemsListDataStatus }}</p>
+                                </div>
+
+                                <!-- Card grid -->
+                                <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
+                                
+                                    <!-- Card items -->
+                                    <div v-if="!itemsListDataStatus" v-for="item in filteredItemsListData" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
+                                    
+                                        <!-- Card head -->
+                                        <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
+                                            <div class="overflow-hidden">
+                                                <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                    {{ item.itemName }}
+                                                </h5>
+                                                <p class="item-sku-style-narrow"  :title="item.sku">
+                                                    {{ item.sku ?? 'Not set' }}
+                                                </p>
+                                            </div>
+
+                                            <div class="justify-center ml-auto w-fit">
+                                                <button
+                                                    @click="toggleSelectItem(null, item.id, item.itemName, item.cost, item.unit, item.sku, item.category)"
+                                                    :class=" selectedItemIds.includes(item.id) ? 'text-white bg-red-500' : 'border-2  border-[#45a049] text-[#45a049] bg-[#eef3ee]' " 
+                                                    class="flex items-center justify-center rounded-full size-12"
+                                                    type="button" 
+                                                >
+                                                    <i :class="{'rotate-45': selectedItemIds.includes(item.id)}" class="text-lg transition duration-500 transform fa-solid fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Card body -->
+                                        <div class="grid gap-2 px-5 pt-2 pb-5 cursor-default">
+
+                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
+                                                <p class="label-style-two">Quantity</p>
+                                                <span class="item-quantity-style-narrow ml-auto" :class="getStockColor(item)">
+                                                    {{ item.quantity + ' ' + (item.unit ?? ( item.quantity < 2 ? 'unit' : 'units') ) }}
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
+                                                <p class="label-style-two">Cost</p>
+                                                <p class="ml-auto item-cost-style-narrow">
+                                                    ₱{{ item.cost }}
+                                                </p>
+                                            </div>
+                                            
+                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center ">
+                                                <p class="label-style-two">Category</p>
+                                                <p class="ml-auto item-category-style-narrow" :title="item.category">
+                                                    {{ item.category ?? 'Not Set' }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-    
-        </transition>
+        </div>
     </Modal>
 
-    <!-- LOADING SUCCESS ERROR -->
     <teleport to="body">
         <Transition
-        :enter-from-class="alertLoadingTransition.enterFrom"
-        :enter-to-class="alertLoadingTransition.enterTo"
-        :enter-active-class="alertLoadingTransition.enterActive"
-        :leave-from-class="alertLoadingTransition.leaveFrom"
-        :leave-to-class="alertLoadingTransition.leaveTo"
-        :leave-active-class="alertLoadingTransition.leaveActive"
+            :enter-from-class="alertLoadingTransition.enterFrom"
+            :enter-to-class="alertLoadingTransition.enterTo"
+            :enter-active-class="alertLoadingTransition.enterActive"
+            :leave-from-class="alertLoadingTransition.leaveFrom"
+            :leave-to-class="alertLoadingTransition.leaveTo"
+            :leave-active-class="alertLoadingTransition.leaveActive"
         >
-        <Loading v-if="loading"></Loading>
+            <Loading v-if="loading"></Loading>
         </Transition>
 
         <Transition
-        :enter-from-class="alertLoadingTransition.enterFrom"
-        :enter-to-class="alertLoadingTransition.enterTo"
-        :enter-active-class="alertLoadingTransition.enterActive"
-        :leave-from-class="alertLoadingTransition.leaveFrom"
-        :leave-to-class="alertLoadingTransition.leaveTo"
-        :leave-active-class="alertLoadingTransition.leaveActive"
+            :enter-from-class="alertLoadingTransition.enterFrom"
+            :enter-to-class="alertLoadingTransition.enterTo"
+            :enter-active-class="alertLoadingTransition.enterActive"
+            :leave-from-class="alertLoadingTransition.leaveFrom"
+            :leave-to-class="alertLoadingTransition.leaveTo"
+            :leave-active-class="alertLoadingTransition.leaveActive"
         >
-        <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
-            <template v-slot:title>
-                {{ successMsgTitle }}
-            </template>
-            <template v-slot:body>
-                {{ successMsgBody }}
-            </template>
-        </SuccessBanner>
+            <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
+                <template v-slot:title>
+                    {{ successMsgTitle }}
+                </template>
+
+                <template v-slot:body>
+                    {{ successMsgBody }}
+                </template>
+            </SuccessBanner>
         </Transition>
 
         <Transition
-        :enter-from-class="alertLoadingTransition.enterFrom"
-        :enter-to-class="alertLoadingTransition.enterTo"
-        :enter-active-class="alertLoadingTransition.enterActive"
-        :leave-from-class="alertLoadingTransition.leaveFrom"
-        :leave-to-class="alertLoadingTransition.leaveTo"
-        :leave-active-class="alertLoadingTransition.leaveActive"
+            :enter-from-class="alertLoadingTransition.enterFrom"
+            :enter-to-class="alertLoadingTransition.enterTo"
+            :enter-active-class="alertLoadingTransition.enterActive"
+            :leave-from-class="alertLoadingTransition.leaveFrom"
+            :leave-to-class="alertLoadingTransition.leaveTo"
+            :leave-active-class="alertLoadingTransition.leaveActive"
         >
-        <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-            <template v-slot:title>
-                Error 
-            </template>
-            <template v-slot:body>
-                {{ errorMsgBody }}
-            </template>
-        </ErrorBanner>
-        </Transition>
+            <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
+                <template v-slot:title>
+                    Error 
+                </template>
 
+                <template v-slot:body>
+                    {{ errorMsgBody }}
+                </template>
+            </ErrorBanner>
+        </Transition>
     </teleport>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { usePopUpTransition, useMainContentTransition, useAlertLoadingTransition, useFormTransition } from '../composables/useTransition';
+import { useMainContentTransition, useAlertLoadingTransition, useFormTransition } from '../composables/useTransition';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useFormatDate } from '../composables/useFormatDate';
 import axiosClient from '../axios';
 import useUserStore from '../store/user';
-
 import Modal from '../components/Modal.vue';
 import Loading from '../components/alerts/Loading.vue';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonRed from '../components/buttons/ButtonRed.vue';
-import ButtonYellow from '../components/buttons/ButtonYellow.vue';
-import ConfirmModal from '../components/ConfirmModal.vue';
+import ButtonYellow from '../components/buttons/ButtonYellow.vue'
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
-import ButtonGreen from '../components/buttons/ButtonGreen.vue';
 
-const { showSuccessMsg, closeSuccessMsg, showErrorMsg, closeErrorMsg, hasSuccessMsg, hasErrorMsg, successMsgTitle, successMsgBody, errorMsgBody } = useAlertMessages()
+const { 
+    showSuccessMsg, 
+    closeSuccessMsg, 
+    showErrorMsg, 
+    closeErrorMsg, 
+    hasSuccessMsg, 
+    hasErrorMsg, 
+    successMsgTitle, 
+    successMsgBody, 
+    errorMsgBody 
+} = useAlertMessages()
 
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
@@ -1789,7 +1922,6 @@ const user = computed(() => userStore.user)
 
 const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
-const popUpTransition = usePopUpTransition()
 const formTransition = useFormTransition()
 
 const viewingPOsList = ref(null)
@@ -1823,15 +1955,38 @@ const filteredPOsListData = computed(() => {
 const itemsListData = ref([])
 const itemsListDataStatus = ref(null)
 const filteredItemsListData = computed(() => {
-  return itemsListData.value.filter(item => {
-    return item.itemName.toLowerCase().includes(searchItemValue.value.toLowerCase()) ||
-           item.sku.toLowerCase().includes(searchItemValue.value.toLowerCase())
-  })
+    return itemsListData.value.filter(item => {
+        return item.itemName.toLowerCase().includes(searchItemValue.value.toLowerCase()) ||
+            item.sku.toLowerCase().includes(searchItemValue.value.toLowerCase())
+    })
 })
 
 const colors = ref({
-  low: null,
-  zero: null
+    low: null,
+    zero: null
+})
+
+function getStockColor(item){
+    if (item.quantity < 1){
+        return colors.value.zero
+    }
+    else if(item.quantity <= item.reorderLevel){
+        return colors.value.low
+    }
+    else {
+        return "bg-emerald-500"
+    }
+}
+
+const colorClass = ref({
+    red: 'bg-red-500',
+    yellow: 'bg-yellow-500',
+    orange: 'bg-orange-500',
+    green: 'bg-green-500',
+    blue: 'bg-blue-500',
+    violet: 'bg-violet-500',
+    pink: 'bg-pink-500',
+    gray: 'bg-gray-500',
 })
 
 const receivingFormData = ref({
@@ -1915,92 +2070,152 @@ const poDetails = ref({
     selectedItemsList: ref([])
 })
 
-//FUNCTIONS API
-function getPOsListData() {
+async function getPOsListData() {
     dataStatus.value = "Loading..."
 
-    axiosClient.get('/api/pos-list')
-        .then(response => {
-            posListData.value = response.data.posListData
-            suppliersListData.value = response.data.suppliersListData
-            console.log(response);
+    try {
+        const response = await axiosClient.get('/api/pos-list')
+
+        posListData.value = response.data.posListData
+        suppliersListData.value = response.data.suppliersListData
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to load purchase orders list data')
+    }
+    finally{
+        if(posListData.value.length < 1){
+            dataStatus.value = "No data"
+        }else{
+            dataStatus.value = null
+        }          
+    }
+}
+
+async function receivePO(){
+    loading.value = true
+
+    try {
+        const response = await axiosClient.put('/api/receive-po', receivingFormData.value)
+        
+        showSuccessMsg('Success', response.data.message)
+        await getPOsListData()
+        showPOsList() 
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to receive purchase order')  
+    }
+    finally{
+        loading.value = false
+    }
+}
+
+async function updateReceivedPO(){
+    loading.value = true
+
+    try {
+        const response = await axiosClient.put('/api/update-received-po', receivedUpdateFormData.value)
+        
+        showSuccessMsg('Success', response.data.message)
+        await getPOsListData()
+        showPOsList() 
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')  
+    }
+    finally{
+        loading.value = false
+    }
+}
+
+async function updatePendingPO () {
+    loading.value = true
+
+    try {
+        const response = await axiosClient.put('/api/update-pending-po', pendingUpdateFormData.value)
+        
+        showSuccessMsg('Success', response.data.message)
+        await getPOsListData()
+        showPOsList()  
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')
+    }
+    finally{
+        loading.value = false
+    }
+}
+
+async function cancelPO(){
+    loading.value = true
+
+    try {
+        const response = await axiosClient.put('/api/cancel-po', cancelFormData.value)
+
+        showSuccessMsg('Success', response.data.message)
+        await getPOsListData()
+        showPOsList()  
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to cancel purchase order')
+    }
+    finally{
+        loading.value = false
+    }
+}
+
+async function returnPO(){
+    loading.value = true
+
+    try {
+        const response = await axiosClient.put('/api/return-po', returnFormData.value)
+        
+        showSuccessMsg('Success', response.data.message)
+        await getPOsListData()
+        showPOsList()  
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to return purchase order')
+    }
+    finally{
+        loading.value = false
+    }
+}
+
+async function getItemsListData() {
+    itemsListDataStatus.value = "Loading..."
+
+    try {
+        const response = await axiosClient.get('/api/items-list')
+        
+        itemsListData.value = response.data.itemsListData
             
-            if(posListData.value.length < 1){
-                dataStatus.value = "No data"
-            }else{
-                dataStatus.value = null
-            }                     
-        })
-        .catch(error => {
-            console.log(error);
+        const lowStockColor = response.data.colors?.lowStockColor?.color_name
+        if(lowStockColor){
+            colors.value.low = colorClass.value[lowStockColor]
+        }else{
+            colors.value.low = "bg-emerald-500"
+        }
 
-            if(posListData.value.length < 1){
-                dataStatus.value = "No data"
-            }else{
-                dataStatus.value = null
-            }
-        })
+        const zeroStockColor = response.data.colors?.noStockColor?.color_name
+        if(zeroStockColor){
+            colors.value.zero = colorClass.value[zeroStockColor]
+        }else{
+            colors.value.zero = "bg-emerald-500"
+        }
+
+    } catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to load items list data')
+    }
+    finally{
+        if(itemsListData.value.length < 1){
+            itemsListDataStatus.value = "No data"
+        }else{
+            itemsListDataStatus.value = null
+        }     
+    }
 }
 
-function receivePO(){
-    loading.value = true
-    axiosClient.put('/api/receive-po', receivingFormData.value)
-        .then(response => {
-            loading.value = false
-
-            console.log(response);
-            
-            showSuccessMsg('Success', response.data.message)
-            getPOsListData()
-            showPOsList()            
-        })
-        .catch(error => {
-            console.log(error);
-                  showErrorMsg(error.response.data.message)  
-            loading.value = false
-
-        })
-}
-
-function updateReceivedPO(){
-    loading.value = true
-
-    axiosClient.put('/api/update-received-po', receivedUpdateFormData.value)
-        .then(response => {
-            loading.value = false
-
-            showSuccessMsg('Success', response.data.message)
-            getPOsListData()
-            showPOsList()            
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-
-        })
-}
-
-function updatePendingPO () {
-    loading.value = true
-
-    axiosClient.put('/api/update-pending-po', pendingUpdateFormData.value)
-        .then(response => {
-            loading.value = false
-
-            showSuccessMsg('Success', response.data.message)
-            getPOsListData()
-            showPOsList()  
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
-}
-
-
-function showReceivingForm(po) {
+async function showReceivingForm(po) {
     loading.value = true
     receivingFormData.value.hdrId = po.hdrId
     receivingFormData.value.poNumber = po.poNumber
@@ -2011,32 +2226,27 @@ function showReceivingForm(po) {
     receivingFormData.value.supplierId = po.supplierId
     receivingFormData.value.supplierName = po.supplierName
     
-
-    axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
-        .then(response => {
-            console.log(response);
-            receivingFormData.value.selectedItemsList = response.data.po_details
+    try {
+        const response = await axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
+        
+        receivingFormData.value.selectedItemsList = response.data.po_details
             
-            //show receive form 
-            viewingPOsList.value = false
-            pageContent.value = 'Receive Purchase Order'
-            
-            //populate the value of quantity received
-            receivingFormData.value.selectedItemsList.forEach(item => {
-                item.receivedQty = item.orderedQty
-            });
-            
-            loading.value = false
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
-
+        viewingPOsList.value = false
+        pageContent.value = 'Receive Purchase Order'
+        
+        receivingFormData.value.selectedItemsList.forEach(item => {
+            item.receivedQty = item.orderedQty
+        });
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
+        loading.value = false
+    }
 }
 
-function showReceivedUpdateForm(po) {
+async function showReceivedUpdateForm(po) {
     loading.value = true
     receivedUpdateFormData.value.hdrId = po.hdrId
     receivedUpdateFormData.value.poNumber = po.poNumber
@@ -2049,25 +2259,23 @@ function showReceivedUpdateForm(po) {
     receivedUpdateFormData.value.supplierId = po.supplierId
     receivedUpdateFormData.value.supplierName = po.supplierName
 
-    axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
-    .then(response => {
-            console.log(response);
-            receivedUpdateFormData.value.selectedItemsList = response.data.po_details
+    try {
+        const response = await axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
+
+        receivedUpdateFormData.value.selectedItemsList = response.data.po_details
             
-            //show received update form
-            viewingPOsList.value = false
-            pageContent.value = 'Update Received PO'
-            
-            loading.value = false
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
+        viewingPOsList.value = false
+        pageContent.value = 'Update Received PO'
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
+        loading.value = false
+    }
 }
 
-function showPendingUpdateForm(po) {
+async function showPendingUpdateForm(po) {
     loading.value = true
     pendingUpdateFormData.value.hdrId = po.hdrId
     pendingUpdateFormData.value.poNumber = po.poNumber
@@ -2078,30 +2286,26 @@ function showPendingUpdateForm(po) {
     pendingUpdateFormData.value.supplierId = po.supplierId
     pendingUpdateFormData.value.supplierName = po.supplierName
 
-    axiosClient.get('/api/po-dtls-pending', {params: { hdrId: po.hdrId }})
-    .then(response => {
-        console.log(response);
-        pendingUpdateFormData.value.selectedItemsList = response.data.po_details
+    try {
+        const response = await axiosClient.get('/api/po-dtls-pending', {params: { hdrId: po.hdrId }})
 
+        pendingUpdateFormData.value.selectedItemsList = response.data.po_details
         pendingUpdateFormData.value.selectedItemsList.forEach(item => {
             selectedItemIds.value.push(item.itemId)
         })
 
-        //show update form
         viewingPOsList.value = false
         pageContent.value = 'Update Pending PO'
-
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
         loading.value = false
-    })
-    .catch(error => {
-        console.log(error);
-        showErrorMsg(error.response.data.message)  
-        loading.value = false
-    })
-    
+    }
 }
 
-function showPODetails(po){
+async function showPODetails(po){
     loading.value = true
     poDetails.value.hdrId = po.hdrId
     poDetails.value.poNumber = po.poNumber
@@ -2114,25 +2318,23 @@ function showPODetails(po){
     poDetails.value.supplierName = po.supplierName
     poDetails.value.receivedByName = po.receivedByName
 
-    axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
-        .then(response => {
-            console.log(response);
-            poDetails.value.selectedItemsList = response.data.po_details
+    try {
+        const response = await axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
+        
+        poDetails.value.selectedItemsList = response.data.po_details
 
-            //show details form
-            viewingPOsList.value = false
-            pageContent.value = 'View PO Details'
-
-            loading.value = false
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
+        viewingPOsList.value = false
+        pageContent.value = 'View PO Details'
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
+        loading.value = false
+    }
 }
 
-function showCancelForm(po){
+async function showCancelForm(po){
     loading.value = true
     cancelFormData.value.hdrId = po.hdrId
     cancelFormData.value.poNumber = po.poNumber
@@ -2143,47 +2345,23 @@ function showCancelForm(po){
     cancelFormData.value.supplierId = po.supplierId
     cancelFormData.value.supplierName = po.supplierName
 
-    axiosClient.get('/api/po-dtls-pending', {params: { hdrId: po.hdrId }})
-    .then(response => {
-        console.log(response);
+    try {
+        const response = await axiosClient.get('/api/po-dtls-pending', {params: { hdrId: po.hdrId }})
+        
         cancelFormData.value.selectedItemsList = response.data.po_details
 
-        // cancelFormData.value.selectedItemsList.forEach(item => {
-        //     selectedItemIds.value.push(item.itemId)
-        // })
-
-        //show update form
         viewingPOsList.value = false
         pageContent.value = 'Cancel PO'
-
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
         loading.value = false
-    })
-    .catch(error => {
-        console.log(error);
-        showErrorMsg(error.response.data.message)  
-        loading.value = false
-    })
+    }
 }
 
-function cancelPO(){
-    loading.value = true
-
-    axiosClient.put('/api/cancel-po', cancelFormData.value)
-        .then(response => {
-            loading.value = false
-
-            showSuccessMsg('Success', response.data.message)
-            getPOsListData()
-            showPOsList()  
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
-}
-
-function showReturnForm(po){
+async function showReturnForm(po){
     loading.value = true
     returnFormData.value.hdrId = po.hdrId
     returnFormData.value.poNumber = po.poNumber
@@ -2196,71 +2374,23 @@ function showReturnForm(po){
     returnFormData.value.supplierId = po.supplierId
     returnFormData.value.supplierName = po.supplierName
 
-    axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
-    .then(response => {
-            console.log(response);
-            returnFormData.value.selectedItemsList = response.data.po_details
+    try {
+        const response = await axiosClient.get('/api/po-dtls-received', {params: { hdrId: po.hdrId }})
+
+        returnFormData.value.selectedItemsList = response.data.po_details
             
-            //show return form
-            viewingPOsList.value = false
-            pageContent.value = 'Return PO'
-            
-            loading.value = false
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
+        viewingPOsList.value = false
+        pageContent.value = 'Return PO'
+    } 
+    catch (error) {
+        showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
+    }
+    finally{
+        loading.value = false
+    }
 }
 
-function returnPO(){
-    loading.value = true
 
-    axiosClient.put('/api/return-po', returnFormData.value)
-        .then(response => {
-            loading.value = false
-
-            showSuccessMsg('Success', response.data.message)
-            getPOsListData()
-            showPOsList()  
-        })
-        .catch(error => {
-            console.log(error);
-            showErrorMsg(error.response.data.message)  
-            loading.value = false
-        })
-}
-
-function getItemsListData() {
-    itemsListDataStatus.value = "Loading..."
-
-    axiosClient.get('/api/items-list')
-        .then(response => {
-            itemsListData.value = response.data.itemsListData
-            console.log(response);
-            
-            colors.value.low = "bg-" + response.data.colors.lowStockColor.color_name + "-500"
-            colors.value.zero = "bg-" + response.data.colors.noStockColor.color_name + "-500"
-
-            if(itemsListData.value.length < 1){
-                itemsListDataStatus.value = "No data"
-            }else{
-                itemsListDataStatus.value = null
-            }            
-        })
-        .catch(error => {
-            console.log(error);
-
-            if(itemsListData.value.length < 1){
-                itemsListDataStatus.value = "No data"
-            }else{
-                itemsListDataStatus.value = null
-            }
-        })
-}
-
-//OTHER FUNCTIONS
 function changeContent(content){
     if(content === 'Purchase Orders'){
         viewingPOsList.value = true
@@ -2279,6 +2409,8 @@ function changeContent(content){
     }else{
         return
     }
+
+    mainContentTransition.value.enterFrom = "-translate-x-1/2 opacity-0"
 }
 
 function showPOsList() {
@@ -2288,8 +2420,6 @@ function showPOsList() {
     viewingCancelForm.value = false
     viewingReturnForm.value = false
     viewingPODetails.value = false
-    
-    viewingSuppliersMenu.value = false
 
     receivingFormData.value.hdrId = null
     receivingFormData.value.remarks = null
@@ -2356,17 +2486,18 @@ function showPOsList() {
 }
 
 function toggleMoreActions (id){
-  if (currentPOId.value == id){
-    currentPOId.value = null
-  }else{
-    currentPOId.value = id
-  } 
+    if (currentPOId.value == id){
+        currentPOId.value = null
+    }else{
+        currentPOId.value = id
+    } 
 }
 
 function toggleSelectItem(dtlId, itemId, itemName, itemCost, itemUnit, itemSKU, itemCategory){
 
     if (selectedItemIds.value.includes(itemId)){
-        // add to removed dtls list
+
+        // Add to pendingUpdateFormData.removedDtlIds
         pendingUpdateFormData.value.selectedItemsList.forEach(selectedItem => {
             if(selectedItem.itemId === itemId){
                 if(selectedItem.dtlId){
@@ -2375,21 +2506,15 @@ function toggleSelectItem(dtlId, itemId, itemName, itemCost, itemUnit, itemSKU, 
             }
         })
 
-        // remove from selected items list
+        // Remove from pendingUpdateFormData.selectedItemsList
         pendingUpdateFormData.value.selectedItemsList = pendingUpdateFormData.value.selectedItemsList.filter(item => {
             return item.itemId != itemId
         });
 
-        // remove from selected ids
+        // Remove from selectedItemIds
         selectedItemIds.value = selectedItemIds.value.filter(i => {
             return i != itemId
-        })
-
-        // if(dtlId){
-        //     pendingUpdateFormData.value.removedDtlIds.push(dtlId)
-        // }
-
-        
+        })        
     }
     else{
         pendingUpdateFormData.value.selectedItemsList.push({
@@ -2423,8 +2548,6 @@ function selectSupplier(supplier){
 }
 
 function handleClickOutside(e) {
-    // close if clicking outside the dropdown
-    
     if (!e.target.closest(".btnActions")) {
         currentPOId.value = null
     }
@@ -2442,7 +2565,6 @@ onMounted(() => {
 
     receivingFormData.value.userId = user.value.id
     receivingFormData.value.userName = user.value.name
-
 })
 
 onBeforeUnmount(() => {

@@ -43,6 +43,21 @@
        transition-all scale-[0.99] duration-100 ease-linear
     }
 
+    .button-sign-in{
+        @apply flex w-full justify-center rounded-md px-3 py-1.5
+        text-sm/6 font-semibold
+        bg-warmyellow-pri text-darkgray-sec hover:bg-warmyellow-sec active:bg-warmyellow-ter
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600
+    }
+
+    .button-demo-acc{
+        @apply px-4 py-2 w-full rounded-md
+        text-white font-medium
+        bg-darkgray-pri hover:bg-darkgray-sec active:bg-darkgray-ter 
+        transition-all duration-200 
+        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 text-sm
+    }
+
     .head-row{
         @apply w-full py-2 text-sm font-semibold  text-gray-600 rounded
         bg-gray-100 sticky top-0 overflow-hidden z-20 
@@ -66,7 +81,7 @@
     }
 
     .hover-up-effect{
-        @apply hover:-translate-y-1 hover:shadow-[0px_4px_10px_rgba(0,0,0,0.2)] transition duration-300
+        @apply hover:-translate-y-[2px] hover:shadow-[0px_4px_8px_rgba(0,0,0,0.2)] transition duration-300
     }
 
     .hover-scale-effect{
@@ -76,23 +91,18 @@
     h1{
         @apply text-4xl
     }
-
     h2{
         @apply text-3xl
     }
-
     h3{
         @apply text-2xl
     }
-
     h4{
         @apply text-xl
     }
-
     h5{
         @apply text-lg
     }
-
     h6{
         @apply text-base
     }
@@ -141,8 +151,6 @@
         @apply font-semibold text-green-600 text-sm
     }
 
-
-
     .po-number-style-wide{
         @apply font-semibold
     }
@@ -164,7 +172,6 @@
         p-2 text-xs border-l-4 border-gray-400 rounded-r mt-3
     }
 
-
     .so-number-style-wide{
         @apply font-semibold
     }
@@ -185,7 +192,6 @@
         @apply bg-gray-100 italic text-gray-500 h-fit w-full text-ellipsis truncate
         p-2 text-xs border-l-4 border-gray-400 rounded-r mt-3
     }
-
 
     .style-wide-supplier-name{
         @apply text-lg font-semibold truncate
@@ -218,7 +224,6 @@
     .style-narrow-supplier-address{
         @apply text-base font-medium w-full truncate  
     }
-
 
     .style-wide-customer-name{
         @apply text-lg font-semibold truncate

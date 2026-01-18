@@ -1,6 +1,5 @@
 <template>
     
-    <!-- LOGIN -->
      <Transition
         :enter-from-class="authFormTransition.enterFrom"
         :enter-to-class="authFormTransition.enterTo"
@@ -9,38 +8,67 @@
         :leave-to-class="authFormTransition.leaveTo"
         :leave-active-class="authFormTransition.leaveActive"
     >
-        <div v-show="loginMounted" class="flex flex-col justify-center flex-1 min-w-[300px] min-h-full px-6 pt-4 pb-12   lg:px-8">
+        <div v-show="loginMounted" class="flex flex-col justify-center flex-1 min-w-[300px] min-h-full px-6 pt-4 pb-12 lg:px-8">
             
             <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto mt-8 mb-4 text-center">
                 <img src="/images/logo.png" alt="" class="rounded-full size-[90px]">
-                <h3 class="text-2xl font-bold text-darkgray-sec">Inventory Management</h3>
+                <h3 class="font-bold text-darkgray-sec">Inventory Management</h3>
             </div>
-            <form @submit.prevent="submit" class="w-full max-w-sm p-6 mx-auto bg-white shadow-md rounded-xl">
-                <h2 class="mb-10 text-xl font-bold text-center">Sign in to your account</h2>
+
+            <form @submit.prevent="submit" class="w-full max-w-sm p-6 mx-auto bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+                <h4 class="mb-8 font-bold text-center">Sign in to your account</h4>
 
                 <div class="flex flex-col w-full mb-4">
                     <label for="email" class="label-style-one">Email</label>
-                    <input v-model="data.email" id="email" type="email" name="email" autocomplete="email" class="value-style">
+                    <input 
+                        v-model="data.email" 
+                        id="email" 
+                        type="email" 
+                        name="email" 
+                        autocomplete="email" 
+                        class="value-style"
+                    >
                 </div>
+
                 <div class="flex flex-col w-full mb-4">
                     <label for="password" class="label-style-one">Password</label>
-                    <input v-model="data.password" id="password" type="password" class="value-style">
+                    <input 
+                        v-model="data.password" 
+                        id="password" 
+                        type="password" 
+                        class="value-style"
+                    >
                 </div>
-                <button 
-                    type="submit" 
-                    class="flex w-full justify-center rounded-md bg-dark-pri px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-dark-sec active:bg-dark-ter focus-visible:outline-1 focus-visible:outline-offset-2  focus-visible:outline-indigo-600"
-                >
+
+                <button type="submit" class="button-sign-in">
                     Sign in
                 </button>
-                <p class="mt-10 text-xs text-center text-gray-500">
-                    Don't have an account?
-                    <router-link :to="{name: 'Signup'}" class="font-semibold text-indigo-600 hover:text-indigo-500 focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ">Create your account here</router-link>
-                </p>
+
+                <div class="pt-4 mt-6 border-t border-gray-200">
+                    <p class="text-center text-sm text-gray-600 mb-4">
+                        Try a demo account:
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button
+                            @click="useDemoAccount('admin')"
+                            type="button"
+                            class="button-demo-acc"
+                        >
+                            Admin Account
+                        </button>
+                        <button
+                            @click="useDemoAccount('staff')"
+                            type="button"
+                            class="button-demo-acc"
+                        >
+                            Staff Account
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
     </Transition>
 
-    <!-- LOADING ERROR SUCCESS -->
     <teleport to="body">
         <Transition
             :enter-from-class="alertLoadingTransition.enterFrom"
@@ -65,6 +93,7 @@
                 <template v-slot:title>
                     Error 
                 </template>
+
                 <template v-slot:body>
                     {{ errorMsgBody }}
                 </template>
@@ -72,17 +101,18 @@
         </Transition>
 
         <Transition
-        :enter-from-class="alertLoadingTransition.enterFrom"
-        :enter-to-class="alertLoadingTransition.enterTo"
-        :enter-active-class="alertLoadingTransition.enterActive"
-        :leave-from-class="alertLoadingTransition.leaveFrom"
-        :leave-to-class="alertLoadingTransition.leaveTo"
-        :leave-active-class="alertLoadingTransition.leaveActive"
+            :enter-from-class="alertLoadingTransition.enterFrom"
+            :enter-to-class="alertLoadingTransition.enterTo"
+            :enter-active-class="alertLoadingTransition.enterActive"
+            :leave-from-class="alertLoadingTransition.leaveFrom"
+            :leave-to-class="alertLoadingTransition.leaveTo"
+            :leave-active-class="alertLoadingTransition.leaveActive"
         >
             <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
                 <template v-slot:title>
                     {{ successMsgTitle }} 
                 </template>
+
                 <template v-slot:body>
                     {{ successMsgBody }}
                 </template>
@@ -95,19 +125,28 @@
 <script setup>
 import { useAlertLoadingTransition, useAuthFormTransition } from '../composables/useTransition.js';
 import { onMounted, ref } from 'vue';
-import { useAlertMessages } from '../composables/useAlertMessages';
 import axiosClient from '../axios.js'
 import router from '../router.js';
-
+import { useAlertMessages } from '../composables/useAlertMessages';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import Loading from '../components/alerts/Loading.vue';
-import useUserStore from '../store/user.js';
+import ButtonDark from '../components/buttons/ButtonDark.vue';
 
 const alertLoadingTransition = useAlertLoadingTransition()
 const authFormTransition = useAuthFormTransition()
 
-const { showSuccessMsg, closeSuccessMsg, showErrorMsg, closeErrorMsg, hasSuccessMsg, hasErrorMsg, successMsgTitle, successMsgBody, errorMsgBody } = useAlertMessages()
+const { 
+    showSuccessMsg, 
+    closeSuccessMsg, 
+    showErrorMsg, 
+    closeErrorMsg, 
+    hasSuccessMsg, 
+    hasErrorMsg, 
+    successMsgTitle, 
+    successMsgBody, 
+    errorMsgBody 
+} = useAlertMessages()
 
 const loading = ref(false)
 const loginMounted = ref(false)
@@ -117,40 +156,44 @@ const data = ref({
     password: ''
 })
 
-function submit(){
+async function submit() {
     loading.value = true
 
-    axiosClient.get('/sanctum/csrf-cookie').then(response => {
-        axiosClient.post('/login', data.value)
-            .then(response => {
-                loading.value = false
-                showSuccessMsg("Success", "Please wait...")    
-                
-                // const userStore = useUserStore()
-                // userStore.fetchUser()
+    try {
+        await axiosClient.get('/sanctum/csrf-cookie')
+        await axiosClient.post('/login', data.value)
 
-                // const user = userStore.user
-                // console.log(user);
-                // console.log(user.role);
+        showSuccessMsg("Success", "Please wait...")
+        router.push({ name: 'Dashboard' })
+    } 
+    catch (error) {
+        if(error.code === 'ERR_NETWORK'){
+            showErrorMsg('Server is unavailable')
+        }
+        else{
+            showErrorMsg(error.response?.data?.message || "These credentials do not match our records")
+        }
+    }
+    finally{
+        loading.value = false
+    }
+}
 
-                
+function useDemoAccount(role){
 
-                router.push({ name: 'Dashboard' })
-            })
-            .catch(error => {
-                loading.value = false
-                showErrorMsg("These credentials do not match our records")
-            })
-    })
-} 
+    if (role === 'admin'){
+        data.value.email = 'admin@example.com'
+        data.value.password = 'aaaaaaaa'
+    }
+
+    if (role === 'staff'){
+        data.value.email = 'staff@example.com'
+        data.value.password = 'aaaaaaaa'
+    }
+
+}
 
 onMounted(() => {
-    const userStore = useUserStore()
-    const user = userStore.user
-
-    console.log(user);
-    
-
     loginMounted.value = true
 })
 

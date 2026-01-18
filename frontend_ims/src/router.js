@@ -2,13 +2,9 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Dashboard from "./pages/Dashboard.vue"
 import MainLayout from './components/MainLayout.vue'
 import Login from './pages/Login.vue'
-import Signup from './pages/Signup.vue'
 import useUserStore from './store/user.js'
 import Items from './pages/Items.vue'
-import Stockin from './pages/Stockin.vue'
-import Stockout from './pages/Stockout.vue'
 import Users from './pages/Users.vue'
-import TransactionHistory from './pages/TransactionHistory.vue'
 import NotFound from './pages/NotFound.vue'
 import Attributes from './pages/Attributes/Attributes.vue'
 import CreatePO from './pages/CreatePO.vue'
@@ -38,28 +34,10 @@ const routes = [
                 meta: { requiresAuth: true }
             },
             {
-                path: '/stock-in',
-                name: 'Stockin',
-                component: Stockin,
-                meta: { requiresAuth: true }
-            },
-            {
-                path: '/stock-out',
-                name: 'Stockout',
-                component: Stockout,
-                meta: { requiresAuth: true }
-            },
-            {
                 path: '/users',
                 name: 'Users',
                 component: Users,
                 meta: { requiresAuth: true, requiresAdmin: true},
-            },
-            {
-                path: '/transaction-history',
-                name: 'TransactionHistory',
-                component: TransactionHistory,
-                meta: { requiresAuth: true }
             },
             {
                 path: '/attributes',
@@ -80,7 +58,7 @@ const routes = [
                 meta: { requiresAuth: true }
             },
             {
-                path: '/sales',
+                path: '/create-sale-order',
                 name: 'CreateSO',
                 component: CreateSO,
                 meta: { requiresAuth: true }
@@ -118,11 +96,6 @@ const routes = [
         name: 'Login'
     },
     {
-        path: '/signup',
-        component: Signup,
-        name: 'Signup'
-    },
-    {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound,
@@ -136,30 +109,13 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-    console.log('changed route');
-
     const userStore = useUserStore()
 
-    // requires auth routes
     if(to.meta.requiresAuth){
-        console.log('requires auth true');
-        console.log(userStore.user);
 
-
-        // not auth users
         if(!userStore.user){
-            // this does not run but the await userStore... runs
-            console.log('!userStore.user');
-
             try {
-                // can't see this log even though it is before the await
-                console.log('inside try 1');
-                // this really runs, it populates the user object
                 await userStore.fetchUser()
-                // but not these, i can't see these logs
-                console.log('inside try 2');
-                // console.log(userStore.user);
-                
             } catch {
                 return next({ name: 'Login' })
             }
@@ -168,11 +124,9 @@ router.beforeEach(async (to, from, next) => {
         if(to.meta.requiresAdmin && userStore.user.role !== 'admin'){
             return next({ name: 'NotFound' });
         }
-
     }
     
     next();
-    
 })
 
 export default router

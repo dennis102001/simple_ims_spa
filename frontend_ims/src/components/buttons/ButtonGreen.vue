@@ -1,7 +1,7 @@
 <template>
     <button
         :class="['w-fit h-fit px-8 py-2 text-sm font-bold rounded-full text-nowrap tracking-wider ', 
-        'shadow-[0px_2px_4px_rgba(0,0,0,0.1)] hover:shadow-[0px_2px_4px_rgba(0,0,0,0.3)]',
+        'shadow-[0px_1px_4px_rgba(0,0,0,0.1)] hover:shadow-[0px_1px_4px_rgba(0,0,0,0.3)]',
         'bg-emerald-500 text-white ',
         'transition-all transform duration-200 active:translate-y-[2px] ',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600', 

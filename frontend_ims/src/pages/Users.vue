@@ -611,7 +611,7 @@ async function submitUpdateForm(id){
   loading.value = true
 
   try {
-    const response = await axiosClient.put(`/update-user/${id}`, updateFormData.value)
+    const response = await axiosClient.put(`/api/update-user/${id}`, updateFormData.value)
     
     showSuccessMsg("Success", "User updated successfully")      
     await getUsersListData()
@@ -630,7 +630,7 @@ async function submitAddForm(){
   loading.value = true
 
   try {
-    const response = await axiosClient.post('/add-user', addFormData.value)
+    const response = await axiosClient.post('/api/add-user', addFormData.value)
 
     showSuccessMsg("Success", "User added successfully")
     await getUsersListData()
@@ -649,7 +649,7 @@ async function deleteUser(){
   loading.value = true
 
   try {
-    const response = await axiosClient.delete(`/delete-user/${confirmId.value}`)
+    const response = await axiosClient.delete(`/api/delete-user/${confirmId.value}`)
 
     viewingConfirmModal.value = false
     showSuccessMsg("Success", "User deleted successfully")

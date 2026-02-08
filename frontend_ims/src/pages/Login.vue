@@ -160,8 +160,9 @@ async function submit() {
     loading.value = true
 
     try {
-        await axiosClient.get('/sanctum/csrf-cookie')
-        await axiosClient.post('/login', data.value)
+        const response = await axiosClient.post('/api/login', data.value)
+
+        localStorage.setItem('token', response.data.token);
 
         showSuccessMsg("Success", "Please wait...")
         router.push({ name: 'Dashboard' })

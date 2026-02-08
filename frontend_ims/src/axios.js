@@ -3,9 +3,15 @@ import axios from 'axios';
 import useUserStore from "./store/user.js";
 
 const axiosClient = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    withCredentials: true,
-    withXSRFToken: true
+    baseURL: import.meta.env.VITE_API_BASE_URL
+});
+
+axiosClient.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 axiosClient.interceptors.response.use(

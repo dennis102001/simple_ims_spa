@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\SaleHdr;
 use App\Models\Category;
 use App\Models\Customer;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use App\Models\PurchaseOrderDtl;
 use App\Models\PurchaseOrderHdr;
@@ -19,7 +20,12 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\UnitMeasurementController;
-use Carbon\CarbonPeriod;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/user', function (Request $request) {
@@ -199,4 +205,48 @@ Route::middleware(['auth:sanctum'])->group(function() {
         });
     });
 });
+
+Route::controller(RegisteredUserController::class)->group(function(){
+
+    Route::middleware('auth:sanctum')->group(function(){
+
+        Route::middleware('isAdmin')->group(function(){
+            Route::post('/add-user', 'addUser')
+                ->name('add.user');
+                
+            Route::put('/update-user/{id}', 'updateUser')
+                ->name('update.user');
+                
+            Route::delete('/delete-user/{id}', 'deleteUser')
+                ->name('delete.user');
+        });
+
+        Route::put('/update-account-info', 'updateAccountInfo');
+        Route::put('/update-account-pass', 'updateAccountPass');
+    });
+});
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.email');
+
+Route::post('/reset-password', [NewPasswordController::class, 'store'])
+    ->middleware('guest')
+    ->name('password.store');
+
+Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
+Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
 

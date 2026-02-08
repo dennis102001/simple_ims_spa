@@ -46,6 +46,8 @@ export default {
     'bg-violet-500',
     'bg-pink-500',
     'bg-gray-500',
+    'pb-[env(safe-area-inset-bottom)]',
+    'pt-[env(safe-area-inset-top)]'
   ]
 }
 

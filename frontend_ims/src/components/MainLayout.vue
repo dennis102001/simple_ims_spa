@@ -1,6 +1,6 @@
 <template>
     <div  class="flex flex-row h-screen">
-        <aside class="sidebar pb-4 z-50 overflow-y-auto overflow-x-hidden absolute h-full sm:static flex-col flex bg-darkgray-pri shadow-md transform transition-all duration-500"
+        <aside class="sidebar z-50 overflow-y-auto overflow-x-hidden absolute h-[100dvh] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] sm:static flex-col flex bg-darkgray-pri shadow-md transform transition-all duration-500"
             :class="isSidebarVisible ? 'w-72' : 'w-0 '"
         >
             <div class="sticky top-0 w-full mb-4 bg-darkgray-pri px-4 z-10">

@@ -334,7 +334,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Update Purchase Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of an existing purchase order</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update purchase order details</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -562,7 +562,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Cancel Purchase Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of purchase order</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of the purchase order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -742,7 +742,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Receive Purchase Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm receiving of purchase order</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm receipt of the purchase order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -957,7 +957,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Return Purchase Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of purchase order</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of the purchase order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
@@ -1165,7 +1165,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Update Purchase Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of a received purchase order</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update purchase order details</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
@@ -1386,7 +1386,7 @@
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
                                 <h3 class="font-bold text-left px-1">Purchase Order Details</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Viewing purchase order details</p>
+                                <p class="mb-5 text-sm text-gray-500 px-1">View purchase order information</p>
                             </div>
                             
                             <p 

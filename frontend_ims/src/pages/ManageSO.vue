@@ -12,7 +12,7 @@
         >
             <section v-show="viewingSalesList" class="h-full flex flex-col max-h-[1200px] min-h-[800px] lg:min-h-[600px] w-full max-w-[1300px] mx-auto">
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
-                    <h3 class="font-semibold tracking-wider">Manage Sale Orders</h3>
+                    <h3 class="font-semibold tracking-wider">Manage Sales Orders</h3>
                 </div>
                 
                 <div class="flex flex-1 p-2 overflow-hidden">
@@ -304,8 +304,8 @@
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
-                                <h3 class="font-bold text-left px-1">Update Sale Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of an existing sale order</p>
+                                <h3 class="font-bold text-left px-1">Update Sales Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update sales order details</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -532,8 +532,8 @@
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
-                                <h3 class="font-bold text-left px-1">Payment</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm payment of sale order</p>
+                                <h3 class="font-bold text-left px-1">Confirm Payment</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm payment for the sales order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -719,8 +719,8 @@
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
-                                <h3 class="font-bold text-left px-1">Cancel Sale Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of sale order</p>
+                                <h3 class="font-bold text-left px-1">Cancel Sales Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of the sales order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
@@ -900,8 +900,8 @@
 
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
-                                <h3 class="font-bold text-left px-1">Return Sale Order</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of sale order</p>
+                                <h3 class="font-bold text-left px-1">Return Sales Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of the sales order</p>
                             </div>
                             
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
@@ -1093,8 +1093,8 @@
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
-                                <h3 class="font-bold text-left px-1">Sale Order Details</h3>
-                                <p class="mb-5 text-sm text-gray-500 px-1">Viewing sale order details</p>
+                                <h3 class="font-bold text-left px-1">Sales Order Details</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">View sales order details</p>
                             </div>
                             
                             <p 

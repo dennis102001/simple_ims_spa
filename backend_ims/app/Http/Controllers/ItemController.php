@@ -39,7 +39,7 @@ class ItemController extends Controller
         $categoriesList = Category::all()->map(function ($category){
             return [
                 'id' => $category->id,
-                'categoryName' => $category->category_name,
+                'name' => $category->category_name,
                 'description' => $category->description
             ];
         });
@@ -47,7 +47,7 @@ class ItemController extends Controller
         $unitsList = UnitMeasurement::all()->map(function ($unit){
             return [
                 'id' => $unit->id,
-                'unitName' => $unit->unit_name,
+                'name' => $unit->unit_name,
                 'description' => $unit->description
             ];
         });

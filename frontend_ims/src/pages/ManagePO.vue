@@ -1,6 +1,5 @@
 <template>
     <div class="relative h-full w-full min-h-fit min-w-[200px]">
-
         <transition
             :enter-from-class="mainContentTransition.enterFrom "
             :enter-to-class="mainContentTransition.enterTo"
@@ -10,7 +9,7 @@
             :leave-active-class="mainContentTransition.leaveActive"
             @after-leave="changeContent(pageContent)"
         >
-            <section v-show="viewingPOsList" class="h-full flex flex-col max-h-[1200px] min-h-[750px] lg:min-h-[500px] w-full max-w-[1300px] mx-auto">
+            <section v-show="viewingPOsList" class=" h-full flex flex-col max-h-[1200px] min-h-[800px] lg:min-h-[600px] w-full max-w-[1300px] mx-auto">
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
                     <h3 class="font-semibold tracking-wider">Manage Purchase Orders</h3>
                 </div>
@@ -329,87 +328,72 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingPendingUpdateForm" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingPendingUpdateForm" class="flex flex-col w-full max-h-[1500px] min-h-[1400px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="updatePendingPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                        
-                        <div class="flex flex-row items-center mb-8 px-1">
-                            <h3 class="font-bold tracking-wide">Update Purchase Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Update Purchase Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of an existing purchase order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + pendingUpdateFormData.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap mb-6 gap-x-6 gap-y-4 px-1">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ pendingUpdateFormData.poNumber }}
-                                    </p>
-                                </div>
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(pendingUpdateFormData.orderDate) }}
-                                    </p>
-                                </div>
-                            </div>
+                        <hr class="mb-5 mx-1">
 
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Supplier:</p>
-                                <div @click="viewingSuppliersMenu = !viewingSuppliersMenu" class="relative cursor-pointer value-style suppliers-dropdown">
-                                    <div class="flex">
-                                        <p v-if="pendingUpdateFormData.supplierName">
-                                            {{ pendingUpdateFormData.supplierName }}
-                                        </p>
-                                        <p v-else class="text-gray-400 ">
-                                            --select supplier--
-                                        </p>
-                                        <span class="ml-auto">
-                                            <i class="transition-all transform fa-solid fa-caret-down" :class="viewingSuppliersMenu ? '-rotate-180 ' : ''"></i>
-                                        </span>
-                                    </div>
-                                    
-                                    <Transition
-                                        enter-from-class="opacity-0"
-                                        enter-to-class="opacity-100"
-                                        enter-active-class="transition duration-200 transform"
-                                        leave-from-class="opacity-100"
-                                        leave-to-class="opacity-0"
-                                        leave-active-class="duration-200 transform transtion"
-                                    >
-                                        <div v-if="viewingSuppliersMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] -translate-x-3 translate-y-3 overflow-auto">
-                                            <ul class=" max-h-40 overflow-auto">
-                                                <li @click="selectSupplier()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                                                    None
-                                                </li>
-
-                                                <li
-                                                    v-for="supplier in suppliersListData"
-                                                    @click="selectSupplier(supplier)"
-                                                    class="p-2 hover:bg-gray-50 cursor-pointer"
-                                                >
-                                                    {{ supplier.name }}
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </Transition> 
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="pendingUpdateFormData.poNumber"
+                            />
 
-                            <div class="flex flex-row flex-wrap items-end justify-between py-3 px-1 gap-y-2">
-                                <p class="label-style-one text-lg">Ordered Items</p>
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(pendingUpdateFormData.orderDate)"
+                            />
+                        </div>
+
+                        <SelectDropdown
+                            v-model="pendingUpdateFormData.supplierId"
+                            label="Supplier:"
+                            :listData="suppliersListData"
+                        />
+
+                        <TextArea
+                            v-model="pendingUpdateFormData.remarks" 
+                            id="remarks-update-pending" 
+                            label="Remarks:"
+                        />
+
+                        <TextDisplay
+                            label="Created by:"
+                            :value="pendingUpdateFormData.createdByName"
+                        />
+
+                        <hr class="mt-2 mb-5 mx-1">
+
+                        <div class="flex flex-col flex-1 overflow-hidden">
+
+                            <div class="mb-5 flex flex-row flex-wrap items-end justify-between gap-y-2">
+                                <div class="flex items-center gap-2 text-lg">
+                                    <i class="fas fa-list"></i>
+                                    <span class="mr-2 font-medium">Ordered Items</span>
+                                </div>
 
                                 <ButtonDark type="button" @click="showItemsListModal">
                                     <div class="relative flex flex-row items-center w-fit ">
                                         <span class="text-sm px-2">
                                             <i class="fa-solid fa-plus"></i>
                                         </span>
-                                        <span class="pr-2">Add more items</span>
+                                        <span class="pr-2">Add Item</span>
                                     </div>
                                 </ButtonDark>
                             </div>
@@ -545,23 +529,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full mb-2 px-1">
-                            <div class="flex flex-col flex-1 mb-4">
-                                <label for="remarks-update-pending" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="pendingUpdateFormData.remarks" 
-                                    id="remarks-update-pending" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style" >
-                                    {{ pendingUpdateFormData.createdByName }}
-                                </p>                            
-                            </div>
-                        </div>
                     </section>
                     
                     <div class="flex items-end justify-end w-full">
@@ -589,51 +556,62 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingCancelForm" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingCancelForm" class="flex flex-col w-full max-h-[1500px] min-h-[1400px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="cancelPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Cancel Purchase Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Cancel Purchase Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of purchase order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + cancelFormData.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ cancelFormData.poNumber }}
-                                    </p>
-                                </div>
+                        <hr class="mb-5 mx-1">
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(cancelFormData.orderDate) }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Supplier:</p>
-                                <p v-if="cancelFormData.supplierName" class="cursor-default value-style">
-                                    {{ cancelFormData.supplierName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    No supplier selected
-                                </p>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="cancelFormData.poNumber"
+                            />
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(cancelFormData.orderDate)"
+                            />
+                        </div>
 
-                            <div class="flex flex-row flex-wrap items-end justify-between py-3 gap-y-2">
-                                <p class="label-style-one text-lg">Ordered Items</p>
+                        <TextDisplay
+                            label="Supplier:"
+                            :value="cancelFormData.supplierName"
+                        />
+
+                        <TextArea
+                            v-model="cancelFormData.remarks" 
+                            id="remarks-cancel" 
+                            label="Remarks:"
+                        />
+
+                        <TextDisplay
+                            label="Created by:"
+                            :value="cancelFormData.createdByName"
+                        />
+
+                        <hr class="mt-2 mb-5 mx-1">
+
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Ordered Items</span>
                             </div>
-                            
+
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
                                 
@@ -731,23 +709,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full mb-2 px-1">
-                            <div class="flex flex-col flex-1 mb-4">
-                                <label for="remarks-cancel" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="cancelFormData.remarks" 
-                                    id="remarks-cancel" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style" >
-                                    {{ cancelFormData.createdByName }}
-                                </p>                            
-                            </div>
-                        </div>
                     </section>
                     
                     <div class="flex items-end justify-end w-full">
@@ -775,47 +736,68 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReceiveForm" class="flex flex-col w-full max-h-[1600px] min-h-[1450px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingReceiveForm" class="flex flex-col w-full max-h-[1500px] min-h-[1500px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="receivePO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                        
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Receive Purchase Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Receive Purchase Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm receiving of purchase order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + receivingFormData.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivingFormData.poNumber }}
-                                    </p>
-                                </div>
+                        <hr class="mb-5 mx-1">
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(receivingFormData.orderDate) }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Supplier:</p>
-                                <p v-if="receivingFormData.supplierName" class="cursor-default value-style">
-                                    {{ receivingFormData.supplierName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    No supplier selected
-                                </p>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="receivingFormData.poNumber"
+                            />
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(receivingFormData.orderDate)"
+                            />
+                        </div>
+
+                        <TextDisplay
+                            label="Supplier:"
+                            :value="receivingFormData.supplierName"
+                        />
+
+                        <TextArea
+                            v-model="receivingFormData.remarks" 
+                            id="remarks-receive" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="receivingFormData.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Received by:"
+                                :value="receivingFormData.userName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
                         
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Ordered Items</p>
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Ordered Items</span>
+                            </div>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -941,34 +923,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-receive" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="receivingFormData.remarks" 
-                                    id="remarks-receive" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivingFormData.createdByName }}
-                                    </p>                            
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivingFormData.userName }}
-                                    </p>                            
-                                </div>
-                            </div>
-                        </div>
+                        
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -996,57 +951,75 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReturnForm" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingReturnForm" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="returnPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                        
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Return Purchase Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Return Purchase Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of purchase order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + returnFormData.status }}
                             </p>
                         </div>
+                        
+                        <hr class="mb-5 mx-1">
 
-                         <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.poNumber }}
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Supplier:</p>
-                                    <p v-if="returnFormData.supplierName" class="cursor-default value-style">
-                                        {{ returnFormData.supplierName }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        No supplier selected
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(returnFormData.orderDate) }}
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Received:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(returnFormData.receivedDate) }}
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Ordered Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="returnFormData.poNumber"
+                            />
+                            <TextDisplay
+                                label="Supplier:"
+                                :value="returnFormData.supplierName"
+                            />
+                        </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(returnFormData.orderDate)"
+                            />
+                            <TextDisplay
+                                label="Date Received:"
+                                :value="formatDate(returnFormData.receivedDate)"
+                            />
+                        </div>
+
+                        <TextArea
+                            v-model="returnFormData.remarks" 
+                            id="remarks-return" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="returnFormData.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Received by:"
+                                :value="returnFormData.receivedByName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Ordered Items</span>
+                            </div>
+                            
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
                                 
@@ -1159,32 +1132,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-return" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="returnFormData.remarks" 
-                                    id="remarks-return" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.createdByName }}
-                                    </p>                            
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.receivedByName }}
-                                    </p>                            
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -1212,56 +1159,74 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingReceivedUpdateForm" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingReceivedUpdateForm" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="updateReceivedPO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                    
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Update Purchase Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Update Purchase Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of a received purchase order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + receivedUpdateFormData.status }}
                             </p>
                         </div>
-                        
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivedUpdateFormData.poNumber }}
-                                    </p>
-                                </div>
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Supplier:</p>
-                                    <p v-if="receivedUpdateFormData.supplierName" class="cursor-default value-style">
-                                        {{ receivedUpdateFormData.supplierName }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        No supplier selected
-                                    </p>
-                                </div>
-                            </div>
+                        <hr class="mb-5 mx-1">
 
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(receivedUpdateFormData.orderDate) }}
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Received:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(receivedUpdateFormData.receivedDate) }}
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Ordered Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="receivedUpdateFormData.poNumber"
+                            />
+                            <TextDisplay
+                                label="Supplier:"
+                                :value="receivedUpdateFormData.supplierName"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(receivedUpdateFormData.orderDate)"
+                            />
+                            <TextDisplay
+                                label="Date Received:"
+                                :value="formatDate(receivedUpdateFormData.receivedDate)"
+                            />
+                        </div>
+
+                        <TextArea
+                            v-model="receivedUpdateFormData.remarks" 
+                            id="remarks-update-received" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="receivedUpdateFormData.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Received by:"
+                                :value="receivedUpdateFormData.receivedByName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Ordered Items</span>
+                            </div>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -1388,33 +1353,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-update-received" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="receivedUpdateFormData.remarks" 
-                                    id="remarks-update-received" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivedUpdateFormData.createdByName }}
-                                    </p>                            
-                                </div>
-                                
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Received by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ receivedUpdateFormData.receivedByName }}
-                                    </p>                            
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -1442,12 +1380,15 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Purchase Orders')"
         >
-            <div v-show="viewingPODetails" class="flex flex-col w-full max-h-[1600px] min-h-[1500px] md:min-h-[1300px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingPODetails" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <div class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                    
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Purchase Order Details</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Purchase Order Details</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Viewing purchase order details</p>
+                            </div>
+                            
                             <p 
                                 :class="['px-3 py-1 w-fit font-medium rounded text-nowrap ml-auto', 
                                     poDetails.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
@@ -1459,49 +1400,61 @@
                                 {{ "Status: " + poDetails.status }}
                             </p>
                         </div>
-                        
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">PO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ poDetails.poNumber }}
-                                    </p>
-                                </div>
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Supplier:</p>
-                                    <p v-if="poDetails.supplierName" class="cursor-default value-style">
-                                        {{ poDetails.supplierName }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        No supplier selected
-                                    </p>
-                                </div>
-                            </div>
+                        <hr class="mb-5 mx-1">
 
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Ordered:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(poDetails.orderDate) }}
-                                    </p>
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Received:</p>
-                                    <p v-if="poDetails.receivedDate" class="cursor-default value-style">
-                                        {{ formatDate(poDetails.receivedDate) }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        -
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Ordered Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="PO Number:"
+                                :value="poDetails.poNumber"
+                            />
+                            <TextDisplay
+                                label="Supplier:"
+                                :value="poDetails.supplierName"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Date Ordered:"
+                                :value="formatDate(poDetails.orderDate)"
+                            />
+                            <TextDisplay
+                                label="Date Received:"
+                                :value="poDetails.receivedDate ? formatDate(poDetails.receivedDate) : null"
+                            />
+                        </div>
+
+                        <TextArea
+                            v-model="poDetails.remarks" 
+                            id="remarks-view" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="poDetails.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Received by:"
+                                :value="poDetails.receivedByName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Ordered Items</span>
+                            </div>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -1635,31 +1588,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Remarks:</p>
-                                <p class="line-clamp-4 min-h-[60px] cursor-default value-style">
-                                    {{ poDetails.remarks }}
-                                </p>
-                            </div>
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ poDetails.createdByName }}
-                                    </p>                            
-                                </div>
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Received by:</p>
-                                    <p v-if="poDetails.receivedByName" class="cursor-default value-style">
-                                        {{ poDetails.receivedByName }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        -
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -1678,8 +1606,8 @@
         <div v-show="viewingItemsListModal" class="w-full mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl h-full max-h-[500px] max-w-[1000px]">
             <div class="flex flex-col size-full">
                 
-                <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-white bg-darkgray-pri rounded-t-xl border-b">
-                    <h4 class="font-semibold tracking-wide">Add More Items</h4>
+                <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-warmyellow-pri bg-darkgray-pri rounded-t-xl border-b">
+                    <h5 class="font-semibold tracking-wide">Add More Items</h5>
 
                     <button 
                         @click="viewingItemsListModal = false" 
@@ -1903,6 +1831,10 @@ import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonRed from '../components/buttons/ButtonRed.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue'
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import TextInput from '../components/TextInput.vue';
+import SelectDropdown from '../components/SelectDropdown.vue';
+import TextArea from '../components/TextArea.vue';
+import TextDisplay from '../components/TextDisplay.vue';
 
 const { 
     showSuccessMsg, 

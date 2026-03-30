@@ -11,11 +11,11 @@
             :leave-active-class="mainContentTransition.leaveActive"
             @after-leave="changeContent(pageContent)"
         >
-            <section v-show="viewingItemsList" class=" h-full flex flex-col max-h-[1200px] min-h-[750px] lg:min-h-[500px] w-full max-w-[1300px] mx-auto ">
+            <section v-show="viewingItemsList" class=" h-full flex flex-col max-h-[1200px] min-h-[800px] lg:min-h-[600px] w-full max-w-[1300px] mx-auto ">
                 
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
                     <h3 class="font-semibold tracking-wider">Create Sale Order</h3>
-                    <p class="text-sm ">Select one or more items</p>
+                    <p class="text-sm ">Select one or more items then proceed</p>
                 </div>
                 
                 <div class="flex flex-1 p-2 overflow-hidden">
@@ -189,7 +189,7 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Items List')"
         >
-            <div v-show="viewingSOForm" class="flex flex-col w-full max-h-[1200px] min-h-[1150px] lg:min-h-[900px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingSOForm" class="flex flex-col w-full max-h-[1300px] min-h-[1200px] lg:max-h-[1200px] lg:min-h-[1100px] h-full max-w-[1300px] mx-auto ">
                 <div class="flex items-start justify-start w-full px-2 mx-auto mb-2 h-fit">
                     <ButtonDark type="button" @click="showItemsList('keep')">
                         <div class="relative flex flex-row items-center w-52 ">
@@ -202,57 +202,44 @@
                 </div>
 
                 <form @submit.prevent="submitSO" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <h3 class=" font-bold text-left px-1">Record Sale</h3>
+                        <p class="mb-5 text-sm text-gray-500 px-1">Fill in the details to record a new sale</p>
 
-                        <div class="flex flex-col items-center mb-8 px-1">
-                            <h3 class="font-bold tracking-wide">Record Sale</h3>
+                        <hr class="mb-5 mx-1">
+
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Sale Details</span>
                         </div>
 
-                        <div class="flex flex-col mb-6 px-1">
-                            <p class="label-style-one">Supplier:</p>
+                        <SelectDropdown
+                            v-model="formData.customerId"
+                            label="Customer:"
+                            :listData="customersListData"
+                        />
+                        
+                        <TextArea
+                            v-model="formData.remarks" 
+                            id="remarks" 
+                            label="Remarks:"
+                        />
 
-                            <div @click="viewingCustomersMenu = !viewingCustomersMenu" class="relative cursor-pointer value-style customers-dropdown">
-                                <div class="flex">
-                                    <p v-if="formData.customerName">
-                                        {{ formData.customerName }}
-                                    </p>
-                                    <p v-else class="text-gray-400 ">
-                                        --select customer--
-                                    </p>
-                                    <span class="ml-auto">
-                                        <i class="transition-all transform fa-solid fa-caret-down" :class="viewingCustomersMenu ? '-rotate-180 ' : ''"></i>
-                                    </span>
-                                </div>
+                        <TextInput
+                            v-model="formData.userName" 
+                            id="created-by" 
+                            label="Created by:"
+                            type="text"
+                            disabled
+                        />
 
-                                <Transition
-                                    enter-from-class="opacity-0"
-                                    enter-to-class="opacity-100"
-                                    enter-active-class="duration-200 transform transition"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                    leave-active-class="duration-200 transform transtion"
-                                >
-                                    <div v-if="viewingCustomersMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] -translate-x-3 translate-y-3 overflow-auto">
-                                        <ul class="max-h-40 overflow-auto">
-                                            <li @click="selectCustomer()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                                                None
-                                            </li>
+                        <hr class="mt-2 mb-5 mx-1">
 
-                                            <li
-                                                v-for="customer in customersListData"
-                                                @click="selectCustomer(customer)"
-                                                class="p-2 hover:bg-gray-50 cursor-pointer"
-                                            >
-                                                {{ customer.name }}
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </Transition> 
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Selected Items</span>
                             </div>
-                        </div>
-
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Selected Items</p>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -286,7 +273,7 @@
                                                 <input 
                                                     v-model="item.quantity"
                                                     type="number"
-                                                    class="flex-1 min-w-0 px-3 py-1.5 text-right bg-transparent focus:outline-none"
+                                                    class="flex-1 min-w-0 px-3 py-1.5 text-right text-sm bg-transparent focus:outline-none"
                                                     placeholder="0"
                                                 >
                                                 <span class="grid px-3 text-gray-500 border-l border-gray-300 whitespace-nowrap place-items-center">
@@ -387,24 +374,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="formData.remarks" 
-                                    id="remarks" 
-                                    class="h-20 value-style cursor-text"
-                                >
-                                </textarea>
-                            </div>
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style">
-                                    {{ formData.userName }}
-                                </p>                            
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -485,6 +454,9 @@ import Loading from '../components/alerts/Loading.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import SelectDropdown from '../components/SelectDropdown.vue';
+import TextArea from '../components/TextArea.vue';
+import TextInput from '../components/TextInput.vue';
 
 const { 
     showSuccessMsg, 
@@ -551,7 +523,6 @@ const formData = ref({
     userName: null,
     remarks: null,
     customerId: null,
-    customerName: null,
     selectedItemsList: ref([])
 })
 
@@ -665,16 +636,6 @@ function toggleSelectedItem(item){
         })
 
         selectedIds.value.push(item.id)
-    }
-}
-
-function selectCustomer(customer){
-    if(customer){
-        formData.value.customerId = customer.id
-        formData.value.customerName = customer.name
-    }else{
-        formData.value.customerId = null
-        formData.value.customerName = null
     }
 }
 

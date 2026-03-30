@@ -211,34 +211,32 @@
       @after-leave="changeContent('Users List')"
     >
       <section v-show="viewingAddForm" class="w-full ">
-        <form @submit.prevent="submitAddForm" class="w-full max-w-sm p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-          <h2 class="mb-10 text-2xl font-bold text-center">New User</h2>
+        <form @submit.prevent="submitAddForm" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+          <h3 class=" font-bold text-left">New User</h3>
+          <p class="mb-5 text-sm text-gray-500">Fill in the details to create new system user</p>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="add-name" class="label-style-one">Full Name:</label>
-              <input 
-                v-model="addFormData.name" 
-                id="add-name" 
-                type="text" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.name ? errors.name[0] : '' }}
-              </p>
+          <hr class="mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-user-circle"></i>
+            <span class="mr-2 font-medium">Account Details</span>
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="add-email" class="label-style-one">Email:</label>
-              <input 
-                v-model="addFormData.email" 
-                id="add-email" 
-                type="text" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.email ? errors.email[0] : '' }}
-              </p>
-          </div>
+          <TextInput
+            v-model="addFormData.name" 
+            id="add-name" 
+            label="Full Name:"
+            :message="errors.name ? errors.name[0] : ''"
+            type="text"
+          />
+
+          <TextInput
+            v-model="addFormData.email" 
+            id="add-email" 
+            label="Email:"
+            :message="errors.email ? errors.email[0] : ''"
+            type="email"
+          />
 
           <div class="flex flex-col w-full h-[76px]">
             <div class="label-style-one">Role:</div>
@@ -284,28 +282,29 @@
             </div>
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-            <label for="add-password" class="label-style-one">Password:</label>
-            <input 
-              v-model="addFormData.password" 
-              id="add-password" 
-              type="text" 
-              class="value-style"
-            >
-            <p class="block ml-2 text-sm text-red-500 h-[20px]">
-              {{ errors.password ? errors.password[0] : '' }}
-            </p>
+          <hr class="mt-2 mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-lock"></i>
+            <span class="mr-2 font-medium">Security Credentials</span>
           </div>
 
-          <div class="flex flex-col w-full h-[76px] mb-4">
-            <label for="add-confirmation" class="label-style-one">Confirm Password:</label>
-            <input 
-              v-model="addFormData.password_confirmation" 
-              id="add-confirmation" 
-              type="text" 
-              class="value-style"
-            >
-          </div>
+          <TextInput
+            v-model="addFormData.password" 
+            id="add-password" 
+            label="Password:"
+            :message="errors.password ? errors.password[0] : ''"
+            type="password"
+          />
+
+          <TextInput
+            v-model="addFormData.password_confirmation" 
+            id="add-confirmation" 
+            label="Confirm Password:"
+            type="password"
+          />
+
+          <hr class="mb-6 mt-1">
           
           <div class="flex items-end justify-end w-full">
             <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
@@ -333,34 +332,32 @@
       @after-leave="changeContent('Users List')"
     >
       <section v-show="viewingUpdateForm" class="w-full ">
-        <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-sm p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-          <h2 class="mb-10 text-2xl font-bold text-center">Update User</h2>
+        <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+          <h3 class=" font-bold text-left">Update User</h3>
+          <p class="mb-5 text-sm text-gray-500">Update details of an existing user</p>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="update-name" class="label-style-one">Full Name:</label>
-              <input 
-                v-model="updateFormData.name" 
-                id="update-name" 
-                type="text" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.name ? errors.name[0] : '' }}
-              </p>
+          <hr class="mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-user-circle"></i>
+            <span class="mr-2 font-medium">Account Details</span>
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="update-email" class="label-style-one">Email:</label>
-              <input 
-                v-model="updateFormData.email" 
-                id="update-email" 
-                type="text" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.email ? errors.email[0] : '' }}
-              </p>
-          </div>
+          <TextInput
+            v-model="updateFormData.name" 
+            id="update-name" 
+            label="Full Name:"
+            :message="errors.name ? errors.name[0] : ''"
+            type="text"
+          />
+
+          <TextInput
+            v-model="updateFormData.email" 
+            id="update-email" 
+            label="Email:"
+            :message="errors.email ? errors.email[0] : ''"
+            type="email"
+          />
 
           <div class="flex flex-col w-full h-[76px]">
             <div class="label-style-one">Role:</div>
@@ -406,28 +403,29 @@
             </div>
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-            <label for="update-password" class="label-style-one">New Password:</label>
-            <input 
-              v-model="updateFormData.password" 
-              id="update-password" 
-              type="text" 
-              class="value-style"
-            >
-            <p class="block ml-2 text-sm text-red-500 h-[20px]">
-              {{ errors.password ? errors.password[0] : '' }}
-            </p>
+          <hr class="mt-2 mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-lock"></i>
+            <span class="mr-2 font-medium">Security Credentials</span>
           </div>
 
-          <div class="flex flex-col w-full h-[76px] mb-4">
-            <label for="update-confirmation" class="label-style-one">Confirm New Password:</label>
-            <input 
-              v-model="updateFormData.password_confirmation" 
-              id="update-confirmation" 
-              type="text" 
-              class="value-style"
-            >
-          </div>
+          <TextInput
+            v-model="updateFormData.password" 
+            id="update-password" 
+            label="New Password:"
+            :message="errors.password ? errors.password[0] : ''"
+            type="password"
+          />
+
+          <TextInput
+            v-model="updateFormData.password_confirmation"
+            id="update-confirmation" 
+            label="Confirm New Password:"
+            type="password"
+          />
+
+          <hr class="mb-6 mt-1">
 
           <div class="flex items-end justify-end w-full">
             <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
@@ -520,6 +518,7 @@ import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import TextInput from '../components/TextInput.vue';
 
 const {
   showSuccessMsg, 

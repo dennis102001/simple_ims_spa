@@ -10,7 +10,7 @@
             :leave-active-class="mainContentTransition.leaveActive"
             @after-leave="changeContent(pageContent)"
         >
-            <section v-show="viewingSalesList" class="h-full flex flex-col max-h-[1200px] min-h-[750px] lg:min-h-[500px] w-full max-w-[1300px] mx-auto">
+            <section v-show="viewingSalesList" class="h-full flex flex-col max-h-[1200px] min-h-[800px] lg:min-h-[600px] w-full max-w-[1300px] mx-auto">
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
                     <h3 class="font-semibold tracking-wider">Manage Sale Orders</h3>
                 </div>
@@ -299,88 +299,72 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Sales List')"
         >
-            <div v-show="viewingUpdateSale" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingUpdateSale" class="flex flex-col w-full max-h-[1500px] min-h-[1400px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="updateSale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                        
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Update Sale Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Update Sale Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Update details of an existing sale order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + updateFormData.status }}
                             </p>
                         </div>
-                    
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">SO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ updateFormData.soNumber }}
-                                    </p>
-                                </div>
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Created:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(updateFormData.createdDate) }}
-                                    </p>
-                                </div>
-                            </div>
+                        <hr class="mb-5 mx-1">
 
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Customer:</p>
-                                <div @click="viewingCustomersMenu = !viewingCustomersMenu" class="relative cursor-pointer customers-dropdown value-style">
-                                    <div class="flex">
-                                        <p v-if="updateFormData.customerName">
-                                            {{ updateFormData.customerName }}
-                                        </p>
-                                        <p v-else class="text-gray-400 ">
-                                            --select customer--
-                                        </p>
-                                        <span class="ml-auto">
-                                            <i class="transition-all transform fa-solid fa-caret-down" :class="viewingCustomersMenu ? '-rotate-180 ' : ''"></i>
-                                        </span>
-                                    </div>
-
-                                    <Transition
-                                        enter-from-class="opacity-0"
-                                        enter-to-class="opacity-100"
-                                        enter-active-class="transition duration-200 transform"
-                                        leave-from-class="opacity-100"
-                                        leave-to-class="opacity-0"
-                                        leave-active-class="duration-200 transform transtion"
-                                    >
-                                        <div v-if="viewingCustomersMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] -translate-x-3 translate-y-3 overflow-auto">
-                                            <ul class="max-h-40 overflow-auto">
-                                                <li @click="selectCustomer()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                                                    None
-                                                </li>
-
-                                                <li
-                                                    v-for="customer in customersListData"
-                                                    @click="selectCustomer(customer)"
-                                                    class="p-2 hover:bg-gray-50 cursor-pointer"
-                                                >
-                                                    {{ customer.name }}
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </Transition> 
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
-                        
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
 
-                            <div class="flex flex-row flex-wrap items-end justify-between py-3 gap-y-2">
-                                <p class="label-style-one text-lg">Selected Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="SO Number:"
+                                :value="updateFormData.soNumber"
+                            />
+
+                            <TextDisplay
+                                label="Date Created:"
+                                :value="formatDate(updateFormData.createdDate)"
+                            />
+                        </div>
+
+                        <SelectDropdown
+                            v-model="updateFormData.customerId"
+                            label="Customer:"
+                            :listData="customersListData"
+                        />
+
+                        <TextArea
+                            v-model="updateFormData.remarks" 
+                            id="remarks-update" 
+                            label="Remarks:"
+                        />
+
+                        <TextDisplay
+                            label="Created by:"
+                            :value="updateFormData.createdByName"
+                        />
+                    
+                        <hr class="mt-2 mb-5 mx-1">
+
+                        <div class="flex flex-col flex-1 overflow-hidden">
+
+                            <div class="mb-5 flex flex-row flex-wrap items-end justify-between gap-y-2">
+                                <div class="flex items-center gap-2 text-lg">
+                                    <i class="fas fa-list"></i>
+                                    <span class="mr-2 font-medium">Selected Items</span>
+                                </div>
 
                                 <ButtonDark type="button" @click="showItemsListModal">
                                     <div class="relative flex flex-row items-center w-fit ">
                                         <span class="text-sm px-2">
                                             <i class="fa-solid fa-plus"></i>
                                         </span>
-                                        <span class="pr-2">Add more items</span>
+                                        <span class="pr-2">Add Item</span>
                                     </div>
                                 </ButtonDark>
                             </div>
@@ -451,7 +435,7 @@
                                 <div class="flex flex-1 overflow-auto">
 
                                     <!-- Card grid -->
-                                    <div class="my-2 content-start flex-1 gap-3 p-1 overflow-hidden min-h-fit grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+                                    <div class="my-2 flex-1 gap-3 overflow-hidden min-h-fit content-start grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] p-1">
                                     
                                         <!-- Card items -->
                                         <div v-for="item in updateFormData.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
@@ -516,24 +500,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full mb-2 px-1">
-                            <div class="flex flex-col flex-1 mb-4">
-                                <label for="remarks-update" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="updateFormData.remarks" 
-                                    id="remarks-update" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style" >
-                                    {{ updateFormData.createdByName }}
-                                </p>                            
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -561,47 +527,68 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Sales List')"
         >
-            <div v-show="viewingPaySale" class="flex flex-col w-full max-h-[1600px] min-h-[1350px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto">
+            <div v-show="viewingPaySale" class="flex flex-col w-full max-h-[1500px] min-h-[1500px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto">
                 <form @submit.prevent="paySale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Payment</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Payment</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm payment of sale order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + payFormData.status }}
                             </p>
                         </div>
-                        
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">SO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ payFormData.soNumber }}
-                                    </p>
-                                </div>
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Created:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(payFormData.createdDate) }}
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Customer:</p>
-                                <p v-if="payFormData.customerName" class="cursor-default value-style">
-                                    {{ payFormData.customerName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    No customer selected
-                                </p>
-                            </div>
+                        <hr class="mb-5 mx-1">
+
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Selected Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="SO Number:"
+                                :value="payFormData.soNumber"
+                            />
+                            <TextDisplay
+                                label="Date Created:"
+                                :value="formatDate(payFormData.createdDate)"
+                            />
+                        </div>
+
+                        <TextDisplay
+                            label="Customer:"
+                            :value="payFormData.customerName"
+                        />
+
+                        <TextArea
+                            v-model="payFormData.remarks" 
+                            id="remarks-payment" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="payFormData.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Confirmed by:"
+                                :value="payFormData.userName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Selected Items</span>
+                            </div>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -700,33 +687,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-payment" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="payFormData.remarks" 
-                                    id="remarks-payment" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ payFormData.createdByName }}
-                                    </p>                            
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Confirmed by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ payFormData.userName }}
-                                    </p>                            
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -754,47 +714,61 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Sales List')"
         >
-            <div v-show="viewingCancelSale" class="flex flex-col w-full max-h-[1600px] min-h-[1300px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto">
+            <div v-show="viewingCancelSale" class="flex flex-col w-full max-h-[1500px] min-h-[1400px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="cancelSale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                        
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Cancel Sale Order</h3>
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Cancel Sale Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm cancellation of sale order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-yellow-600 bg-yellow-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + cancelFormData.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">SO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ cancelFormData.soNumber }}
-                                    </p>
-                                </div>
+                        <hr class="mb-5 mx-1">
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Created:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(cancelFormData.createdDate) }}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col flex-1 w-full">
-                                <p class="label-style-one">Customer:</p>
-                                <p v-if="cancelFormData.customerName" class="cursor-default value-style">
-                                    {{ cancelFormData.customerName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    No customer selected
-                                </p>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
 
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Selected Items</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="SO Number:"
+                                :value="cancelFormData.soNumber"
+                            />
+                            <TextDisplay
+                                label="Date Created:"
+                                :value="formatDate(cancelFormData.createdDate)"
+                            />
+                        </div>
+
+                        <TextDisplay
+                            label="Customer:"
+                            :value="cancelFormData.customerName"
+                        />
+
+                        <TextArea
+                            v-model="cancelFormData.remarks" 
+                            id="remarks-cancel" 
+                            label="Remarks:"
+                        />
+
+                        <TextDisplay
+                            label="Created by:"
+                            :value="cancelFormData.createdByName"
+                        />
+
+                        <hr class="mt-2 mb-5 mx-1">
+
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Selected Items</span>
+                            </div>
 
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -893,24 +867,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-cancel" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="cancelFormData.remarks" 
-                                    id="remarks-cancel" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-                            
-                            <div class="flex flex-col flex-1 ">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style">
-                                    {{ cancelFormData.createdByName }}
-                                </p>                            
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -938,56 +894,75 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Sales List')"
         >
-            <div v-show="viewingReturnSale" class="flex flex-col w-full max-h-[1600px] min-h-[1450px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto ">
+            <div v-show="viewingReturnSale" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
                 <form @submit.prevent="returnSale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
-                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
 
-                        <div class="flex flex-row items-center px-1 mb-8">
-                            <h3 class="font-bold tracking-wide">Return Sale Order</h3>
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Return Sale Order</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Confirm return of sale order</p>
+                            </div>
+                            
                             <p class="px-3 py-1 ml-auto font-medium text-blue-600 bg-blue-100 rounded w-fit text-nowrap">
                                 {{ "Status: " + returnFormData.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">SO Number:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.soNumber }}
-                                    </p>
-                                </div>
+                        <hr class="mb-5 mx-1">
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Customer:</p>
-                                    <p v-if="returnFormData.customerName" class="cursor-default value-style">
-                                        {{ returnFormData.customerName }}
-                                    </p>
-                                    <p v-else class="text-gray-500 cursor-default value-style">
-                                        No customer selected
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
+                        </div>
 
-                            <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Created:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(returnFormData.createdDate) }}
-                                    </p>
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="SO Number:"
+                                :value="returnFormData.soNumber"
+                            />
+                            <TextDisplay
+                                label="Customer:"
+                                :value="returnFormData.customerName"
+                            />
+                        </div>
 
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Date Confirmed:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ formatDate(returnFormData.confirmedDate) }}
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Date Created:"
+                                :value="formatDate(returnFormData.createdDate)"
+                            />
+                            <TextDisplay
+                                label="Date Confirmed:"
+                                :value="formatDate(returnFormData.confirmedDate)"
+                            />
+                        </div>
+
+                        <TextArea
+                            v-model="returnFormData.remarks" 
+                            id="remarks-return" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="returnFormData.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Confirmed by:"
+                                :value="returnFormData.confirmedByName"
+                            />
                         </div>
                         
-                        <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                            <p class="label-style-one text-lg">Selected Items</p>
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Selected Items</span>
+                            </div>
                         
                             <!-- Desktop table layout -->
                             <div class="relative flex-1 hidden overflow-hidden lg:flex">
@@ -1086,33 +1061,6 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                            <div class="flex flex-col flex-1">
-                                <label for="remarks-return" class="label-style-one">Remarks:</label>
-                                <textarea 
-                                    v-model="returnFormData.remarks" 
-                                    id="remarks-return" 
-                                    class="h-20 value-style"
-                                >
-                                </textarea>
-                            </div>
-
-                            <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                                <div class="flex flex-col flex-1 ">
-                                    <p class="label-style-one">Created by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.createdByName }}
-                                    </p>                            
-                                </div>
-
-                                <div class="flex flex-col flex-1">
-                                    <p class="label-style-one">Confirmed by:</p>
-                                    <p class="cursor-default value-style">
-                                        {{ returnFormData.confirmedByName }}
-                                    </p>                            
-                                </div>
-                            </div>
-                        </div>
                     </section>
 
                     <div class="flex items-end justify-end w-full">
@@ -1140,197 +1088,187 @@
             :leave-active-class="formTransition.leaveActive"
             @after-leave="changeContent('Sales List')"
         >
-            <div v-show="viewingSaleDetails" class="flex flex-col w-full max-h-[1600px] min-h-[1450px] md:min-h-[1200px] lg:min-h-[1000px] h-full max-w-[1300px] mx-auto p-2">
-                <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 py-6 px-5 bg-white rounded-xl flex flex-col mb-4">
-                    
-                    <div class="flex flex-row items-center px-1 mb-8">
-                        <h3 class="font-bold tracking-wide">Sale Order Details</h3>
-                        <p 
-                            :class="['px-3 py-1 w-fit font-medium rounded text-nowrap ml-auto', 
-                                saleDetails.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
-                                saleDetails.status == 'Paid' ? 'bg-blue-100 text-blue-600' : '',
-                                saleDetails.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
-                                saleDetails.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
-                            ]"
-                        >
-                            {{ "Status: " + saleDetails.status }}
-                        </p>
-                    </div>
-                        
-                    <div class="flex flex-wrap px-1 mb-6 gap-x-6 gap-y-4">
-                        <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">SO Number:</p>
-                                <p class="cursor-default value-style">
-                                    {{ saleDetails.soNumber }}
-                                </p>
+            <div v-show="viewingSaleDetails" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
+                <div class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
+                    <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
+                        <div class="flex flex-row items-start">
+                            <div class="flex flex-col">
+                                <h3 class="font-bold text-left px-1">Sale Order Details</h3>
+                                <p class="mb-5 text-sm text-gray-500 px-1">Viewing sale order details</p>
                             </div>
-
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Customer:</p>
-                                <p v-if="saleDetails.customerName" class="cursor-default value-style">
-                                    {{ saleDetails.customerName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    No customer selected
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col justify-start w-full gap-x-6 gap-y-4 md:flex-row">
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Date Created:</p>
-                                <p class="cursor-default value-style">
-                                    {{ formatDate(saleDetails.createdDate) }}
-                                </p>
-                            </div>
-
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Confirmed Date:</p>
-                                <p v-if="saleDetails.confirmedDate" class="cursor-default value-style">
-                                    {{ formatDate(saleDetails.confirmedDate) }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    -
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col flex-1 py-4 mb-6 overflow-hidden border-darkgray-sec border-y">
-                        <p class="label-style-one text-lg">Selected Items</p>
-
-                        <!-- Desktop table layout -->
-                        <div class="relative flex-1 hidden overflow-hidden lg:flex">
                             
-                            <!-- Gradient overlay -->
-                            <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
-                            
-                            <div class="flex-1 px-1 overflow-auto">
-                                <div class="grid grid-cols-[40%_20%_20%_20%] head-row">
-                                    <div class="head-data">Item</div>
-                                    <div class="head-data">Price</div>
-                                    <div class="head-data">Quantity</div>
-                                    <div class="head-data">Subtotal</div>
-                                </div>
-
-                                <div v-for="item in saleDetails.selectedItemsList" class="grid grid-cols-[40%_20%_20%_20%] body-row">
-                                    <div class="grid body-data">
-                                        <p class="item-name-style-wide" :title="item.itemName">
-                                            {{ item.itemName }}
-                                        </p>
-                                        <p class="item-sku-style-wide" :title="item.sku">
-                                            {{ item.sku }}
-                                        </p>
-                                    </div>
-                                    <div class="body-data item-price-style-wide">
-                                        ₱{{ item.price }}
-                                    </div>
-                                    <div class="body-data">
-                                        <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
-                                            <p class="grid px-3  py-1.5 place-items-center">
-                                                {{ item.quantity + " " + (item.unit ?? (item.quantity < 2 ? 'unit' : 'units')) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="body-data item-subtotal-style-wide">
-                                        ₱{{ (item.price * item.quantity).toFixed(2)  }}
-                                    </div>
-                                </div>                            
-                            </div>
-                        </div>
-
-                        <!-- Mobile card layout -->
-                        <div class="relative flex flex-1 overflow-hidden lg:hidden">
-                            
-                            <!-- Gradient overlays -->
-                            <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
-                
-                            <div class="flex flex-1 overflow-auto">
-
-                                <!-- Card grid -->
-                                <div class="my-2 content-start flex-1 gap-3 p-1 overflow-hidden min-h-fit grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
-                                
-                                    <!-- Card items -->
-                                    <div v-for="item in saleDetails.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
-                                    
-                                        <!-- Card head -->
-                                        <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
-                                            <div class="overflow-hidden">
-                                                <h5 class="item-name-style-narrow" :title="item.itemName">
-                                                    {{ item.itemName }}
-                                                </h5>
-                                                <p class="item-sku-style-narrow" :title="item.sku">
-                                                    {{ item.sku ?? 'Not set' }}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Card body -->
-                                        <div class="grid gap-2 px-5 pt-2 pb-5">
-
-                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                <p class="label-style-two">Price</p>
-                                                <p class="ml-auto item-price-style-narrow">
-                                                    ₱{{ item.price }}
-                                                </p>
-                                            </div>
-
-                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
-                                                <p class="w-1/2 label-style-two">Quantity</p>
-                                                <p class="w-1/2 ml-auto px-3 py-1.5 text-sm text-gray-500 text-right bg-gray-100 rounded-md">
-                                                    {{ item.quantity + " " + (item.unit ?? (item.quantity < 2 ? 'unit' : 'units')) }}
-                                                </p>
-                                            </div>
-
-                                            <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
-                                                <p class="label-style-two">Subtotal</p>
-                                                <p class="ml-auto item-subtotal-style-narrow">
-                                                    ₱{{ (item.price * item.quantity).toFixed(2)  }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    
-                    <div class="flex flex-col w-full gap-4 mb-2 px-1">
-                        <div class="flex flex-col flex-1">
-                            <p class="label-style-one">Remarks:</p>
-                            <p class="line-clamp-4 min-h-20 cursor-default value-style">
-                                {{ saleDetails.remarks }}
+                            <p 
+                                :class="['px-3 py-1 w-fit font-medium rounded text-nowrap ml-auto', 
+                                    saleDetails.status == 'Pending' ? 'bg-yellow-100 text-yellow-600' : '', 
+                                    saleDetails.status == 'Paid' ? 'bg-blue-100 text-blue-600' : '',
+                                    saleDetails.status == 'Cancelled' ? 'bg-red-100 text-red-600' : '', 
+                                    saleDetails.status == 'Returned' ? 'bg-orange-100 text-orange-600' : ''
+                                ]"
+                            >
+                                {{ "Status: " + saleDetails.status }}
                             </p>
                         </div>
 
-                        <div class="flex flex-col mb-2 md:flex-row gap-x-6 gap-y-4">
-                            <div class="flex flex-col flex-1 ">
-                                <p class="label-style-one">Created by:</p>
-                                <p class="cursor-default value-style">
-                                    {{ saleDetails.createdByName }}
-                                </p>                           
-                            </div>
+                        <hr class="mb-5 mx-1">
 
-                            <div class="flex flex-col flex-1">
-                                <p class="label-style-one">Confirmed by:</p>
-                                <p v-if="saleDetails.confirmedByName" class="cursor-default value-style">
-                                    {{ saleDetails.confirmedByName }}
-                                </p>
-                                <p v-else class="text-gray-500 cursor-default value-style">
-                                    -
-                                </p>
-                            </div>
+                        <div class="mb-5 flex items-center gap-2 text-lg">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="mr-2 font-medium">Order Details</span>
                         </div>
-                    </div>
-                </section>
 
-                <div class="flex items-end justify-end w-full">
-                    <div class="flex flex-row justify-between w-full sm:w-[200px] ">
-                        <ButtonWhite @click="showSalesList" width="full" type="button">
-                            Back
-                        </ButtonWhite>
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="SO Number:"
+                                :value="saleDetails.soNumber"
+                            />
+                            <TextDisplay
+                                label="Customer:"
+                                :value="saleDetails.customerName"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Date Created:"
+                                :value="formatDate(saleDetails.createdDate)"
+                            />
+                            <TextDisplay
+                                label="Confirmed Date:"
+                                :value="saleDetails.confirmedDate ? formatDate(saleDetails.confirmedDate) : null"
+                            />
+                        </div>
+
+                        <TextArea
+                            v-model="saleDetails.remarks" 
+                            id="remarks-view" 
+                            label="Remarks:"
+                        />
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                            <TextDisplay
+                                label="Created by:"
+                                :value="saleDetails.createdByName"
+                            />
+
+                            <TextDisplay
+                                label="Confirmed by:"
+                                :value="saleDetails.confirmedByName"
+                            />
+                        </div>
+
+                        <hr class="mt-2 mb-5 mx-1">
+                        
+                        <div class="flex flex-col flex-1 overflow-hidden">
+                            <div class="mb-5 flex items-center gap-2 text-lg">
+                                <i class="fas fa-list"></i>
+                                <span class="mr-2 font-medium">Selected Items</span>
+                            </div>
+
+                            <!-- Desktop table layout -->
+                            <div class="relative flex-1 hidden overflow-hidden lg:flex">
+                                
+                                <!-- Gradient overlay -->
+                                <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
+                                
+                                <div class="flex-1 px-1 overflow-auto">
+                                    <div class="grid grid-cols-[40%_20%_20%_20%] head-row">
+                                        <div class="head-data">Item</div>
+                                        <div class="head-data">Price</div>
+                                        <div class="head-data">Quantity</div>
+                                        <div class="head-data">Subtotal</div>
+                                    </div>
+
+                                    <div v-for="item in saleDetails.selectedItemsList" class="grid grid-cols-[40%_20%_20%_20%] body-row">
+                                        <div class="grid body-data">
+                                            <p class="item-name-style-wide" :title="item.itemName">
+                                                {{ item.itemName }}
+                                            </p>
+                                            <p class="item-sku-style-wide" :title="item.sku">
+                                                {{ item.sku }}
+                                            </p>
+                                        </div>
+                                        <div class="body-data item-price-style-wide">
+                                            ₱{{ item.price }}
+                                        </div>
+                                        <div class="body-data">
+                                            <div class="text-gray-500 bg-gray-100 rounded-md h-fit">
+                                                <p class="grid px-3  py-1.5 place-items-center">
+                                                    {{ item.quantity + " " + (item.unit ?? (item.quantity < 2 ? 'unit' : 'units')) }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="body-data item-subtotal-style-wide">
+                                            ₱{{ (item.price * item.quantity).toFixed(2)  }}
+                                        </div>
+                                    </div>                            
+                                </div>
+                            </div>
+
+                            <!-- Mobile card layout -->
+                            <div class="relative flex flex-1 overflow-hidden lg:hidden">
+                                
+                                <!-- Gradient overlays -->
+                                <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
+                    
+                                <div class="flex flex-1 overflow-auto">
+
+                                    <!-- Card grid -->
+                                    <div class="my-2 content-start flex-1 gap-3 p-1 overflow-hidden min-h-fit grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
+                                    
+                                        <!-- Card items -->
+                                        <div v-for="item in saleDetails.selectedItemsList" class="cursor-default flex flex-col shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
+                                        
+                                            <!-- Card head -->
+                                            <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">
+                                                <div class="overflow-hidden">
+                                                    <h5 class="item-name-style-narrow" :title="item.itemName">
+                                                        {{ item.itemName }}
+                                                    </h5>
+                                                    <p class="item-sku-style-narrow" :title="item.sku">
+                                                        {{ item.sku ?? 'Not set' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Card body -->
+                                            <div class="grid gap-2 px-5 pt-2 pb-5">
+
+                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
+                                                    <p class="label-style-two">Price</p>
+                                                    <p class="ml-auto item-price-style-narrow">
+                                                        ₱{{ item.price }}
+                                                    </p>
+                                                </div>
+
+                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center">
+                                                    <p class="w-1/2 label-style-two">Quantity</p>
+                                                    <p class="w-1/2 ml-auto px-3 py-1.5 text-sm text-gray-500 text-right bg-gray-100 rounded-md">
+                                                        {{ item.quantity + " " + (item.unit ?? (item.quantity < 2 ? 'unit' : 'units')) }}
+                                                    </p>
+                                                </div>
+
+                                                <div class="flex gap-4 h-fit overflow-hidden flex-row items-center pt-2 border-t">
+                                                    <p class="label-style-two">Subtotal</p>
+                                                    <p class="ml-auto item-subtotal-style-narrow">
+                                                        ₱{{ (item.price * item.quantity).toFixed(2)  }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                        
+                    </section>
+
+                    <div class="flex items-end justify-end w-full">
+                        <div class="flex flex-row justify-between w-full sm:w-[200px] ">
+                            <ButtonWhite @click="showSalesList" width="full" type="button">
+                                Back
+                            </ButtonWhite>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1341,8 +1279,9 @@
         <div v-show="viewingItemsListModal" class="w-full h-full mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl max-h-[500px] max-w-[1000px]">
             <div class="flex flex-col size-full">
                 
-                <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-white bg-darkgray-pri rounded-t-xl border-b">
-                    <h4 class="font-semibold tracking-wide">Add More Items</h4>
+                <div class="flex flex-row flex-wrap gap-2 items-center px-6 py-2 text-warmyellow-pri bg-darkgray-pri rounded-t-xl border-b">
+                    <h5 class="font-semibold tracking-wide">Add More Items</h5>
+
                     <button 
                         @click="viewingItemsListModal = false" 
                         class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
@@ -1565,6 +1504,9 @@ import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonRed from '../components/buttons/ButtonRed.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import TextDisplay from '../components/TextDisplay.vue';
+import SelectDropdown from '../components/SelectDropdown.vue';
+import TextArea from '../components/TextArea.vue';
 
 const { 
     showSuccessMsg, 

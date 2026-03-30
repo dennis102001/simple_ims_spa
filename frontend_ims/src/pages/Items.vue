@@ -252,172 +252,92 @@
       @after-leave="changeContent('Items List')"
     >
       <section v-show="viewingAddForm" class="w-full">
-        <form @submit.prevent="submitAddForm" class="w-full max-w-lg p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-          <h2 class="mb-10 text-2xl font-bold text-center">New Item</h2>
+        <form @submit.prevent="submitAddForm" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+          <h3 class=" font-bold text-left">New Item</h3>
+          <p class="mb-5 text-sm text-gray-500">Fill in the details to add a new item to inventory</p>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="add-item" class="text-sm label-style-one">Item Name:</label>
-              <input 
-                v-model="addFormData.itemName" 
-                id="add-item" 
-                class="value-style"
-                type="text" 
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.itemName ? errors.itemName[0] : '' }}
-              </p>
+          <hr class="mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-info-circle"></i>
+            <span class="mr-2 font-medium">Basic Information</span>
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-            <label for="add-description" class="text-sm label-style-one">Description:</label>
-            <input 
-              v-model="addFormData.description" 
-              id="add-description" 
-              type="text" 
-              class="value-style"
-            >
+          <TextInput
+            v-model="addFormData.itemName" 
+            id="add-item" 
+            label="Item Name:"
+            :message="errors.itemName ? errors.itemName[0] : ''"
+            type="text"
+          />
+
+          <TextArea
+            v-model="addFormData.description"
+            id="add-description" 
+            label="Description:"
+          />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <SelectDropdown
+              v-model="addFormData.categoryId"
+              label="Category:"
+              :listData="categoriesListData"
+            />
+
+            <SelectDropdown
+              v-model="addFormData.unitId"
+              label="Unit Measurement:"
+              :listData="unitsListData"
+            />
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-            <p class="text-sm label-style-one">Category:</p>
-            <div @click="viewingCategoryMenu = !viewingCategoryMenu" class="category-dropdown relative cursor-pointer value-style">
-              <div class="flex">
-                <p v-if="addFormData.categoryName">
-                  {{ addFormData.categoryName }}
-                </p>
-                <p v-else class="text-gray-400">
-                  None
-                </p>
-                <span class="ml-auto">
-                  <i class="transition-all transform fa-solid fa-caret-down" :class="viewingCategoryMenu ? '-rotate-180 ' : ''"></i>
-                </span>
-              </div>
+          <hr class="mt-2 mb-5">
 
-              <Transition
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                enter-active-class="transition duration-200 transform"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-                leave-active-class="duration-200 transform transtion"
-              >
-                <div v-if="viewingCategoryMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
-                  <ul class="max-h-40 overflow-auto">
-                    <li @click="selectCategory()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                      None
-                    </li>
-
-                    <li
-                      v-for="category in categoriesListData"
-                      @click="selectCategory(category.id, category.categoryName)"
-                      class="p-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      {{ category.categoryName }}
-                    </li>
-                  </ul>
-                </div>
-              </Transition>
-            </div>
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-peso-sign"></i>
+            <span class="mr-2 font-medium">Pricing & Inventory</span>
           </div>
 
-          <div class="flex flex-wrap w-full gap-x-4">
-            <div class="flex flex-col flex-1 min-w-[80px] h-[76px]">
-              <label for="add-cost" class="text-sm label-style-one">Cost:</label>
-              <input 
-                v-model="addFormData.cost" 
-                id="add-cost" 
-                step="0.01" 
-                min="0" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.cost ? errors.cost[0] : '' }}
-              </p>
-            </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <TextInput
+              v-model="addFormData.cost"
+              id="add-cost" 
+              label="Cost:"
+              :message="errors.cost ? errors.cost[0] : ''"
+              step="0.01" 
+              min="0" 
+              type="number" 
+            />
 
-            <div class="flex flex-col flex-1 min-w-[80px] h-[76px]">
-              <label for="add-price" class="text-sm label-style-one">Price:</label>
-              <input 
-                v-model="addFormData.price" 
-                id="add-price" 
-                step="0.01" 
-                min="0" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.price ? errors.price[0] : '' }}
-              </p>
-            </div>
-
-            <div class="flex flex-col flex-1 min-w-[150px] h-[76px]">
-              <p class="text-sm label-style-one">Unit Measurement:</p>
-              <div @click="viewingUnitMenu = !viewingUnitMenu" class="unit-dropdown relative cursor-pointer value-style">
-                <div class="flex">
-                  <p v-if="addFormData.unitName">
-                    {{ addFormData.unitName }}
-                  </p>
-                  <p v-else class="text-gray-400">
-                    None
-                  </p>
-                  <span class="ml-auto">
-                    <i class="transition-all transform fa-solid fa-caret-down" :class="viewingUnitMenu ? '-rotate-180 ' : ''"></i>
-                  </span>
-                </div>
-
-                <Transition
-                  enter-from-class="opacity-0"
-                  enter-to-class="opacity-100"
-                  enter-active-class="transition duration-200 transform"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
-                  leave-active-class="duration-200 transform transtion"
-                >
-                  <div v-if="viewingUnitMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
-                    <ul class="max-h-32 overflow-auto">
-                      <li @click="selectUnit()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                        None
-                      </li>
-
-                      <li
-                        v-for="unit in unitsListData"
-                        @click="selectUnit(unit.id, unit.unitName)"
-                        class="p-2 hover:bg-gray-50 cursor-pointer"
-                      >
-                        {{ unit.unitName }}
-                      </li>
-                    </ul>
-                  </div>
-                </Transition>
-              </div>
-            </div>
+            <TextInput
+              v-model="addFormData.price" 
+              id="add-price" 
+              label="Price:"
+              :message="errors.price ? errors.price[0] : ''"
+              step="0.01" 
+              min="0" 
+              type="number" 
+            />
           </div>
 
-          <div class="flex flex-wrap w-full mb-4 gap-x-4">
-            <div class="flex flex-col flex-1 min-w-[120px] h-[76px]">
-              <label for="add-sku" class="text-sm label-style-one">SKU:</label>
-              <input 
-                v-model="addFormData.sku" 
-                id="add-sku" 
-                type="text" 
-                class="value-style"
-              >
-            </div>
-
-            <div class="flex flex-col flex-1 min-w-[120px] h-[76px]">
-              <label for="add-reorder" class="text-sm label-style-one">Reorder level:</label>
-              <input 
-                v-model="addFormData.reorderLevel" 
-                id="add-reorder" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.reorderLevel ? errors.reorderLevel[0] : '' }}
-              </p>
-            </div> 
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <TextInput
+              v-model="addFormData.sku" 
+              id="add-sku" 
+              label="SKU:"
+              type="text"
+            />
+            
+            <TextInput
+              v-model="addFormData.reorderLevel" 
+              id="add-reorder" 
+              label="Reorder Level:"
+              type="number"
+              :message="errors.reorderLevel ? errors.reorderLevel[0] : ''"
+            />
           </div>
+
+          <hr class="mb-6 mt-1">
           
           <div class="flex items-end justify-end w-full">
             <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
@@ -445,172 +365,92 @@
       @after-leave="changeContent('Items List')"
     >
       <section v-show="viewingUpdateForm" class="w-full ">
-        <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-lg p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-          <h2 class="mb-10 text-2xl font-bold text-center">Update Item</h2>
+        <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+          <h3 class=" font-bold text-left">Update Item</h3>
+          <p class="mb-5 text-sm text-gray-500">Update details of an existing item in inventory</p>
 
-          <div class="flex flex-col w-full h-[76px]">
-              <label for="update-item" class="text-sm label-style-one">Item Name:</label>
-              <input 
-                v-model="updateFormData.itemName" 
-                id="update-item" 
-                type="text" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.itemName ? errors.itemName[0] : '' }}
-              </p>
+          <hr class="mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-info-circle"></i>
+            <span class="mr-2 font-medium">Basic Information</span>
+          </div>
+
+          <TextInput
+            v-model="updateFormData.itemName" 
+            id="update-item" 
+            label="Item Name:"
+            :message="errors.itemName ? errors.itemName[0] : ''"
+            type="text"
+          />
+
+          <TextArea
+            v-model="updateFormData.description"
+            id="update-description" 
+            label="Description:"
+          />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <SelectDropdown
+              v-model="updateFormData.categoryId"
+              label="Category:"
+              :listData="categoriesListData"
+            />
+
+            <SelectDropdown
+              v-model="updateFormData.unitId"
+              label="Unit Measurement:"
+              :listData="unitsListData"
+            />
           </div>
           
-          <div class="flex flex-col w-full h-[76px]">
-            <label for="update-description" class="text-sm label-style-one">Description:</label>
-            <input 
-              v-model="updateFormData.description"
-              id="update-description" 
+          <hr class="mt-2 mb-5">
+
+          <div class="mb-5 flex items-center gap-2 text-lg">
+            <i class="fas fa-peso-sign"></i>
+            <span class="mr-2 font-medium">Pricing & Inventory</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <TextInput
+              v-model="updateFormData.cost"
+              id="update-cost" 
+              label="Cost:"
+              :message="errors.cost ? errors.cost[0] : ''"
+              step="0.01" 
+              min="0" 
+              type="number" 
+            />
+
+            <TextInput
+              v-model="updateFormData.price" 
+              id="update-price" 
+              label="Price:"
+              :message="errors.price ? errors.price[0] : ''"
+              step="0.01" 
+              min="0" 
+              type="number" 
+            />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+            <TextInput
+              v-model="updateFormData.sku" 
+              id="update-sku" 
+              label="SKU:"
               type="text"
-              class="value-style"
-            >
+            />
+            
+            <TextInput
+              v-model="updateFormData.reorderLevel" 
+              id="update-reorder" 
+              label="Reorder Level:"
+              type="number"
+              :message="errors.reorderLevel ? errors.reorderLevel[0] : ''"
+            />
           </div>
 
-          <div class="flex flex-col w-full h-[76px]">
-            <p class="text-sm label-style-one">Category:</p>
-            <div @click="viewingCategoryMenu = !viewingCategoryMenu" class="category-dropdown relative cursor-pointer value-style">
-              <div class="flex">
-                <p v-if="updateFormData.categoryName">
-                  {{ updateFormData.categoryName }}
-                </p>
-                <p v-else class="text-gray-400 ">
-                  None
-                </p>
-                <span class="ml-auto">
-                  <i class="transition-all transform fa-solid fa-caret-down" :class="viewingCategoryMenu ? '-rotate-180 ' : ''"></i>
-                </span>
-              </div>
-              
-              <Transition
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                enter-active-class="transition duration-200 transform"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-                leave-active-class="duration-200 transform transtion"
-              >
-                <div v-if="viewingCategoryMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
-                  <ul class="max-h-40 overflow-auto">
-                    <li @click="selectCategory()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                      None
-                    </li>
-
-                    <li
-                      v-for="category in categoriesListData"
-                      @click="selectCategory(category.id, category.categoryName)"
-                      class="p-2 hover:bg-gray-50 cursor-pointer"
-                    >
-                      {{ category.categoryName }}
-                    </li>
-                  </ul>
-                </div>
-              </Transition>
-            </div>
-          </div>
-          
-          <div class="flex flex-wrap w-full gap-x-4">
-            <div class="flex flex-col flex-1 min-w-[80px] h-[76px]">
-              <label for="update-cost" class="text-sm label-style-one">Cost:</label>
-              <input 
-                v-model="updateFormData.cost" 
-                id="update-cost" 
-                step="0.01" 
-                min="0" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.cost ? errors.cost[0] : '' }}
-              </p>
-            </div>
-
-            <div class="flex flex-col flex-1 min-w-[80px] h-[76px]">
-              <label for="update-price" class="text-sm label-style-one">Price:</label>
-              <input 
-                v-model="updateFormData.price" 
-                id="update-price" 
-                step="0.01" 
-                min="0" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.price ? errors.price[0] : '' }}
-              </p>
-            </div>
-
-            <div class="flex flex-col flex-1 min-w-[150px] h-[76px]">
-              <label class="text-sm label-style-one">Unit Measurement:</label>
-              <div @click="viewingUnitMenu = !viewingUnitMenu" class="unit-dropdown relative cursor-pointer value-style">
-                <div class="flex">
-                  <p v-if="updateFormData.unitName">
-                    {{ updateFormData.unitName }}
-                  </p>
-                  <p v-else class="text-gray-400 ">
-                    None
-                  </p>
-                  <span class="ml-auto">
-                    <i class="transition-all transform fa-solid fa-caret-down" :class="viewingUnitMenu ? '-rotate-180 ' : ''"></i>
-                  </span>
-                </div>
-
-                <Transition
-                  enter-from-class="opacity-0"
-                  enter-to-class="opacity-100"
-                  enter-active-class="transition duration-200 transform"
-                  leave-from-class="opacity-100"
-                  leave-to-class="opacity-0"
-                  leave-active-class="duration-200 transform transtion"
-                >
-                  <div v-if="viewingUnitMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
-                    <ul class="max-h-32 overflow-auto">
-                      <li @click="selectUnit()" class="p-2 hover:bg-gray-50 cursor-pointer">
-                        None
-                      </li>
-
-                      <li
-                        v-for="unit in unitsListData"
-                        @click="selectUnit(unit.id, unit.unitName)"
-                        class="p-2 hover:bg-gray-50 cursor-pointer"
-                      >
-                        {{ unit.unitName }}
-                      </li>
-                    </ul>
-                  </div>
-                </Transition>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap w-full mb-4 gap-x-4">
-            <div class="flex flex-col flex-1 min-w-[120px] h-[76px]">
-              <label for="update-sku" class="text-sm label-style-one">SKU:</label>
-              <input 
-                v-model="updateFormData.sku" 
-                id="update-sku" 
-                type="text" 
-                class="value-style"
-              >
-            </div>
-
-            <div class="flex flex-col flex-1 min-w-[120px] h-[76px]">
-              <label for="update-reorder" class="text-sm label-style-one">Reorder level:</label>
-              <input 
-                v-model="updateFormData.reorderLevel" 
-                id="update-reorder" 
-                type="number" 
-                class="value-style"
-              >
-              <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                {{ errors.reorderLevel ? errors.reorderLevel[0] : '' }}
-              </p>
-            </div>
-          </div>
+          <hr class="mb-6 mt-1">
           
           <div class="flex items-end justify-end w-full">
             <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
@@ -697,7 +537,7 @@
 
 <script setup>
 import { useAlertLoadingTransition, useMainContentTransition, useFormTransition } from '../composables/useTransition';
-import { onMounted, ref, computed, onBeforeUnmount } from 'vue';
+import { onMounted, ref, computed, onBeforeUnmount, watch } from 'vue';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
 import axiosClient from '../axios';
@@ -707,6 +547,9 @@ import Loading from '../components/alerts/Loading.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import TextInput from '../components/TextInput.vue';
+import SelectDropdown from '../components/SelectDropdown.vue';
+import TextArea from '../components/TextArea.vue';
 
 const { 
   showSuccessMsg, 
@@ -741,8 +584,6 @@ const currentItemId = ref(null)
 const searchValue = ref("")
 const loading = ref(false)
 const dataStatus = ref(null)
-const viewingCategoryMenu = ref(false)
-const viewingUnitMenu = ref(false)
 
 const categoriesListData = ref([])
 const unitsListData = ref([])
@@ -782,9 +623,7 @@ const addFormData = ref({
   price: null,
   cost: null,
   categoryId: null,
-  categoryName: null,
   unitId: null,
-  unitName: null,
   reorderLevel: null,
   sku: null
 })
@@ -796,9 +635,7 @@ const updateFormData = ref({
   cost: null,
   price: null,
   categoryId: null,
-  categoryName: null,
   unitId: null,
-  unitName: null,
   reorderLevel: null,
   sku: null
 })
@@ -959,52 +796,10 @@ function toggleMoreActions (id){
     currentItemId.value = id
   } 
 }
-
-function selectCategory(id, name){
-  if(id){
-    if(viewingAddForm.value){
-      addFormData.value.categoryId = id
-      addFormData.value.categoryName = name
-    }else if(viewingUpdateForm.value){
-      updateFormData.value.categoryId = id
-      updateFormData.value.categoryName = name
-    }
-  }else{
-    addFormData.value.categoryId = null
-    addFormData.value.categoryName = null
-    updateFormData.value.categoryId = null
-    updateFormData.value.categoryName = null
-  }
-}
-
-function selectUnit(id, name) {
-  if(id){
-    if(viewingAddForm.value){
-      addFormData.value.unitId = id
-      addFormData.value.unitName = name
-    }else if(viewingUpdateForm.value){
-      updateFormData.value.unitId = id
-      updateFormData.value.unitName = name
-    }
-  }else{
-    addFormData.value.unitId = null
-    addFormData.value.unitName = null
-    updateFormData.value.unitId = null
-    updateFormData.value.unitName = null
-  }
-}
  
 function handleClickOutside(e) {
   if (!e.target.closest(".btnActions")) {
     currentItemId.value = null
-  }
-
-  if(!e.target.closest('.category-dropdown')){
-    viewingCategoryMenu.value = false
-  }
-  
-  if(!e.target.closest('.unit-dropdown')){
-    viewingUnitMenu.value = false
   }
 }
 
@@ -1035,9 +830,6 @@ function clearInputsErrors(){
   updateFormData.value.unitName = null
   updateFormData.value.reorderLevel = null
   updateFormData.value.sku = null
-
-  viewingCategoryMenu.value = false
-  viewingUnitMenu.value = false
 }
 
 onMounted(() => {

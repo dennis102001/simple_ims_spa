@@ -8,35 +8,49 @@
         :leave-to-class="authFormTransition.leaveTo"
         :leave-active-class="authFormTransition.leaveActive"
     >
-        <div v-show="loginMounted" class="flex flex-col justify-center flex-1 min-w-[300px] min-h-full px-6 pt-4 pb-12 lg:px-8">
-            
-            <div class="flex flex-col items-center justify-center w-full max-w-sm mx-auto mt-8 mb-4 text-center">
-                <img src="/images/logo.png" alt="" class="rounded-full size-[90px]">
-                <h3 class="font-bold text-darkgray-sec">Inventory Management</h3>
-            </div>
+        <div v-show="loginMounted" class="flex flex-col justify-center flex-1 min-w-[300px] min-h-full px-6 pt-6 lg:pt-12 pb-12 lg:px-8">
 
-            <form @submit.prevent="submit" class="w-full max-w-sm p-6 mx-auto bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-                <h4 class="mb-8 font-bold text-center">Sign in to your account</h4>
+            <form @submit.prevent="submit" class="w-full max-w-md p-10 mx-auto bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-3xl">
+                <div class="flex flex-col items-center mb-8 text-center">
+                    <div class="w-20 h-20 mb-3 overflow-hidden bg-gradient-to-br from-indigo-50 to-gray-50 rounded-full shadow-sm">
+                        <img 
+                            src="/images/logo.png" 
+                            alt="Company Logo" 
+                            class="object-cover w-full h-full"
+                            loading="lazy"
+                        >
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-800">Inventory Management</h2>
+                    <p class="mt-1 text-sm text-gray-500">Sign in to access your dashboard</p>
+                </div>
 
-                <div class="flex flex-col w-full mb-4">
-                    <label for="email" class="label-style-one">Email</label>
+                <div class="flex flex-col w-full mb-4 relative ">
+                    <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input 
                         v-model="data.email" 
                         id="email" 
                         type="email" 
                         name="email" 
+                        placeholder="Email address"
                         autocomplete="email" 
-                        class="value-style"
+                        class="pl-12 pr-5 py-3 w-full block bg-white rounded-md
+                            text-base
+                            outline outline-1 -outline-offset-1 outline-gray-300  
+                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 "
                     >
                 </div>
 
-                <div class="flex flex-col w-full mb-4">
-                    <label for="password" class="label-style-one">Password</label>
+                <div class="flex flex-col w-full mb-4 relative ">
+                    <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input 
                         v-model="data.password" 
                         id="password" 
                         type="password" 
-                        class="value-style"
+                        placeholder="Password"
+                        class="pl-12 pr-5 py-3 w-full block bg-white rounded-md
+                            text-base
+                            outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 
+                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 "
                     >
                 </div>
 
@@ -44,8 +58,8 @@
                     Sign in
                 </button>
 
-                <div class="pt-4 mt-6 border-t border-gray-200">
-                    <p class="text-center text-sm text-gray-600 mb-4">
+                <div class="pt-6 mt-6 border-t border-gray-200">
+                    <p class="text-center text-sm text-darkgray-sec mb-6">
                         Try a demo account:
                     </p>
                     <div class="flex flex-col sm:flex-row gap-3 justify-center">
@@ -54,14 +68,16 @@
                             type="button"
                             class="button-demo-acc"
                         >
-                            Admin Account
+                            <i class="fa-solid fa-user-shield text-lg mr-2"></i>
+                            Admin
                         </button>
                         <button
                             @click="useDemoAccount('staff')"
                             type="button"
                             class="button-demo-acc"
                         >
-                            Staff Account
+                            <i class="fa-solid fa-user text-lg mr-2"></i>
+                            Staff
                         </button>
                     </div>
                 </div>

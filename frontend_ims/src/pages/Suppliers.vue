@@ -237,74 +237,60 @@
             @after-leave="changeContent('Suppliers List')"
         >
             <section v-show="viewingAddForm" class="w-full ">
-                <form @submit.prevent="submitAddForm" class="w-full max-w-sm p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-                    <h2 class="mb-10 text-2xl font-bold text-center">New Supplier</h2>
+                <form @submit.prevent="submitAddForm" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+                    <h3 class=" font-bold text-left">New Supplier</h3>
+                    <p class="mb-5 text-sm text-gray-500">Fill in the details to add a new supplier</p>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="add-name" class="label-style-one">Name:</label>
-                        <input 
-                            v-model="addFormData.name" 
-                            id="add-name" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.name ? errors.name[0] : '' }}
-                        </p>
+                    <hr class="mb-5">
+
+                    <div class="mb-5 flex items-center gap-2 text-lg">
+                        <i class="fas fa-building"></i>
+                        <span class="mr-2 font-medium">Supplier Details</span>
                     </div>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="add-phone" class="label-style-one">Phone:</label>
-                        <input 
+                    <TextInput
+                        v-model="addFormData.name" 
+                        id="add-name" 
+                        label="Name:"
+                        :message="errors.name ? errors.name[0] : ''"
+                        type="text"
+                    />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                        <TextInput
                             v-model="addFormData.phone" 
                             id="add-phone" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.phone ? errors.phone[0] : '' }}
-                        </p>
-                    </div>
+                            label="Phone:"
+                            :message="errors.phone ? errors.phone[0] : ''"
+                            type="text"
+                        />
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="add-contact" class="label-style-one">Contact Person:</label>
-                        <input 
+                        <TextInput
                             v-model="addFormData.contactPerson" 
                             id="add-contact" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.contactPerson ? errors.contactPerson[0] : '' }}
-                        </p>
+                            label="Contact Person:"
+                            :message="errors.contactPerson ? errors.contactPerson[0] : ''"
+                            type="text"
+                        />
                     </div>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="add-email" class="label-style-one">Email:</label>
-                        <input 
-                            v-model="addFormData.email" 
-                            id="add-email" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.email ? errors.email[0] : '' }}
-                        </p>
-                    </div>
+                    <TextInput
+                        v-model="addFormData.email" 
+                        id="add-email" 
+                        label="Email:"
+                        :message="errors.email ? errors.email[0] : ''"
+                        type="email"
+                    />
 
-                    <div class="flex flex-col w-full h-[76px] mb-4">
-                        <label for="add-address" class="label-style-one">Address:</label>
-                        <input 
-                            v-model="addFormData.address" 
-                            id="add-address" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.address ? errors.address[0] : '' }}
-                        </p>
-                    </div>
+                    <TextArea
+                        v-model="addFormData.address" 
+                        id="add-address" 
+                        label="Address:"
+                        :message="errors.address ? errors.address[0] : ''"
+                    />
 
+                    <hr class="mb-6 mt-1">
+                    
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
                             <ButtonYellow type="submit" width="full">
@@ -331,73 +317,59 @@
             @after-leave="changeContent('Suppliers List')"
         >
             <section v-show="viewingUpdateForm" class="w-full ">
-                <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-sm p-6 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-                    <h2 class="mb-10 text-2xl font-bold text-center">Update Supplier</h2>
+                <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-xl p-6 sm:p-8 mx-auto mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+                    <h3 class=" font-bold text-left">Update Supplier</h3>
+                    <p class="mb-5 text-sm text-gray-500">Update details of an existing supplier</p>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="update-name" class="label-style-one">Name:</label>
-                        <input 
-                            v-model="updateFormData.name" 
-                            id="update-name" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.name ? errors.name[0] : '' }}
-                        </p>
+                    <hr class="mb-5">
+
+                    <div class="mb-5 flex items-center gap-2 text-lg">
+                        <i class="fas fa-building"></i>
+                        <span class="mr-2 font-medium">Supplier Details</span>
                     </div>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="update-phone" class="label-style-one">Phone:</label>
-                        <input 
+                    <TextInput
+                        v-model="updateFormData.name" 
+                        id="update-name" 
+                        label="Name:"
+                        :message="errors.name ? errors.name[0] : ''"
+                        type="text"
+                    />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 w-full gap-x-4">
+                        <TextInput
                             v-model="updateFormData.phone" 
                             id="update-phone" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.phone ? errors.phone[0] : '' }}
-                        </p>
-                    </div>
+                            label="Phone:"
+                            :message="errors.phone ? errors.phone[0] : ''"
+                            type="text"
+                        />
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="update-contact" class="label-style-one">Contact Person:</label>
-                        <input 
+                        <TextInput
                             v-model="updateFormData.contactPerson" 
                             id="update-contact" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.contactPerson ? errors.contactPerson[0] : '' }}
-                        </p>
+                            label="Contact Person:"
+                            :message="errors.contactPerson ? errors.contactPerson[0] : ''"
+                            type="text"
+                        />
                     </div>
 
-                    <div class="flex flex-col w-full h-[76px]">
-                        <label for="update-email" class="label-style-one">Email:</label>
-                        <input 
-                            v-model="updateFormData.email" 
-                            id="update-email" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.email ? errors.email[0] : '' }}
-                        </p>
-                    </div>
+                    <TextInput
+                        v-model="updateFormData.email" 
+                        id="update-email" 
+                        label="Email:"
+                        :message="errors.email ? errors.email[0] : ''"
+                        type="email"
+                    />
+                    
+                    <TextArea
+                        v-model="updateFormData.address" 
+                        id="update-address" 
+                        label="Address:"
+                        :message="errors.address ? errors.address[0] : ''"
+                    />
 
-                    <div class="flex flex-col w-full h-[76px] mb-4">
-                        <label for="update-address" class="label-style-one">Address:</label>
-                        <input 
-                            v-model="updateFormData.address" 
-                            id="update-address" 
-                            type="text" 
-                            class="value-style"
-                        >
-                        <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                            {{ errors.address ? errors.address[0] : '' }}
-                        </p>
-                    </div>
+                    <hr class="mb-6 mt-1">
 
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
@@ -494,6 +466,8 @@ import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
+import TextInput from '../components/TextInput.vue';
+import TextArea from '../components/TextArea.vue';
 
 const { 
     showSuccessMsg, 

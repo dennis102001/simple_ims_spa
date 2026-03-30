@@ -63,213 +63,198 @@
     </div>
 
     <Modal :inUse="viewingUpdateColorModal">
-        <form @submit.prevent="submitUpdateColorForm()" class="w-full mb-4 max-w-sm bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-            <div class="flex flex-col size-full">
+        <form @submit.prevent="submitUpdateColorForm()" class="w-full max-w-sm mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
+            
+            <div class="px-6 py-2 rounded-t-xl border-b flex flex-row justify-between items-center text-warmyellow-pri bg-darkgray-pri">
+                <h5 class="font-semibold tracking-wide">
+                    <i class="fa-solid fa-droplet"></i>
+                    <span class="ml-2">{{ colorFormData.type }} Color</span>
+                </h5>
                 
-                <div class="px-6 pt-4 pb-2 rounded-t-xl border-b mb-6 flex flex-row justify-between items-center">
-                    <h4 class="font-semibold tracking-wide mb-1">
-                        {{ colorFormData.type }} Color
-                    </h4>
 
-                    <button 
-                        @click="closeColorUpdateModal" 
-                        class="ml-auto hover:bg-gray-50 rounded-full size-10 flex items-center justify-center cursor-pointer" 
-                        title="close"
-                        type="button"
-                    >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                <button 
+                    @click="closeColorUpdateModal" 
+                    class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
+                    title="close"
+                    type="button"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                <div class="flex flex-col w-full px-6 mb-6">
-                    <div class="label-style-one">Select color indicator</div>
-                    <div @click="viewingColorsMenu = !viewingColorsMenu" class="colors-dropdown relative cursor-pointer p-2 h-[42px] w-full block bg-gray-50 rounded-md text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ">
-                        <div class="flex items-center">
-                            <div v-if="colorFormData.color" class="flex gap-2 items-center capitalize">
-                                <div class="flex items-center">
-                                    <div class="size-6 block rounded-md" :class="colorClass[colorFormData.color.colorName]"></div>
-                                </div>
-                                {{ colorFormData.color.colorName }}
+            <div class="flex flex-col w-full px-6 p-6">
+                <div class="label-style-one">Select color indicator</div>
+                <div @click="viewingColorsMenu = !viewingColorsMenu" class="colors-dropdown relative cursor-pointer p-2 h-[42px] w-full block bg-gray-50 rounded-md text-base outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ">
+                    <div class="flex items-center">
+                        <div v-if="colorFormData.color" class="flex gap-2 items-center capitalize">
+                            <div class="flex items-center">
+                                <div class="size-6 block rounded-md" :class="colorClass[colorFormData.color.colorName]"></div>
                             </div>
-                            <div v-else class="text-gray-400 ml-2">
-                                select color
-                            </div>
-                            <div class="ml-auto">
-                                <i class="transition-all transform fa-solid fa-caret-down" :class="viewingColorsMenu ? '-rotate-180 ' : ''"></i>
-                            </div>
+                            {{ colorFormData.color.colorName }}
                         </div>
-
-                        <Transition
-                            enter-from-class="opacity-0"
-                            enter-to-class="opacity-100"
-                            enter-active-class="transition duration-200 transform"
-                            leave-from-class="opacity-100"
-                            leave-to-class="opacity-0"
-                            leave-active-class="duration-200 transform transtion"
-                        >
-                            <div v-if="viewingColorsMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-4 -translate-x-2 overflow-auto">
-                                <ul class="max-h-[200px] overflow-auto capitalize">
-                                    <li @click="colorFormData.color = null" class="p-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
-                                        <div class="text-gray-500 flex items-center justify-center bg-gray-100 size-8  rounded-md pt-[1px]">
-                                            <i class="fa-solid fa-ban"></i>
-                                        </div>
-
-                                        <span>
-                                            none
-                                        </span>
-                                    </li>
-                                    
-                                    <li
-                                        v-for="color in colorsListData"
-                                        @click="colorFormData.color = color"
-                                        class="p-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
-                                    >
-                                        <div class="size-8 block rounded-md" :class="colorClass[color.colorName]"></div>
-
-                                        <span>
-                                            {{ color.colorName }}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </Transition> 
+                        <div v-else class="text-gray-400 ml-2">
+                            select color
+                        </div>
+                        <div class="ml-auto">
+                            <i class="transition-all transform fa-solid fa-caret-down" :class="viewingColorsMenu ? '-rotate-180 ' : ''"></i>
+                        </div>
                     </div>
+
+                    <Transition
+                        enter-from-class="opacity-0"
+                        enter-to-class="opacity-100"
+                        enter-active-class="transition duration-200 transform"
+                        leave-from-class="opacity-100"
+                        leave-to-class="opacity-0"
+                        leave-active-class="duration-200 transform transtion"
+                    >
+                        <div v-if="viewingColorsMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-4 -translate-x-2 overflow-auto">
+                            <ul class="max-h-[200px] overflow-auto capitalize">
+                                <li @click="colorFormData.color = null" class="p-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
+                                    <div class="text-gray-500 flex items-center justify-center bg-gray-100 size-8  rounded-md pt-[1px]">
+                                        <i class="fa-solid fa-ban"></i>
+                                    </div>
+
+                                    <span>
+                                        none
+                                    </span>
+                                </li>
+                                
+                                <li
+                                    v-for="color in colorsListData"
+                                    @click="colorFormData.color = color"
+                                    class="p-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
+                                >
+                                    <div class="size-8 block rounded-md" :class="colorClass[color.colorName]"></div>
+
+                                    <span>
+                                        {{ color.colorName }}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </Transition> 
                 </div>
+            </div>
 
-                <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
-                    <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
-                        <ButtonYellow width="full" type="submit">
-                            Save
-                        </ButtonYellow>
+            <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
+                <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
+                    <ButtonYellow width="full" type="submit">
+                        Save
+                    </ButtonYellow>
 
-                        <ButtonWhite @click="closeColorUpdateModal" type="button" width="full">
-                            Cancel
-                        </ButtonWhite>
-                    </div>
+                    <ButtonWhite @click="closeColorUpdateModal" type="button" width="full">
+                        Cancel
+                    </ButtonWhite>
                 </div>
             </div>
         </form>
     </Modal>
     
     <Modal :inUse="viewingUpdateInfoModal" @close="closeUserUpdateModal">
-        <form @submit.prevent="submitUpdateInfoForm()" class="w-full mb-4 max-w-sm bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-            <div class="flex flex-col size-full">
+        <form @submit.prevent="submitUpdateInfoForm()" class="w-full max-w-sm mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
                 
-                <div class="px-6 pt-4 pb-2 rounded-t-xl border-b mb-6 flex flex-row justify-between items-center">
-                    <h4 class="font-semibold tracking-wide mb-1">Update Account</h4>
+            <div class="px-6 py-2 rounded-t-xl border-b flex flex-row justify-between items-center text-warmyellow-pri bg-darkgray-pri">
+                <h5 class="font-semibold tracking-wide">
+                    <i class="fas fa-user"></i>
+                    <span class="ml-2">Update Account</span>
+                </h5>
 
-                    <button 
-                        @click="closeUserUpdateModal" 
-                        class="ml-auto hover:bg-gray-50 rounded-full size-10 flex items-center justify-center cursor-pointer" 
-                        title="close"
-                        type="button"
-                    >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                <button 
+                    @click="closeUserUpdateModal" 
+                    class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
+                    title="close"
+                    type="button"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                <div class="flex flex-col w-full px-6">
-                    <label for="name" class="label-style-one">Full Name:</label>
-                    <input 
-                        v-model="updateInfoFormData.name" 
-                        id="name" 
-                        name="name" 
-                        type="text" 
-                        class="value-style"
-                    >
-                    <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                        {{ errors.name ? errors.name[0] : '' }}
-                    </p>
-                </div>
-                <div class="flex flex-col w-full px-6 mb-2">
-                    <label for="email" class="label-style-one">Email:</label>
-                    <input 
-                        v-model="updateInfoFormData.email" 
-                        id="email" 
-                        name="email" 
-                        type="text" 
-                        class="value-style"
-                    >
-                    <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                        {{ errors.email ? errors.email[0] : '' }}
-                    </p>
-                </div>
+            <div class="flex flex-col w-full px-6 pt-6 pb-4">
+                <TextInput
+                    v-model="updateInfoFormData.name" 
+                    id="name" 
+                    label="Full Name:"
+                    :message="errors.name ? errors.name[0] : ''"
+                    type="text" 
+                />
 
-                <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
-                    <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
-                        <ButtonYellow type="submit" width="full">
-                            Save
-                        </ButtonYellow>
+                <TextInput
+                    v-model="updateInfoFormData.email" 
+                    id="email" 
+                    label="Email:"
+                    :message="errors.email ? errors.email[0] : ''"
+                    type="email" 
+                />
+            </div>
 
-                        <ButtonWhite @click="closeUserUpdateModal" type="button" width="full">
-                            Cancel
-                        </ButtonWhite>
-                    </div>
+            <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
+                <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
+                    <ButtonYellow type="submit" width="full">
+                        Save
+                    </ButtonYellow>
+
+                    <ButtonWhite @click="closeUserUpdateModal" type="button" width="full">
+                        Cancel
+                    </ButtonWhite>
                 </div>
             </div>
         </form>
     </Modal>
 
     <Modal :inUse="viewingChangePassModal" @close="closeChangePassModal">
-        <div class="w-full mb-4 max-w-sm bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
-            <div class="flex flex-col size-full">
+        <div class="w-full max-w-sm mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
                 
-                <div class="px-6 pt-4 pb-2 rounded-t-xl border-b mb-6 flex flex-row justify-between items-center">
-                    <h4 class="font-semibold tracking-wide mb-1">Change Password</h4>
-                    
-                    <button 
-                        @click="closeChangePassModal" 
-                        class="ml-auto hover:bg-gray-50 rounded-full size-10 flex items-center justify-center cursor-pointer" 
-                        title="close"
+            <div class="px-6 py-2 rounded-t-xl border-b flex flex-row justify-between items-center text-warmyellow-pri bg-darkgray-pri">
+                <h5 class="font-semibold tracking-wide">
+                    <i class="fas fa-user"></i>
+                    <span class="ml-2">Change Password</span>
+                </h5>
+                
+                <button 
+                    @click="closeChangePassModal" 
+                    class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer"  
+                    title="close"
+                    type="button"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col w-full px-6 pt-6 pb-4">
+                <TextInput
+                    v-model="changePassFormData.password" 
+                    id="password" 
+                    label="New Password:"
+                    :message="errors.password ? errors.password[0] : ''"
+                    type="password" 
+                />
+
+                <TextInput
+                    v-model="changePassFormData.password_confirmation" 
+                    id="confirmation" 
+                    label="Confirm New Password:"
+                    type="password" 
+                />
+            </div>
+
+            <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
+                <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
+                    <ButtonYellow 
+                        @click="openConfirmModal('Confirm Change Password', 'You will be redirected to login page after confirmation', changePassFormData.id)" 
                         type="button"
+                        width="full"
                     >
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                        Save
+                    </ButtonYellow>
 
-                <div class="flex flex-col w-full px-6">
-                    <label for="password" class="label-style-one">New Password:</label>
-                    <input 
-                        v-model="changePassFormData.password" 
-                        id="password" 
-                        name="password" 
-                        type="text" 
-                        class="value-style"
+                    <ButtonWhite 
+                        @click="closeChangePassModal"
+                        type="button" 
+                        width="full" 
                     >
-                    <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                        {{ errors.password ? errors.password[0] : '' }}
-                    </p>
-                </div>
-
-                <div class="flex flex-col w-full px-6 mb-6">
-                    <label for="confirmation" class="label-style-one">Confirm New Password:</label>
-                    <input 
-                        v-model="changePassFormData.password_confirmation" 
-                        id="confirmation" 
-                        name="password_confirmation" 
-                        type="text" 
-                        class="value-style"
-                    >
-                </div>
-
-                <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
-                    <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
-                        <ButtonYellow 
-                            @click="openConfirmModal('Confirm Change Password', 'You will be redirected to login page after confirmation', changePassFormData.id)" 
-                            type="button"
-                            width="full"
-                        >
-                            Save
-                        </ButtonYellow>
-
-                        <ButtonWhite 
-                            @click="closeChangePassModal"
-                            type="button" 
-                            width="full" 
-                        >
-                            Cancel
-                        </ButtonWhite>
-                    </div>
+                        Cancel
+                    </ButtonWhite>
                 </div>
             </div>
         </div>
@@ -329,6 +314,7 @@
             :inUse="viewingConfirmModal" 
             @cancel="viewingConfirmModal = !viewingConfirmModal"
             @yes="submitChangePassForm"
+            btnRedText="Confirm"
         >
             <template v-slot:title>
                 {{ confirmTitle }}
@@ -357,6 +343,7 @@ import { useAlertLoadingTransition, useMainContentTransition } from '../composab
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
 import axiosClient from '../axios';
+import TextInput from '../components/TextInput.vue';
 
 const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
@@ -512,7 +499,7 @@ async function submitUpdateInfoForm(){
     loading.value = true
 
     try {
-        const response = await axiosClient.put('/update-account-info', updateInfoFormData.value)
+        const response = await axiosClient.put('/api/update-account-info', updateInfoFormData.value)
         
         showSuccessMsg("Success", "Account updated successfully")      
 
@@ -538,7 +525,7 @@ async function submitChangePassForm(){
     loading.value = true
 
     try {
-        const response = await axiosClient.put('/update-account-pass', changePassFormData.value)
+        const response = await axiosClient.put('/api/update-account-pass', changePassFormData.value)
 
         showSuccessMsg("Success", "Redirecting to login page...")      
 

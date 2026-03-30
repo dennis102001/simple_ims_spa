@@ -34,7 +34,7 @@
               </div>
               <div class="grid w-full grid-cols-2 gap-4 px-6 pt-2 pb-6 rounded-b-xl">
                 <ButtonRed @click="$emit('yes')" width="full">
-                  Delete
+                  {{ btnRedText }}
                 </ButtonRed>
 
                 <ButtonWhite @click="$emit('cancel')" width="full">
@@ -57,7 +57,14 @@ import ButtonWhite from './buttons/ButtonWhite.vue';
 const popUpTransition = usePopUpTransition()
 
 defineProps({
-  inUse: {type: Boolean, required: true}
+  inUse: {
+    type: Boolean, 
+    required: true
+  },
+  btnRedText: {
+    type: String,
+    default: "Delete"
+  }
 })
 
 </script>

@@ -111,11 +111,14 @@
     <Modal :inUse="viewingAddCategoryModal" @close="closeAddUpModal">
         <form @submit.prevent="submitAddForm" class="w-full max-w-sm mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
             
-            <div class="px-6 pt-4 pb-2 rounded-t-xl border-b mb-4 flex flex-row justify-between items-center">
-                <h4 class="font-semibold tracking-wide mb-1">New Category</h4>
+            <div class="px-6 py-2 rounded-t-xl border-b flex flex-row justify-between items-center text-warmyellow-pri bg-darkgray-pri">
+                <h5 class="font-semibold tracking-wide">
+                    <i class="fas fa-tag"></i>
+                    <span class="ml-2">New Category</span>
+                </h5>
                 <button 
                     @click="closeAddUpModal" 
-                    class="ml-auto hover:bg-gray-50 rounded-full size-10 flex items-center justify-center cursor-pointer" 
+                    class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
                     title="close"
                     type="button"
                 >
@@ -123,32 +126,23 @@
                 </button>
             </div>
 
-            <div class="flex flex-col w-full h-[76px] px-6">
-                <label for="add-category" class="label-style-one">Category Name:</label>
-                <input 
-                    v-model="addFormData.categoryName" 
+            <div class="flex flex-col w-full px-6 pt-6 pb-4">
+                <TextInput
+                    v-model="addFormData.categoryName"
                     id="add-category" 
+                    label="Category Name:"
+                    :message="errors.categoryName ? errors.categoryName[0] : ''"
                     type="text" 
-                    class="value-style"
-                >
-                <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                    {{ errors.categoryName ? errors.categoryName[0] : '' }}
-                </p>
+                />
+
+                <TextArea
+                    v-model="addFormData.description" 
+                    id="add-description" 
+                    label="Description:"
+                    :message="errors.description ? errors.description[0] : ''"
+                />
             </div>
 
-            <div class="flex flex-col w-full h-[76px] px-6 mb-4">
-                <label for="add-description" class="label-style-one">Description:</label>
-                <input 
-                    v-model="addFormData.description" 
-                    id="add-description" name="description" 
-                    type="text" 
-                    class="value-style"
-                >
-                <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                    {{ errors.description ? errors.description[0] : '' }}
-                </p>
-            </div>
-            
             <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
                 <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
                     <ButtonYellow type="submit" width="full">
@@ -166,11 +160,14 @@
     <Modal :inUse="viewingUpdateCategoryModal" @close="closeAddUpModal">
         <form @submit.prevent="submitUpdateForm(updateFormData.id)" class="w-full max-w-sm mb-4 bg-white shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-xl">
             
-            <div class="px-6 pt-4 pb-2 rounded-t-xl border-b mb-4 flex flex-row justify-between items-center">
-                <h4 class="font-semibold tracking-wide mb-1">Update Category</h4>
+            <div class="px-6 py-2 rounded-t-xl border-b flex flex-row justify-between items-center text-warmyellow-pri bg-darkgray-pri">
+                <h5 class="font-semibold tracking-wide">
+                    <i class="fas fa-tag"></i>
+                    <span class="ml-2">Update Category</span>
+                </h5>
                 <button 
                     @click="closeAddUpModal" 
-                    class="ml-auto hover:bg-gray-50 rounded-full size-10 flex items-center justify-center cursor-pointer" 
+                    class="ml-auto hover:bg-darkgray-sec rounded-full size-10 flex items-center justify-center cursor-pointer" 
                     title="close"
                     type="button"
                 >
@@ -178,30 +175,21 @@
                 </button>
             </div>
 
-            <div class="flex flex-col w-full h-[76px] px-6">
-                <label for="update-category" class="label-style-one">Category Name:</label>
-                <input 
-                    v-model="updateFormData.categoryName" 
+            <div class="flex flex-col w-full px-6 pt-6 pb-4">
+                <TextInput
+                    v-model="updateFormData.categoryName"
                     id="update-category" 
+                    label="Category Name:"
+                    :message="errors.categoryName ? errors.categoryName[0] : ''"
                     type="text" 
-                    class="value-style"
-                >
-                <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                    {{ errors.categoryName ? errors.categoryName[0] : '' }}
-                </p>
-            </div>
+                />
 
-            <div class="flex flex-col w-full h-[76px] px-6 mb-4">
-                <label for="update-description" class="label-style-one">Description:</label>
-                <input 
+                <TextArea
                     v-model="updateFormData.description" 
                     id="update-description" 
-                    type="text" 
-                    class="value-style"
-                >
-                <p class="block ml-2 text-sm text-red-500 h-[20px]">
-                    {{ errors.description ? errors.description[0] : '' }}
-                </p>
+                    label="Description:"
+                    :message="errors.description ? errors.description[0] : ''"
+                />
             </div>
 
             <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
@@ -294,6 +282,8 @@ import ErrorBanner from '../../components/alerts/ErrorBanner.vue';
 import Loading from '../../components/alerts/Loading.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import Modal from '../../components/Modal.vue';
+import TextInput from '../../components/TextInput.vue';
+import TextArea from '../../components/TextArea.vue';
 
 const alertLoadingTransition = useAlertLoadingTransition()
 

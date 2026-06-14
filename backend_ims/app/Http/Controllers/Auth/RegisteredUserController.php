@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
     {
         $validation = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $request->id],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'role' => ['required', 'string'],
             'password' => ['required', 'confirmed', Password::defaults()]
         ]);
@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => Hash::make($request->string('password'))
+            'password' => Hash::make($request->password)
         ]);
 
         return response()->noContent();

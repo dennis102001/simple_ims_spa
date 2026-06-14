@@ -111,7 +111,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
         $revenue = [
             'start' => $request->start, 
             'end' => $request->end, 
-            'totalRevenue' => $revenueThisMonth->total_revenue
+            'totalRevenue' => number_format($revenueThisMonth->total_revenue, 2)
         ];
 
         return response()->json([

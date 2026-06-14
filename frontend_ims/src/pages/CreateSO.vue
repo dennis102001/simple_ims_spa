@@ -14,7 +14,7 @@
             <section v-show="viewingItemsList" class=" h-full flex flex-col max-h-[1200px] min-h-[800px] lg:min-h-[600px] w-full max-w-[1300px] mx-auto ">
                 
                 <div class="flex flex-col items-start px-2 mt-2 mb-4">
-                    <h3 class="font-semibold tracking-wider">Create Sale Order</h3>
+                    <h3 class="font-semibold tracking-wider">Create Sales Order</h3>
                     <p class="text-sm ">Select one or more items then proceed</p>
                 </div>
                 

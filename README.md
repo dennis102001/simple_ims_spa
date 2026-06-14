@@ -12,7 +12,9 @@ This Inventory Management System runs in browsers. User accounts are designed fo
 4. Install PHP dependencies
     - Change directory to backend folder
     - Run: `composer install`
-5. Copy `.env.example` to `.env` and edit database credentials
+5. Environment Setup
+    - Backend: Copy `backend/.env.example` to `backend/.env`
+    - Frontend: Copy `frontend/.env.example` to `frontend/.env`
 6. Generate application key: `php artisan key:generate`
 7. Run database migration `php artisan migrate` (make sure xampp server (or anything alike) is running)
 8. Run seeders: `php artisan db:seed` (required for ColorSeeder and other default data)

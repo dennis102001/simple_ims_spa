@@ -1,7 +1,7 @@
 # Inventory Management System
 
 ## App Description
-This Inventory Management System runs in browsers. User accounts are designed for company users only. Only admins can create accounts for system users. The dashboard displays data such as monthly revenue, inventory status, top selling items, stock movement, and recent transactions. Users can manage purchase orders, sales orders, items, suppliers, customers, and item attributes. Admins can manage everything, including all user accounts. The system also has settings for changing low/no stock level colors and updating user accounts. The tech stack used is Laravel, Vue.js, and Tailwind CSS.
+This Inventory Management System runs in a browser. User accounts are designed for company users only. Only admins can create accounts for system users. The dashboard displays data such as monthly revenue, inventory status, top-selling items, stock movement, and recent transactions. Users can manage purchase orders, sales orders, items, suppliers, customers, and item attributes. Admins can manage everything, including all user accounts. The system also has settings for customizing low-stock and out-of-stock color indicators and updating user accounts. The tech stack used is Laravel, Vue.js, and Tailwind CSS.
 
 ## Installation
 1. Clone the repository or download the zip file and extract it
@@ -21,6 +21,6 @@ This Inventory Management System runs in browsers. User accounts are designed fo
 
 ## Usage
 
-Run these three commands in separate terminals
-- `npm run dev`
-- `php artisan serve`
+Run these two commands in separate terminals:
+- Frontend: `npm run dev`
+- Backend: `php artisan serve`

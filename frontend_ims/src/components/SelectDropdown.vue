@@ -83,8 +83,6 @@ function select(item){
 function handleClickOutside(e) {
     if (root.value && !root.value.contains(e.target)) {
         open.value = false
-        console.log('outside');
-        
     }
 }
 

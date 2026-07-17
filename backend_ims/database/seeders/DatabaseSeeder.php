@@ -17,26 +17,25 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Admin A. Admin',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-            'password' => Hash::make('aaaaaaaa'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin A. Admin',
+                'role' => 'admin',
+                'password' => Hash::make('aaaaaaaa'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Staff S. Staff',
-            'email' => 'staff@example.com',
-            'role' => 'user',
-            'password' => Hash::make('aaaaaaaa'),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'staff@example.com'],
+            [
+                'name' => 'Staff S. Staff',
+                'role' => 'user',
+                'password' => Hash::make('aaaaaaaa'),
+            ]
+        );
 
         $this->call([
-            CategorySeeder::class,
-            UnitMeasurementSeeder::class,
-            ItemSeeder::class,
-            CustomerSeeder::class,
-            SupplierSeeder::class,
             ColorSeeder::class
         ]);
     }

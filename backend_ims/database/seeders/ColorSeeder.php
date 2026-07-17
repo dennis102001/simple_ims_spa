@@ -13,8 +13,8 @@ class ColorSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('colors')->insert([
-            ['color_name' => 'red', 'isSelectedForNo' => true, 'isSelectedForLow' => false], 
+        $colors = [
+            ['color_name' => 'red', 'isSelectedForNo' => true, 'isSelectedForLow' => false],
             ['color_name' => 'orange', 'isSelectedForNo' => false, 'isSelectedForLow' => true],
             ['color_name' => 'yellow', 'isSelectedForNo' => false, 'isSelectedForLow' => false],
             ['color_name' => 'green', 'isSelectedForNo' => false, 'isSelectedForLow' => false],
@@ -22,6 +22,13 @@ class ColorSeeder extends Seeder
             ['color_name' => 'violet', 'isSelectedForNo' => false, 'isSelectedForLow' => false],
             ['color_name' => 'pink', 'isSelectedForNo' => false, 'isSelectedForLow' => false],
             ['color_name' => 'gray', 'isSelectedForNo' => false, 'isSelectedForLow' => false],
-        ]);
+        ];
+
+        foreach ($colors as $color) {
+            DB::table('colors')->updateOrInsert(
+                ['color_name' => $color['color_name']],
+                $color
+            );
+        }
     }
 }

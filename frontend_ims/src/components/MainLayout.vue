@@ -139,7 +139,7 @@
                 </button>
 
                 <button 
-                    @click="logout" 
+                    @click="viewingLogoutModal = true" 
                     title="Logout" 
                     type="button" 
                     class="px-4 text-2xl rounded-md hover:bg-gray-50"
@@ -173,6 +173,21 @@
                 </template>
             </ErrorBanner>
         </Transition>
+
+        <ConfirmModal 
+            :inUse="viewingLogoutModal" 
+            btnRedText="Confirm" 
+            @cancel="viewingLogoutModal = !viewingLogoutModal"
+            @yes="logout"
+        >
+            <template v-slot:title>
+                {{ confirmLogout.title }}
+            </template>
+
+            <template v-slot:body>
+                {{ confirmLogout.body }}
+            </template>
+        </ConfirmModal>
     </teleport>
     
 </template>
@@ -186,6 +201,7 @@ import ErrorBanner from './alerts/ErrorBanner.vue';
 import axiosClient from '../axios';
 import router from '../router';
 import useUserStore from '../store/user';
+import ConfirmModal from './ConfirmModal.vue';
 
 const route = useRoute()
 const isSidebarVisible = ref(false)
@@ -206,6 +222,13 @@ const {
     successMsgBody,
     errorMsgBody
 } = useAlertMessages()
+
+const confirmLogout = ref({
+    title: "Confirm Logout",
+    body: "Are you sure you want to logout?"
+})
+
+const viewingLogoutModal = ref(false)
 
 const alertLoadingTransition = useAlertLoadingTransition()
 

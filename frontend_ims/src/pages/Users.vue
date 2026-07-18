@@ -173,7 +173,7 @@
                         <div v-if="currentUserId == user.id" class="absolute flex flex-col items-center justify-center w-full h-full gap-1 rounded-lg bg-black/60">
                           <div class="grid w-3/5 grid-cols-1 gap-1 btnActions min-w-[150px]">
                             <button 
-                              @click="showUpdateForm(user.id, user.name, user.email)" 
+                              @click="showUpdateForm(user)" 
                               class="w-full px-4 py-2 bg-white rounded-lg hover:shadow-[0_0_6px] hover:shadow-white/70" 
                               type="button"
                             >

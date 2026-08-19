@@ -1446,17 +1446,6 @@
             :leave-to-class="alertLoadingTransition.leaveTo"
             :leave-active-class="alertLoadingTransition.leaveActive"
         >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
             <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
                 <template v-slot:title>
                     {{ successMsgTitle }} 
@@ -1497,7 +1486,6 @@ import { useFormatDate } from '../composables/useFormatDate';
 import axiosClient from '../axios';
 import useUserStore from '../store/user';
 import Modal from '../components/Modal.vue';
-import Loading from '../components/alerts/Loading.vue';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
@@ -1507,6 +1495,7 @@ import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextDisplay from '../components/TextDisplay.vue';
 import SelectDropdown from '../components/SelectDropdown.vue';
 import TextArea from '../components/TextArea.vue';
+import { useLoading } from '../composables/useLoading';
 
 const { 
     showSuccessMsg, 
@@ -1520,6 +1509,7 @@ const {
     errorMsgBody 
 } = useAlertMessages()
 
+const { showLoading, closeLoading } = useLoading()
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
@@ -1541,7 +1531,6 @@ const pageContent = ref(null)
 const searchSaleValue = ref("")
 const searchItemValue = ref("")
 const currentSaleId = ref(null)
-const loading = ref(false)
 const selectedItemIds = ref([])
 const customersListData = ref([])
 
@@ -1714,7 +1703,7 @@ async function getItemsListData() {
 }
 
 async function updateSale() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-sale', updateFormData.value)
@@ -1727,12 +1716,12 @@ async function updateSale() {
         showErrorMsg(error.response?.data?.message || 'Failed to update sale order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function paySale() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/pay-sale', payFormData.value)
@@ -1745,12 +1734,12 @@ async function paySale() {
         showErrorMsg(error.response?.data?.message || 'Failed to pay sale order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function returnSale(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/return-sale', returnFormData.value)
@@ -1763,12 +1752,12 @@ async function returnSale(){
         showErrorMsg(error.response?.data?.message || 'Failed to return sale order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function cancelSale() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/cancel-sale', cancelFormData.value)    
@@ -1781,12 +1770,12 @@ async function cancelSale() {
         showErrorMsg(error.response?.data?.message || 'Failed to cancel sale order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showUpdateForm(sale) {
-    loading.value = true
+    showLoading()
     updateFormData.value.hdrId = sale.hdrId
     updateFormData.value.soNumber = sale.soNumber
     updateFormData.value.createdDate = sale.createdDate
@@ -1812,12 +1801,12 @@ async function showUpdateForm(sale) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch sale order details')   
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showPayForm(sale) {
-    loading.value = true
+    showLoading()
     payFormData.value.hdrId = sale.hdrId
     payFormData.value.soNumber = sale.soNumber
     payFormData.value.createdDate = sale.createdDate
@@ -1839,12 +1828,12 @@ async function showPayForm(sale) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch sale order details')  
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showReturnForm(sale) {
-    loading.value = true
+    showLoading()
     returnFormData.value.hdrId = sale.hdrId
     returnFormData.value.soNumber = sale.soNumber
     returnFormData.value.createdDate = sale.createdDate
@@ -1868,12 +1857,12 @@ async function showReturnForm(sale) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch sale order details')  
     }
     finally{
-        loading.value = false
+        closeLoading()
     } 
 }
 
 async function showCancelForm(sale) {
-    loading.value = true
+    showLoading()
     cancelFormData.value.hdrId = sale.hdrId
     cancelFormData.value.soNumber = sale.soNumber
     cancelFormData.value.remarks = sale.remarks
@@ -1895,12 +1884,12 @@ async function showCancelForm(sale) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch sale order details')  
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showSaleDetails(sale) {
-    loading.value = true
+    showLoading()
     saleDetails.value.hdrId = sale.hdrId
     saleDetails.value.soNumber = sale.soNumber
     saleDetails.value.createdDate = sale.createdDate
@@ -1924,7 +1913,7 @@ async function showSaleDetails(sale) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch sale order details')   
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

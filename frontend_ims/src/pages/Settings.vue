@@ -262,17 +262,6 @@
 
     <teleport to="body">
         <Transition
-        :enter-from-class="alertLoadingTransition.enterFrom"
-        :enter-to-class="alertLoadingTransition.enterTo"
-        :enter-active-class="alertLoadingTransition.enterActive"
-        :leave-from-class="alertLoadingTransition.leaveFrom"
-        :leave-to-class="alertLoadingTransition.leaveTo"
-        :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-
-        <Transition
             :enter-from-class="alertLoadingTransition.enterFrom"
             :enter-to-class="alertLoadingTransition.enterTo"
             :enter-active-class="alertLoadingTransition.enterActive"
@@ -335,13 +324,13 @@ import ConfirmModal from '../components/ConfirmModal.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
-import Loading from '../components/alerts/Loading.vue';
 import Modal from '../components/Modal.vue';
 import useUserStore from '../store/user';
 
 import { useAlertLoadingTransition, useMainContentTransition } from '../composables/useTransition';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
+import { useLoading } from '../composables/useLoading';
 import axiosClient from '../axios';
 import TextInput from '../components/TextInput.vue';
 
@@ -349,7 +338,7 @@ const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-const loading = ref(false)
+const { showLoading, closeLoading } = useLoading()
 
 const viewingSettings = ref(false)
 const viewingUpdateColorModal = ref(false)
@@ -428,7 +417,7 @@ function showColorUpdateModal(type){
 }
 
 async function getColorsListData() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.get('/api/colors-list')
@@ -451,12 +440,12 @@ async function getColorsListData() {
         showErrorMsg(error.response?.data?.message || 'Failed load colors list data')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function submitUpdateColorForm() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/set-color', colorFormData.value)
@@ -472,7 +461,7 @@ async function submitUpdateColorForm() {
         showErrorMsg(error.response?.data?.message || 'Failed to update color')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
@@ -496,7 +485,7 @@ function showChangePassModal(){
 }
 
 async function submitUpdateInfoForm(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-account-info', updateInfoFormData.value)
@@ -517,12 +506,12 @@ async function submitUpdateInfoForm(){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function submitChangePassForm(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-account-pass', changePassFormData.value)
@@ -542,7 +531,7 @@ async function submitChangePassForm(){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
         viewingConfirmModal.value = false
     }
 }

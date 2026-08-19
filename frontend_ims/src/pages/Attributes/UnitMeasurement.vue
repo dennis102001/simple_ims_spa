@@ -209,18 +209,7 @@
         </form>
     </Modal>
 
-    <teleport to="body">
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-        
+    <teleport to="body">        
         <Transition
             :enter-from-class="alertLoadingTransition.enterFrom"
             :enter-to-class="alertLoadingTransition.enterTo"
@@ -283,13 +272,14 @@ import ButtonYellow from '../../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../../components/buttons/ButtonWhite.vue';
 import SuccessBanner from '../../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../../components/alerts/ErrorBanner.vue';
-import Loading from '../../components/alerts/Loading.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import Modal from '../../components/Modal.vue';
 import TextInput from '../../components/TextInput.vue';
 import TextArea from '../../components/TextArea.vue';
+import { useLoading } from '../../composables/useLoading.js';
 
 const alertLoadingTransition = useAlertLoadingTransition()
+const { showLoading, closeLoading } = useLoading()
 
 const { 
     showSuccessMsg, 
@@ -312,7 +302,6 @@ const {
 } = useConfirmModal()
 
 const dataStatus = ref(null)
-const loading = ref(false)
 const searchValue = ref('')
 const currentUnitId = ref(null)
 
@@ -365,7 +354,7 @@ async function getUnitsListData() {
 }
 
 async function submitAddForm(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-unit', addFormData.value)
@@ -379,12 +368,12 @@ async function submitAddForm(){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function submitUpdateForm(id){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-unit/${id}`, updateFormData.value)
@@ -398,12 +387,12 @@ async function submitUpdateForm(id){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function deleteUnit(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-unit/${confirmId.value}`)
@@ -416,7 +405,7 @@ async function deleteUnit(){
         showErrorMsg(error.response?.data?.message || 'Failed to delete unit measurement')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

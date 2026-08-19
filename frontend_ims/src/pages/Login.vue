@@ -86,16 +86,6 @@
     </Transition>
 
     <teleport to="body">
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <Loading v-if="loading"></Loading>
-        </Transition>
 
         <Transition
             :enter-from-class="alertLoadingTransition.enterFrom"
@@ -146,11 +136,11 @@ import router from '../router.js';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
-import Loading from '../components/alerts/Loading.vue';
-import ButtonDark from '../components/buttons/ButtonDark.vue';
+import { useLoading } from '../composables/useLoading.js';
 
 const alertLoadingTransition = useAlertLoadingTransition()
 const authFormTransition = useAuthFormTransition()
+const { showLoading, closeLoading } = useLoading()
 
 const { 
     showSuccessMsg, 
@@ -164,7 +154,6 @@ const {
     errorMsgBody 
 } = useAlertMessages()
 
-const loading = ref(false)
 const loginMounted = ref(false)
 
 const data = ref({
@@ -173,7 +162,7 @@ const data = ref({
 })
 
 async function submit() {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.post('/api/login', data.value)
@@ -192,7 +181,7 @@ async function submit() {
         }
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

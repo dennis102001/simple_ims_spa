@@ -401,17 +401,6 @@
             :leave-to-class="alertLoadingTransition.leaveTo"
             :leave-active-class="alertLoadingTransition.leaveActive"
         >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
             <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
                 <template v-slot:title>
                     {{ successMsgTitle }} 
@@ -450,13 +439,13 @@ import axiosClient from '../axios';
 import useUserStore from '../store/user';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
-import Loading from '../components/alerts/Loading.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import SelectDropdown from '../components/SelectDropdown.vue';
 import TextArea from '../components/TextArea.vue';
 import TextInput from '../components/TextInput.vue';
+import { useLoading } from '../composables/useLoading';
 
 const { 
     showSuccessMsg, 
@@ -485,7 +474,7 @@ const pageContent = ref(null)
 const searchValue = ref("")
 const selectedIds = ref([])
 const dataStatus = ref(null)
-const loading = ref(false)
+const { showLoading, closeLoading } = useLoading()
 
 const itemsListData = ref([])
 const customersListData = ref([])
@@ -569,7 +558,7 @@ async function getItemsListData() {
 }
 
 async function submitSO(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.post('/api/save-sales', formData.value)
@@ -582,7 +571,7 @@ async function submitSO(){
         showErrorMsg(error.response?.data?.message || 'Saving failed')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

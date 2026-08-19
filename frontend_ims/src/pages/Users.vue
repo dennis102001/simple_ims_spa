@@ -452,17 +452,6 @@
       :leave-to-class="alertLoadingTransition.leaveTo"
       :leave-active-class="alertLoadingTransition.leaveActive"
     >
-      <Loading v-if="loading"></Loading>
-    </Transition>
-
-    <Transition
-      :enter-from-class="alertLoadingTransition.enterFrom"
-      :enter-to-class="alertLoadingTransition.enterTo"
-      :enter-active-class="alertLoadingTransition.enterActive"
-      :leave-from-class="alertLoadingTransition.leaveFrom"
-      :leave-to-class="alertLoadingTransition.leaveTo"
-      :leave-active-class="alertLoadingTransition.leaveActive"
-    >
       <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
         <template v-slot:title>
           {{ successMsgTitle }} 
@@ -512,13 +501,13 @@ import { onMounted, ref, computed, onBeforeUnmount } from 'vue';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
 import axiosClient from '../axios';
-import Loading from '../components/alerts/Loading.vue';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextInput from '../components/TextInput.vue';
+import { useLoading } from '../composables/useLoading';
 
 const {
   showSuccessMsg, 
@@ -540,6 +529,8 @@ const {
   openConfirmModal 
 } = useConfirmModal()
 
+const { showLoading, closeLoading } = useLoading()
+
 const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
@@ -549,8 +540,6 @@ const viewingAddForm = ref(null)
 const viewingUpdateForm = ref(null)
 const pageContent = ref(null)
 const viewingRolesMenu = ref(false)
-
-const loading = ref(false)
 const usersListData = ref([])
 const currentUserId = ref(null)
 const searchValue = ref("")
@@ -607,7 +596,7 @@ async function getUsersListData() {
 }
 
 async function submitUpdateForm(id){
-  loading.value = true
+  showLoading()
 
   try {
     const response = await axiosClient.put(`/api/update-user/${id}`, updateFormData.value)
@@ -621,12 +610,12 @@ async function submitUpdateForm(id){
     errors.value = error.response?.data?.errors || {}
   }
   finally{
-    loading.value = false
+    closeLoading()
   }
 }
 
 async function submitAddForm(){
-  loading.value = true
+  showLoading()
 
   try {
     const response = await axiosClient.post('/api/add-user', addFormData.value)
@@ -640,12 +629,12 @@ async function submitAddForm(){
     errors.value = error.response?.data?.errors || {}
   }
   finally{
-    loading.value = false
+    closeLoading()
   }
 }
 
 async function deleteUser(){
-  loading.value = true
+  showLoading()
 
   try {
     const response = await axiosClient.delete(`/api/delete-user/${confirmId.value}`)
@@ -658,7 +647,7 @@ async function deleteUser(){
     showErrorMsg(error.response?.data?.message || 'Failed to delete user')
   }
   finally{
-    loading.value = false
+    closeLoading()
   }
 }
 

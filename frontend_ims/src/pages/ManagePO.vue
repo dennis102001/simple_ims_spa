@@ -1773,17 +1773,6 @@
             :leave-to-class="alertLoadingTransition.leaveTo"
             :leave-active-class="alertLoadingTransition.leaveActive"
         >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
             <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
                 <template v-slot:title>
                     {{ successMsgTitle }}
@@ -1824,7 +1813,6 @@ import { useFormatDate } from '../composables/useFormatDate';
 import axiosClient from '../axios';
 import useUserStore from '../store/user';
 import Modal from '../components/Modal.vue';
-import Loading from '../components/alerts/Loading.vue';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
@@ -1835,6 +1823,7 @@ import TextInput from '../components/TextInput.vue';
 import SelectDropdown from '../components/SelectDropdown.vue';
 import TextArea from '../components/TextArea.vue';
 import TextDisplay from '../components/TextDisplay.vue';
+import { useLoading } from '../composables/useLoading';
 
 const { 
     showSuccessMsg, 
@@ -1847,6 +1836,8 @@ const {
     successMsgBody, 
     errorMsgBody 
 } = useAlertMessages()
+
+const { showLoading, closeLoading } = useLoading()
 
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
@@ -1870,7 +1861,6 @@ const pageContent = ref(null)
 const searchPOValue = ref("")
 const searchItemValue = ref("")
 const currentPOId = ref(null)
-const loading = ref(false)
 
 const selectedItemIds = ref([])
 const suppliersListData = ref([])
@@ -2024,7 +2014,7 @@ async function getPOsListData() {
 }
 
 async function receivePO(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/receive-po', receivingFormData.value)
@@ -2037,12 +2027,12 @@ async function receivePO(){
         showErrorMsg(error.response?.data?.message || 'Failed to receive purchase order')  
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function updateReceivedPO(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-received-po', receivedUpdateFormData.value)
@@ -2055,12 +2045,12 @@ async function updateReceivedPO(){
         showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')  
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function updatePendingPO () {
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-pending-po', pendingUpdateFormData.value)
@@ -2073,12 +2063,12 @@ async function updatePendingPO () {
         showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function cancelPO(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/cancel-po', cancelFormData.value)
@@ -2091,12 +2081,12 @@ async function cancelPO(){
         showErrorMsg(error.response?.data?.message || 'Failed to cancel purchase order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function returnPO(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put('/api/return-po', returnFormData.value)
@@ -2109,7 +2099,7 @@ async function returnPO(){
         showErrorMsg(error.response?.data?.message || 'Failed to return purchase order')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
@@ -2148,7 +2138,7 @@ async function getItemsListData() {
 }
 
 async function showReceivingForm(po) {
-    loading.value = true
+    showLoading()
     receivingFormData.value.hdrId = po.hdrId
     receivingFormData.value.poNumber = po.poNumber
     receivingFormData.value.orderDate = po.orderDate
@@ -2174,12 +2164,12 @@ async function showReceivingForm(po) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showReceivedUpdateForm(po) {
-    loading.value = true
+    showLoading()
     receivedUpdateFormData.value.hdrId = po.hdrId
     receivedUpdateFormData.value.poNumber = po.poNumber
     receivedUpdateFormData.value.orderDate = po.orderDate
@@ -2203,12 +2193,12 @@ async function showReceivedUpdateForm(po) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showPendingUpdateForm(po) {
-    loading.value = true
+    showLoading()
     pendingUpdateFormData.value.hdrId = po.hdrId
     pendingUpdateFormData.value.poNumber = po.poNumber
     pendingUpdateFormData.value.orderDate = po.orderDate
@@ -2233,12 +2223,12 @@ async function showPendingUpdateForm(po) {
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showPODetails(po){
-    loading.value = true
+    showLoading()
     poDetails.value.hdrId = po.hdrId
     poDetails.value.poNumber = po.poNumber
     poDetails.value.remarks = po.remarks
@@ -2262,12 +2252,12 @@ async function showPODetails(po){
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showCancelForm(po){
-    loading.value = true
+    showLoading()
     cancelFormData.value.hdrId = po.hdrId
     cancelFormData.value.poNumber = po.poNumber
     cancelFormData.value.orderDate = po.orderDate
@@ -2289,12 +2279,12 @@ async function showCancelForm(po){
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function showReturnForm(po){
-    loading.value = true
+    showLoading()
     returnFormData.value.hdrId = po.hdrId
     returnFormData.value.poNumber = po.poNumber
     returnFormData.value.remarks = po.remarks
@@ -2318,7 +2308,7 @@ async function showReturnForm(po){
         showErrorMsg(error.response?.data?.message || 'Failed to fetch purchase order details')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

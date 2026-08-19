@@ -206,18 +206,7 @@
         </form>
     </Modal>
 
-    <teleport to="body">
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-        
+    <teleport to="body">        
         <Transition
             :enter-from-class="alertLoadingTransition.enterFrom"
             :enter-to-class="alertLoadingTransition.enterTo"
@@ -279,13 +268,14 @@ import ButtonYellow from '../../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../../components/buttons/ButtonWhite.vue';
 import SuccessBanner from '../../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../../components/alerts/ErrorBanner.vue';
-import Loading from '../../components/alerts/Loading.vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import Modal from '../../components/Modal.vue';
 import TextInput from '../../components/TextInput.vue';
 import TextArea from '../../components/TextArea.vue';
+import { useLoading } from '../../composables/useLoading.js';
 
 const alertLoadingTransition = useAlertLoadingTransition()
+const { showLoading, closeLoading } = useLoading()
 
 const { 
     showSuccessMsg, 
@@ -308,7 +298,6 @@ const {
 } = useConfirmModal()
 
 const dataStatus = ref(null)
-const loading = ref(false)
 const searchValue = ref('')
 const categoriesListData = ref([])
 const currentCategoryId = ref(null)
@@ -360,7 +349,7 @@ async function getCategoriesListData() {
 }
 
 async function submitAddForm(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-category', addFormData.value)
@@ -374,12 +363,12 @@ async function submitAddForm(){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function submitUpdateForm(id){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-category/${id}`, updateFormData.value)
@@ -393,12 +382,12 @@ async function submitUpdateForm(id){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function deleteCategory(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-category/${confirmId.value}`)
@@ -411,7 +400,7 @@ async function deleteCategory(){
         showErrorMsg(error.response?.data?.message || 'Failed to delete category')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 

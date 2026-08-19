@@ -365,17 +365,6 @@
             :leave-to-class="alertLoadingTransition.leaveTo"
             :leave-active-class="alertLoadingTransition.leaveActive"
         >
-            <Loading v-if="loading"></Loading>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
             <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
                 <template v-slot:title>
                     {{ successMsgTitle }} 
@@ -425,7 +414,6 @@ import { onMounted, ref, computed, onBeforeUnmount } from 'vue';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
 import axiosClient from '../axios';
-import Loading from '../components/alerts/Loading.vue';
 import SuccessBanner from '../components/alerts/SuccessBanner.vue';
 import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
@@ -433,6 +421,7 @@ import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextInput from '../components/TextInput.vue';
 import TextArea from '../components/TextArea.vue';
+import { useLoading } from '../composables/useLoading';
 
 const { 
     showSuccessMsg, 
@@ -454,6 +443,8 @@ const {
     openConfirmModal 
 } = useConfirmModal()
 
+const { showLoading, closeLoading } = useLoading()
+
 const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
@@ -465,7 +456,6 @@ const pageContent = ref(null)
 
 const searchValue = ref("")
 const dataStatus = ref(null)
-const loading = ref(false)
 const customersListData = ref([])
 const currentCustomerId = ref(null)
 
@@ -519,7 +509,7 @@ async function getCustomersListData() {
 }
 
 async function submitAddForm(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-customer', addFormData.value)
@@ -533,12 +523,12 @@ async function submitAddForm(){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     } 
 }
 
 async function submitUpdateForm(customerId){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-customer/${customerId}`, updateFormData.value)
@@ -552,12 +542,12 @@ async function submitUpdateForm(customerId){
         errors.value = error.response?.data?.errors || {}
     }
     finally{
-        loading.value = false
+        closeLoading()
     }
 }
 
 async function deleteCustomer(){
-    loading.value = true
+    showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-customer/${confirmId.value}`)
@@ -570,7 +560,7 @@ async function deleteCustomer(){
         showErrorMsg(error.response?.data?.message || 'Failed to delete customer')
     }
     finally{
-        loading.value = false
+        closeLoading()
     }  
 }
 

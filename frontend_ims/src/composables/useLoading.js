@@ -9,10 +9,7 @@ export function useLoading(){
     }
 
     function closeLoading(){
-        setTimeout(function(){
-            isLoading.value = false
-
-        }, 7000)
+        isLoading.value = false
     }
 
     return {

@@ -240,7 +240,7 @@ function handleClickOutside(e) {
 
 async function logout(){
     try {
-        const response = await axiosClient.post('/api/logout')
+        await axiosClient.post('/api/logout')
         
         userStore.logoutUser()
         router.push({name: 'Login'})

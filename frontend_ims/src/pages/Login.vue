@@ -84,75 +84,20 @@
             </form>
         </div>
     </Transition>
-
-    <teleport to="body">
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-                <template v-slot:title>
-                    Error 
-                </template>
-
-                <template v-slot:body>
-                    {{ errorMsgBody }}
-                </template>
-            </ErrorBanner>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
-                <template v-slot:title>
-                    {{ successMsgTitle }} 
-                </template>
-
-                <template v-slot:body>
-                    {{ successMsgBody }}
-                </template>
-            </SuccessBanner>
-        </Transition>
-    </teleport>
     
 </template>
 
 <script setup>
-import { useAlertLoadingTransition, useAuthFormTransition } from '../composables/useTransition.js';
+import { useAuthFormTransition } from '../composables/useTransition.js';
 import { onMounted, ref } from 'vue';
+import { useAlertMessages } from '../composables/useAlertMessages';
+import { useLoading } from '../composables/useLoading.js';
 import axiosClient from '../axios.js'
 import router from '../router.js';
-import { useAlertMessages } from '../composables/useAlertMessages';
-import SuccessBanner from '../components/alerts/SuccessBanner.vue';
-import ErrorBanner from '../components/alerts/ErrorBanner.vue';
-import { useLoading } from '../composables/useLoading.js';
 
-const alertLoadingTransition = useAlertLoadingTransition()
 const authFormTransition = useAuthFormTransition()
 const { showLoading, closeLoading } = useLoading()
-
-const { 
-    showSuccessMsg, 
-    closeSuccessMsg, 
-    showErrorMsg, 
-    closeErrorMsg, 
-    hasSuccessMsg, 
-    hasErrorMsg, 
-    successMsgTitle, 
-    successMsgBody, 
-    errorMsgBody 
-} = useAlertMessages()
+const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 
 const loginMounted = ref(false)
 

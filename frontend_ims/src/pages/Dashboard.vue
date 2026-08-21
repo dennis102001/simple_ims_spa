@@ -238,53 +238,19 @@
     </section>
   </transition>
 
-  <teleport to="body">
-    <Transition
-      :enter-from-class="alertLoadingTransition.enterFrom"
-      :enter-to-class="alertLoadingTransition.enterTo"
-      :enter-active-class="alertLoadingTransition.enterActive"
-      :leave-from-class="alertLoadingTransition.leaveFrom"
-      :leave-to-class="alertLoadingTransition.leaveTo"
-      :leave-active-class="alertLoadingTransition.leaveActive"
-    >
-      <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-        <template v-slot:title>
-          Error 
-        </template>
-
-        <template v-slot:body>
-          {{ errorMsgBody }}
-        </template>
-      </ErrorBanner>
-    </Transition>
-  </teleport>
-
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { useAlertLoadingTransition, useMainContentTransition } from '../composables/useTransition';
+import { useMainContentTransition } from '../composables/useTransition';
 import { useFormatDate } from '../composables/useFormatDate';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import axiosClient from '../axios';
-import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import BarChart from '../components/BarChart.vue';
 import LineChart from '../components/LineChart.vue';
 
-const { 
-    showSuccessMsg, 
-    closeSuccessMsg, 
-    showErrorMsg, 
-    closeErrorMsg, 
-    hasSuccessMsg, 
-    hasErrorMsg, 
-    successMsgTitle, 
-    successMsgBody, 
-    errorMsgBody 
-} = useAlertMessages()
-
+const { showErrorMsg } = useAlertMessages()
 const mainContentTransition = useMainContentTransition()
-const alertLoadingTransition = useAlertLoadingTransition()
 
 const { formatDate } = useFormatDate()
 const isLoading = ref(false)

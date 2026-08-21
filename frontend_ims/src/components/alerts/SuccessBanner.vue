@@ -1,19 +1,24 @@
 <template>
-    <div class="fixed z-50 flex items-center p-3 mb-4 text-green-800 -translate-x-1/2 border border-green-500 rounded-lg left-1/2 top-10 bg-green-50">
-        <i class="justify-center text-center fa-solid fa-circle-check"></i>
-        <div class="ml-4 text-sm font-medium">
-            <span class="font-bold">
-                <slot name="title"></slot> 
-            </span>
+    <div class="w-[calc(100%-2rem)] max-w-sm min-w-[200px] fixed z-50 flex items-start mb-4 text-green-800 -translate-x-1/2 border border-green-500 rounded-lg left-1/2 top-10 bg-green-50/80 backdrop-blur-sm">
+        <div class="py-2 px-3 ">
+            <i class=" text-center fa-solid fa-circle-check"></i>
+        </div>
 
-            <span class="ml-1">
+        <div class="py-2.5 pr-4">
+            <div class="font-bold text-sm">
+                <slot name="title"></slot> 
+            </div>
+
+            <div class="text-xs">
                 <slot name="body"></slot>
-            </span>
+            </div>
         </div>
         
-        <button @click="closeBanner" type="button" class="size-[32px] bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 ">
-            <i class="text-lg fa-solid fa-xmark"></i>
-        </button>
+        <div class="p-1 ml-auto">
+            <button @click="closeBanner" type="button" class="py-1 px-2.5 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 hover:bg-green-100 ">
+                <i class="text-center fa-solid fa-xmark"></i>
+            </button>
+        </div>
     </div>
 </template>
 

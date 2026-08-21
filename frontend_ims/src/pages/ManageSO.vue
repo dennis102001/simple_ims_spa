@@ -1436,58 +1436,18 @@
             </div>
         </div>
     </Modal>
-    
-    <teleport to="body">
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
-                <template v-slot:title>
-                    {{ successMsgTitle }} 
-                </template>
 
-                <template v-slot:body>
-                    {{ successMsgBody }}
-                </template>
-            </SuccessBanner>
-        </Transition>
-
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-                <template v-slot:title>
-                    Error 
-                </template>
-
-                <template v-slot:body>
-                    {{ errorMsgBody }}
-                </template>
-            </ErrorBanner>
-        </Transition>
-    </teleport>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { usePopUpTransition, useMainContentTransition, useAlertLoadingTransition, useFormTransition } from '../composables/useTransition';
+import { useMainContentTransition, useFormTransition } from '../composables/useTransition';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useFormatDate } from '../composables/useFormatDate';
+import { useLoading } from '../composables/useLoading';
 import axiosClient from '../axios';
 import useUserStore from '../store/user';
 import Modal from '../components/Modal.vue';
-import SuccessBanner from '../components/alerts/SuccessBanner.vue';
-import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonDark from '../components/buttons/ButtonDark.vue';
 import ButtonRed from '../components/buttons/ButtonRed.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
@@ -1495,26 +1455,13 @@ import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextDisplay from '../components/TextDisplay.vue';
 import SelectDropdown from '../components/SelectDropdown.vue';
 import TextArea from '../components/TextArea.vue';
-import { useLoading } from '../composables/useLoading';
 
-const { 
-    showSuccessMsg, 
-    closeSuccessMsg, 
-    showErrorMsg, 
-    closeErrorMsg, 
-    hasSuccessMsg, 
-    hasErrorMsg, 
-    successMsgTitle, 
-    successMsgBody, 
-    errorMsgBody 
-} = useAlertMessages()
-
+const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { showLoading, closeLoading } = useLoading()
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
 
-const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
 

@@ -1,11 +1,12 @@
 import { ref } from "vue";
 
+const hasSuccessMsg = ref(false)
+const successMsgTitle = ref("")
+const successMsgBody = ref("")
+const hasErrorMsg = ref(false)
+const errorMsgBody = ref("")
+
 export function useAlertMessages(){
-    const hasSuccessMsg = ref(false)
-    const successMsgTitle = ref("")
-    const successMsgBody = ref("")
-    const hasErrorMsg = ref(false)
-    const errorMsgBody = ref("")
 
     function showSuccessMsg(title, body){
         successMsgTitle.value = title

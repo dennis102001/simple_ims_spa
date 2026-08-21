@@ -444,42 +444,6 @@
   </div>
 
   <teleport to="body">
-    <Transition
-      :enter-from-class="alertLoadingTransition.enterFrom"
-      :enter-to-class="alertLoadingTransition.enterTo"
-      :enter-active-class="alertLoadingTransition.enterActive"
-      :leave-from-class="alertLoadingTransition.leaveFrom"
-      :leave-to-class="alertLoadingTransition.leaveTo"
-      :leave-active-class="alertLoadingTransition.leaveActive"
-    >
-      <SuccessBanner @closeSuccess="closeSuccessMsg" v-if="hasSuccessMsg">
-        <template v-slot:title>
-          {{ successMsgTitle }} 
-        </template>
-        <template v-slot:body>
-          {{ successMsgBody }}
-        </template>
-      </SuccessBanner>
-    </Transition>
-
-    <Transition
-      :enter-from-class="alertLoadingTransition.enterFrom"
-      :enter-to-class="alertLoadingTransition.enterTo"
-      :enter-active-class="alertLoadingTransition.enterActive"
-      :leave-from-class="alertLoadingTransition.leaveFrom"
-      :leave-to-class="alertLoadingTransition.leaveTo"
-      :leave-active-class="alertLoadingTransition.leaveActive"
-    >
-      <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-        <template v-slot:title>
-          Error 
-        </template>
-        <template v-slot:body>
-          {{ errorMsgBody }}
-        </template>
-      </ErrorBanner>
-    </Transition>
-
     <ConfirmModal 
       :inUse="viewingConfirmModal" 
       @cancel="viewingConfirmModal = !viewingConfirmModal"
@@ -496,30 +460,19 @@
 </template>
 
 <script setup>
-import { useAlertLoadingTransition, useMainContentTransition, useFormTransition } from '../composables/useTransition';
+import { useMainContentTransition, useFormTransition } from '../composables/useTransition';
 import { onMounted, ref, computed, onBeforeUnmount } from 'vue';
 import { useAlertMessages } from '../composables/useAlertMessages';
 import { useConfirmModal } from '../composables/useConfirmModal';
+import { useLoading } from '../composables/useLoading';
 import axiosClient from '../axios';
-import SuccessBanner from '../components/alerts/SuccessBanner.vue';
-import ErrorBanner from '../components/alerts/ErrorBanner.vue';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextInput from '../components/TextInput.vue';
-import { useLoading } from '../composables/useLoading';
 
-const {
-  showSuccessMsg, 
-  closeSuccessMsg, 
-  showErrorMsg, 
-  closeErrorMsg, 
-  hasSuccessMsg, 
-  hasErrorMsg, 
-  successMsgTitle, 
-  successMsgBody, 
-  errorMsgBody 
-} = useAlertMessages()
+const { showSuccessMsg, showErrorMsg } = useAlertMessages()
+const { showLoading, closeLoading } = useLoading()
 
 const { 
   viewingConfirmModal, 
@@ -529,9 +482,6 @@ const {
   openConfirmModal 
 } = useConfirmModal()
 
-const { showLoading, closeLoading } = useLoading()
-
-const alertLoadingTransition = useAlertLoadingTransition()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
 

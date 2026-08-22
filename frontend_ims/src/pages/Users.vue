@@ -537,7 +537,7 @@ async function submitUpdateForm(id){
   showLoading()
 
   try {
-    const response = await axiosClient.put(`/api/update-user/${id}`, updateFormData.value)
+    await axiosClient.put(`/api/update-user/${id}`, updateFormData.value)
     
     showSuccessMsg("Success", "User updated successfully")      
     await getUsersListData()
@@ -556,7 +556,7 @@ async function submitAddForm(){
   showLoading()
 
   try {
-    const response = await axiosClient.post('/api/add-user', addFormData.value)
+    await axiosClient.post('/api/add-user', addFormData.value)
 
     showSuccessMsg("Success", "User added successfully")
     await getUsersListData()

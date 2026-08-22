@@ -168,6 +168,7 @@ import { useRoute } from 'vue-router';
 import router from '../router';
 import useUserStore from '../store/user';
 import { useConfirmModal } from '../composables/useConfirmModal';
+import { useLoading } from '../composables/useLoading';
 
 const route = useRoute()
 const isSidebarVisible = ref(false)
@@ -179,6 +180,7 @@ const user = computed(() => userStore.user)
 
 const { showErrorMsg } = useAlertMessages()
 const { openConfirmModal } = useConfirmModal()
+const { showLoading, closeLoading } = useLoading()
 
 function handleClickOutside(e) {
     if(!e.target.closest('.sidebar') && !e.target.closest('.menu-button') && (window.innerWidth < 640)){
@@ -187,12 +189,17 @@ function handleClickOutside(e) {
 }
 
 async function logout(){
+    showLoading()
+    
     try {
         await userStore.logoutUser()
         await router.push({name: 'Login'})
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to log out')
+    }
+    finally{
+        closeLoading()
     }
 }
 

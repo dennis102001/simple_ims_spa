@@ -114,8 +114,8 @@ async function submit() {
 
         localStorage.setItem('token', response.data.token);
 
-        showSuccessMsg("Success", "Please wait...")
-        router.push({ name: 'Dashboard' })
+        showSuccessMsg("Successful login", "Please wait...")
+        await router.push({ name: 'Dashboard' })
     } 
     catch (error) {
         if(error.code === 'ERR_NETWORK'){

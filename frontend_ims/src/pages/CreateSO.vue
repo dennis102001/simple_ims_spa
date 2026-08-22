@@ -91,7 +91,7 @@
 
                                 <!-- Gradient overlays -->
                                 <div class="absolute top-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-b from-white to-transparent"></div>
-                                <div class="absolute bottom-0 left-0 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 z-20 w-full h-2 pointer-events-none bg-gradient-to-t from-white to-transparent"></div>
                     
                                 <div class="flex flex-1 overflow-auto">
 
@@ -103,7 +103,11 @@
                                     <div class="my-2 content-start flex-1 gap-3 p-1 overflow-hidden min-h-fit grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))]">
                                     
                                         <!-- Card items -->
-                                        <div v-if="!dataStatus" v-for="item in filteredItemsListData" class="flex flex-col cursor-default shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all">
+                                        <div 
+                                            v-if="!dataStatus" 
+                                            v-for="item in filteredItemsListData" 
+                                            class="flex flex-col cursor-default shadow-[0px_1px_4px_rgba(0,0,0,0.1)] rounded-lg max-h-full hover:shadow-[0_1px_4px_rgba(0,0,0,0.25)] transition-all"
+                                        >
                                         
                                             <!-- Card head -->
                                             <div class="flex items-center  justify-between pt-5 pb-3 mx-5 mb-2 border-b border-gray-200">

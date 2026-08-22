@@ -1,16 +1,20 @@
 <template>
   <teleport to="body">
     
-    <Transition
-      :enter-from-class="alertLoadingTransition.enterFrom"
-      :enter-to-class="alertLoadingTransition.enterTo"
-      :enter-active-class="alertLoadingTransition.enterActive"
-      :leave-from-class="alertLoadingTransition.leaveFrom"
-      :leave-to-class="alertLoadingTransition.leaveTo"
-      :leave-active-class="alertLoadingTransition.leaveActive"
+    <ConfirmModal 
+      :inUse="viewingConfirmModal" 
+      :btnRedText="confirmButtonText"
+      @cancel="closeConfirmModal"
+      @yes="confirm"
     >
-      <Loading v-if="isLoading"></Loading>
-    </Transition>
+      <template v-slot:title>
+        {{ confirmTitle }}
+      </template>
+
+      <template v-slot:body>
+        {{ confirmBody }}
+      </template>
+    </ConfirmModal>
 
     <Transition
       :enter-from-class="alertLoadingTransition.enterFrom"
@@ -50,20 +54,16 @@
       </SuccessBanner>
     </Transition>
 
-    <ConfirmModal 
-      :inUse="viewingConfirmModal" 
-      :btnRedText="confirmButtonText"
-      @cancel="closeConfirmModal"
-      @yes="confirm"
+    <Transition
+      :enter-from-class="alertLoadingTransition.enterFrom"
+      :enter-to-class="alertLoadingTransition.enterTo"
+      :enter-active-class="alertLoadingTransition.enterActive"
+      :leave-from-class="alertLoadingTransition.leaveFrom"
+      :leave-to-class="alertLoadingTransition.leaveTo"
+      :leave-active-class="alertLoadingTransition.leaveActive"
     >
-      <template v-slot:title>
-        {{ confirmTitle }}
-      </template>
-
-      <template v-slot:body>
-        {{ confirmBody }}
-      </template>
-    </ConfirmModal>
+      <Loading v-if="isLoading"></Loading>
+    </Transition>
 
   </teleport>
 

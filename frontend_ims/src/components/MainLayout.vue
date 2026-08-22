@@ -131,7 +131,7 @@
 
         <div class="flex flex-col w-full overflow-hidden">
 
-            <nav class="relative z-40 flex flex-row justify-between w-full px-6 py-2 bg-white shadow-md xl:py-3">
+            <nav class="relative z-30 flex flex-row justify-between w-full px-6 py-2 bg-white shadow-md xl:py-3">
                 
                 <!-- Menu button -->
                 <button @click="isSidebarVisible = !isSidebarVisible" class="menu-button px-4 text-2xl rounded-md hover:bg-gray-50">

@@ -715,7 +715,7 @@
             @after-leave="changeContent('Sales List')"
         >
             <div v-show="viewingCancelSale" class="flex flex-col w-full max-h-[1500px] min-h-[1400px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
-                <form @submit.prevent="cancelSale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
+                <div class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
                         <div class="flex flex-row items-start">
                             <div class="flex flex-col">
@@ -871,7 +871,16 @@
 
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
-                            <ButtonRed width="full" type="submit">
+                            <ButtonRed 
+                                @click="openConfirmModal(
+                                    'Cancel Sales Order',
+                                    'Are you sure you want to cancel this sales order? This action cannot be undone.',
+                                    () => { cancelSale() },
+                                    'Yes, Cancel Order'
+                                )" 
+                                width="full" 
+                                type="button"
+                            >
                                 Cancel SO
                             </ButtonRed>
 
@@ -880,7 +889,7 @@
                             </ButtonWhite>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </transition>
 
@@ -895,7 +904,7 @@
             @after-leave="changeContent('Sales List')"
         >
             <div v-show="viewingReturnSale" class="flex flex-col w-full max-h-[1600px] min-h-[1600px] lg:max-h-[1300px] lg:min-h-[1200px] h-full max-w-[1300px] mx-auto ">
-                <form @submit.prevent="returnSale" class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
+                <div class="flex flex-col flex-1 w-full p-2 mx-auto overflow-hidden">
                     <section class="shadow-[0px_1px_4px_rgba(0,0,0,0.1)] overflow-hidden flex-1 p-6 sm:p-8 bg-white rounded-xl flex flex-col mb-4">
 
                         <div class="flex flex-row items-start">
@@ -1065,7 +1074,16 @@
 
                     <div class="flex items-end justify-end w-full">
                         <div class="grid grid-cols-2 w-full md:w-[400px] gap-2 lg:gap-4">
-                            <ButtonRed width="full" type="submit">
+                            <ButtonRed 
+                                @click="openConfirmModal(
+                                    'Return Sales Order',
+                                    'Are you sure you want to return this sales order? This action cannot be undone.',
+                                    () => { returnSale() },
+                                    'Yes, Return Order'
+                                )" 
+                                width="full" 
+                                type="button"
+                            >
                                 Confirm return
                             </ButtonRed>
 
@@ -1074,7 +1092,7 @@
                             </ButtonWhite>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </transition>
 
@@ -1443,6 +1461,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useMainContentTransition, useFormTransition } from '../composables/useTransition';
 import { useAlertMessages } from '../composables/useAlertMessages';
+import { useConfirmModal } from '../composables/useConfirmModal';
 import { useFormatDate } from '../composables/useFormatDate';
 import { useLoading } from '../composables/useLoading';
 import axiosClient from '../axios';
@@ -1458,6 +1477,7 @@ import TextArea from '../components/TextArea.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { showLoading, closeLoading } = useLoading()
+const { openConfirmModal } = useConfirmModal()
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)

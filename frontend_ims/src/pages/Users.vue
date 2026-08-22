@@ -100,7 +100,12 @@
                             </button>
 
                             <button 
-                              @click="openConfirmModal('Delete User', 'This will deactivate the user and prevent future use. Existing records will not be affected.', user.id)"
+                              @click="openConfirmModal(
+                                'Delete User', 
+                                'This will deactivate the user and prevent future use. Existing records will not be affected.', 
+                                () => { deleteUser(user.id) },
+                                'Delete'
+                              )"
                               class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-red-700"
                               type="button" 
                             >
@@ -181,7 +186,12 @@
                             </button>
 
                             <button 
-                              @click="openConfirmModal('Delete User', 'This will deactivate the user and prevent future use. Existing records will not be affected.', user.id)"
+                              @click="openConfirmModal(
+                                'Delete User', 
+                                'This will deactivate the user and prevent future use. Existing records will not be affected.', 
+                                () => { deleteUser(user.id) },
+                                'Delete'
+                              )"
                               class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
                               type="button" 
                             >
@@ -261,7 +271,7 @@
                 leave-to-class="opacity-0"
                 leave-active-class="duration-200 transform transtion"
               >
-                <div v-if="viewingRolesMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
+                <div v-if="viewingRolesMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
                   <ul class="max-h-[200px] overflow-auto capitalize">
                     <li
                       @click="addFormData.role = 'admin'"
@@ -382,7 +392,7 @@
                 leave-to-class="opacity-0"
                 leave-active-class="duration-200 transform transtion"
               >
-                <div v-if="viewingRolesMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
+                <div v-if="viewingRolesMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-3 -translate-x-3 overflow-auto">
                   <ul class="max-h-[200px] overflow-auto capitalize">
                     <li
                       @click="updateFormData.role = 'admin'"
@@ -443,20 +453,6 @@
     </transition>
   </div>
 
-  <teleport to="body">
-    <ConfirmModal 
-      :inUse="viewingConfirmModal" 
-      @cancel="viewingConfirmModal = !viewingConfirmModal"
-      @yes="deleteUser"
-    >
-      <template v-slot:title>
-        {{ confirmTitle }}
-      </template>
-      <template v-slot:body>
-        {{ confirmBody }}
-      </template>
-    </ConfirmModal>
-  </teleport>
 </template>
 
 <script setup>
@@ -467,20 +463,12 @@ import { useConfirmModal } from '../composables/useConfirmModal';
 import { useLoading } from '../composables/useLoading';
 import axiosClient from '../axios';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
-import ConfirmModal from '../components/ConfirmModal.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextInput from '../components/TextInput.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { showLoading, closeLoading } = useLoading()
-
-const { 
-  viewingConfirmModal, 
-  confirmTitle,
-  confirmBody,
-  confirmId,
-  openConfirmModal 
-} = useConfirmModal()
+const { openConfirmModal } = useConfirmModal()
 
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
@@ -583,13 +571,12 @@ async function submitAddForm(){
   }
 }
 
-async function deleteUser(){
+async function deleteUser(id){
   showLoading()
 
   try {
-    const response = await axiosClient.delete(`/api/delete-user/${confirmId.value}`)
+    await axiosClient.delete(`/api/delete-user/${id}`)
 
-    viewingConfirmModal.value = false
     showSuccessMsg("Success", "User deleted successfully")
     await getUsersListData()
   } 

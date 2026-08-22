@@ -1,23 +1,48 @@
 import { ref } from "vue"
 
-export function useConfirmModal () {
-    const viewingConfirmModal = ref(false)
-    const confirmTitle = ref(null)
-    const confirmBody = ref(null)
-    const confirmId = ref(null)
+const viewingConfirmModal = ref(false)
+const confirmTitle = ref('')
+const confirmBody = ref('')
+const confirmButtonText = ref('Confirm')
+const onConfirm = ref(null)
 
-    function openConfirmModal(title, body, id){
+export function useConfirmModal () {
+    
+
+    function openConfirmModal(title, body, callback, buttonText = 'Confirm'){
         confirmTitle.value = title
         confirmBody.value = body
-        confirmId.value = id
+        confirmButtonText.value = buttonText
+        onConfirm.value = callback
+
         viewingConfirmModal.value = true
+    }
+
+    async function confirm(){
+        const callback = onConfirm.value
+
+        closeConfirmModal()
+
+        if(callback){
+            await callback()
+        }
+    }
+
+    function closeConfirmModal(){
+        viewingConfirmModal.value = false
+        confirmTitle.value = ''
+        confirmBody.value = ''
+        confirmButtonText.value = 'Confirm'
+        onConfirm.value = null
     }
     
     return {
         viewingConfirmModal, 
         confirmTitle,
         confirmBody,
-        confirmId,
-        openConfirmModal
+        confirmButtonText,
+        openConfirmModal,
+        closeConfirmModal,
+        confirm
     }
 }

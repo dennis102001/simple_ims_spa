@@ -12,7 +12,14 @@ const useUserStore = defineStore('user', {
                     this.user = data;
                 })
         },
-        logoutUser () {
+
+        clearUser() {
+            this.user = null
+            localStorage.removeItem('token')
+        },
+
+        async logoutUser () {
+            await axiosClient.post('/api/logout')
             this.user = null
             localStorage.removeItem('token')
         }

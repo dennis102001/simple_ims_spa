@@ -107,7 +107,12 @@
                                                     </button>
 
                                                     <button 
-                                                        @click="openConfirmModal('Delete Supplier', 'Are you sure you want to delete this supplier? This supplier will no longer be usable, but existing transactions will remain unchanged.', supplier.id)"
+                                                        @click="openConfirmModal(
+                                                            'Delete Supplier', 
+                                                            'Are you sure you want to delete this supplier? This supplier will no longer be usable, but existing transactions will remain unchanged.', 
+                                                            () => { deleteSupplier(supplier.id) },
+                                                            'Delete'
+                                                        )"
                                                         class="h-full px-4 font-semibold text-white rounded-md w-fit hover:bg-red-700 "
                                                         type="button" 
                                                     >
@@ -207,7 +212,12 @@
                                                         </button>
 
                                                         <button 
-                                                            @click="openConfirmModal('Delete Supplier', 'Are you sure you want to delete this supplier? This supplier will no longer be usable, but existing transactions will remain unchanged.', supplier.id)"
+                                                            @click="openConfirmModal(
+                                                                'Delete Supplier', 
+                                                                'Are you sure you want to delete this supplier? This supplier will no longer be usable, but existing transactions will remain unchanged.', 
+                                                                () => { deleteSupplier(supplier.id) },
+                                                                'Delete'
+                                                            )"
                                                             class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
                                                             type="button" 
                                                         >
@@ -385,23 +395,8 @@
                 </form>
             </section>
         </transition>
+    
     </div>
-
-    <teleport to="body">
-        <ConfirmModal 
-            :inUse="viewingConfirmModal" 
-            @cancel="viewingConfirmModal = !viewingConfirmModal"
-            @yes="deleteSupplier"
-        >
-            <template v-slot:title>
-                {{ confirmTitle }}
-            </template>
-
-            <template v-slot:body>
-                {{ confirmBody }}
-            </template>
-        </ConfirmModal>
-    </teleport>
 </template>
 
 <script setup>
@@ -412,22 +407,13 @@ import { useConfirmModal } from '../composables/useConfirmModal';
 import { useLoading } from '../composables/useLoading';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
-import ConfirmModal from '../components/ConfirmModal.vue';
 import TextInput from '../components/TextInput.vue';
 import TextArea from '../components/TextArea.vue';
 import axiosClient from '../axios';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { showLoading, closeLoading } = useLoading()
-
-const { 
-    viewingConfirmModal, 
-    confirmTitle,
-    confirmBody,
-    confirmId,
-    openConfirmModal 
-} = useConfirmModal()
-
+const { openConfirmModal } = useConfirmModal()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
 
@@ -531,13 +517,12 @@ async function submitUpdateForm(supplierId){
     }
 }
 
-async function deleteSupplier(){
+async function deleteSupplier(id){
     showLoading()
 
     try {
-        const response = await axiosClient.delete(`/api/delete-supplier/${confirmId.value}`)
+        const response = await axiosClient.delete(`/api/delete-supplier/${id}`)
 
-        viewingConfirmModal.value = false
         showSuccessMsg("Success", response.data.message)
         await getSuppliersListData()
     } 

@@ -108,7 +108,7 @@
                         leave-to-class="opacity-0"
                         leave-active-class="duration-200 transform transtion"
                     >
-                        <div v-if="viewingColorsMenu" class="z-30 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-4 -translate-x-2 overflow-auto">
+                        <div v-if="viewingColorsMenu" class="z-20 p-3 absolute flex-col flex w-full bg-white rounded-md shadow-[0px_1px_4px_rgba(0,0,0,0.1)] translate-y-4 -translate-x-2 overflow-auto">
                             <ul class="max-h-[200px] overflow-auto capitalize">
                                 <li @click="colorFormData.color = null" class="p-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2">
                                     <div class="text-gray-500 flex items-center justify-center bg-gray-100 size-8  rounded-md pt-[1px]">
@@ -241,7 +241,11 @@
             <div class="flex flex-row justify-between w-full space-x-4 px-6 pt-4 pb-6 border-t rounded-b-xl">
                 <div class="grid grid-cols-2 w-full gap-2 lg:gap-4">
                     <ButtonYellow 
-                        @click="openConfirmModal('Confirm Change Password', 'You will be redirected to login page after confirmation', changePassFormData.id)" 
+                        @click="openConfirmModal(
+                            'Confirm Change Password', 
+                            'You will be redirected to login page after confirmation', 
+                            () => { submitChangePassForm() }
+                        )" 
                         type="button"
                         width="full"
                     >
@@ -260,23 +264,6 @@
         </div>
     </Modal>
 
-    <teleport to="body">
-        <ConfirmModal 
-            :inUse="viewingConfirmModal" 
-            @cancel="viewingConfirmModal = !viewingConfirmModal"
-            @yes="submitChangePassForm"
-            btnRedText="Confirm"
-        >
-            <template v-slot:title>
-                {{ confirmTitle }}
-            </template>
-
-            <template v-slot:body>
-                {{ confirmBody }}
-            </template>
-        </ConfirmModal>
-    </teleport>
-
 </template>
 
 <script setup>
@@ -287,31 +274,24 @@ import { useConfirmModal } from '../composables/useConfirmModal';
 import { useLoading } from '../composables/useLoading';
 import ButtonYellow from '../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../components/buttons/ButtonWhite.vue';
-import ConfirmModal from '../components/ConfirmModal.vue';
 import TextInput from '../components/TextInput.vue';
 import Modal from '../components/Modal.vue';
 import useUserStore from '../store/user';
 import axiosClient from '../axios';
+import router from '../router';
 
 const mainContentTransition = useMainContentTransition()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
 const { showLoading, closeLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
+const { openConfirmModal } = useConfirmModal()
 
 const viewingSettings = ref(false)
 const viewingUpdateColorModal = ref(false)
 const viewingColorsMenu = ref(false)
 const viewingUpdateInfoModal = ref(false)
 const viewingChangePassModal = ref(false)
-
-const { 
-    viewingConfirmModal, 
-    confirmTitle,
-    confirmBody,
-    confirmId,
-    openConfirmModal 
-} = useConfirmModal()
 
 const colorsListData = ref([])
 const colorClass = ref({
@@ -461,25 +441,36 @@ async function submitChangePassForm(){
     showLoading()
 
     try {
-        const response = await axiosClient.put('/api/update-account-pass', changePassFormData.value)
-
-        showSuccessMsg("Success", "Redirecting to login page...")      
-
+        await axiosClient.put('/api/update-account-pass', changePassFormData.value)
+        
+        await userStore.logoutUser()
+        
         viewingChangePassModal.value = false
-        changePassFormData.value.id = null
-        changePassFormData.value.password = null
-        changePassFormData.value.password_confirmation = null
-        userStore.fetchUser()
-
-        errors.value.password = []
+        
+        changePassFormData.value = {
+            id: null,
+            password: '',
+            password_confirmation: ''
+        }
+        
+        errors.value = {
+            name: [],
+            email: [],
+            password: []
+        }
+        
+        showSuccessMsg("Success", "Password changed successfully. Please log in again.")    
+        
+        await router.push({name: 'Login'})
     } 
     catch (error) {
-        showErrorMsg(error.response?.data?.message || 'Failed to change password')
+        console.log(error);
+        
+        showErrorMsg( error.response?.data?.message || 'Failed to change password' )
         errors.value = error.response?.data?.errors || {}
     }
     finally{
         closeLoading()
-        viewingConfirmModal.value = false
     }
 }
 

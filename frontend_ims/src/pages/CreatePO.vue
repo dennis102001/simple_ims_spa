@@ -166,6 +166,7 @@
                                 <p v-show="selectedIds.length" class="absolute top-0 left-0 z-10 p-1 text-xs text-center text-white -translate-x-1 -translate-y-1 rounded-full bg-darkgray-sec min-h-6 min-w-6">
                                     {{ selectedIds.length }}
                                 </p>
+                                
                                 <ButtonYellow type="button" @click="showPOForm" >
                                     <div class="relative flex flex-row items-center justify-end w-40">
                                         <span class="mx-auto">Proceed</span>

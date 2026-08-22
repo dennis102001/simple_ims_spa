@@ -1,6 +1,6 @@
 <template>
     <div  class="flex flex-row h-screen">
-        <aside class="sidebar z-50 overflow-y-auto overflow-x-hidden absolute h-[100dvh] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] sm:static flex-col flex bg-darkgray-pri shadow-md transform transition-all duration-500"
+        <aside class="sidebar z-30 overflow-y-auto overflow-x-hidden absolute h-[100dvh] pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] sm:static flex-col flex bg-darkgray-pri shadow-md transform transition-all duration-500"
             :class="isSidebarVisible ? 'w-72' : 'w-0 '"
         >
             <div class="sticky top-0 w-full mb-4 bg-darkgray-pri px-4 z-10">
@@ -139,7 +139,12 @@
                 </button>
 
                 <button 
-                    @click="viewingLogoutModal = true" 
+                    @click="openConfirmModal(
+                        'Confirm Logout',
+                        'Are you sure you want to logout?',
+                        () => { logout() },
+                        'Logout'
+                    )" 
                     title="Logout" 
                     type="button" 
                     class="px-4 text-2xl rounded-md hover:bg-gray-50"
@@ -153,55 +158,16 @@
             </main>
         </div>
     </div>
-
-    <teleport to="body">
-        <Transition
-            :enter-from-class="alertLoadingTransition.enterFrom"
-            :enter-to-class="alertLoadingTransition.enterTo"
-            :enter-active-class="alertLoadingTransition.enterActive"
-            :leave-from-class="alertLoadingTransition.leaveFrom"
-            :leave-to-class="alertLoadingTransition.leaveTo"
-            :leave-active-class="alertLoadingTransition.leaveActive"
-        >
-            <ErrorBanner @closeError="closeErrorMsg" v-if="hasErrorMsg">
-                <template v-slot:title>
-                    Error 
-                </template>
-
-                <template v-slot:body>
-                    {{ errorMsgBody }}
-                </template>
-            </ErrorBanner>
-        </Transition>
-
-        <ConfirmModal 
-            :inUse="viewingLogoutModal" 
-            btnRedText="Confirm" 
-            @cancel="viewingLogoutModal = !viewingLogoutModal"
-            @yes="logout"
-        >
-            <template v-slot:title>
-                {{ confirmLogout.title }}
-            </template>
-
-            <template v-slot:body>
-                {{ confirmLogout.body }}
-            </template>
-        </ConfirmModal>
-    </teleport>
     
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useAlertMessages } from '../composables/useAlertMessages';
-import { useAlertLoadingTransition } from '../composables/useTransition';
 import { useRoute } from 'vue-router';
-import ErrorBanner from './alerts/ErrorBanner.vue';
-import axiosClient from '../axios';
 import router from '../router';
 import useUserStore from '../store/user';
-import ConfirmModal from './ConfirmModal.vue';
+import { useConfirmModal } from '../composables/useConfirmModal';
 
 const route = useRoute()
 const isSidebarVisible = ref(false)
@@ -211,26 +177,8 @@ const areSOBtnsVisible = ref(false)
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
 
-const { 
-    showSuccessMsg, 
-    closeSuccessMsg,
-    showErrorMsg,
-    closeErrorMsg,
-    hasSuccessMsg,
-    hasErrorMsg,
-    successMsgTitle,
-    successMsgBody,
-    errorMsgBody
-} = useAlertMessages()
-
-const confirmLogout = ref({
-    title: "Confirm Logout",
-    body: "Are you sure you want to logout?"
-})
-
-const viewingLogoutModal = ref(false)
-
-const alertLoadingTransition = useAlertLoadingTransition()
+const { showErrorMsg } = useAlertMessages()
+const { openConfirmModal } = useConfirmModal()
 
 function handleClickOutside(e) {
     if(!e.target.closest('.sidebar') && !e.target.closest('.menu-button') && (window.innerWidth < 640)){
@@ -240,10 +188,8 @@ function handleClickOutside(e) {
 
 async function logout(){
     try {
-        await axiosClient.post('/api/logout')
-        
-        userStore.logoutUser()
-        router.push({name: 'Login'})
+        await userStore.logoutUser()
+        await router.push({name: 'Login'})
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to log out')

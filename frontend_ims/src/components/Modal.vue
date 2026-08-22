@@ -8,7 +8,7 @@
             leave-to-class="opacity-0"
             leave-active-class="transition duration-500 ease-in-out transform"
         >
-            <div v-show="inUse" class="modal fixed top-0 z-50 w-full h-full overflow-hidden bg-black/30 ">
+            <div v-show="inUse" class="modal fixed top-0 z-40 w-full h-full overflow-hidden bg-black/30 ">
                 <div @click.self="closeModal" class="p-2 sm:p-4 md:p-6 lg:p-8 size-full overflow-auto grid place-items-center">
                     <transition
                         :enter-from-class="popUpTransition.enterFrom"

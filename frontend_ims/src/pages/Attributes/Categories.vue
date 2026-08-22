@@ -93,7 +93,12 @@
                                     </button>
 
                                     <button 
-                                        @click="openConfirmModal('Delete Category', 'This category will no longer be selectable for new items. Existing records will not be affected.', category.id)"
+                                        @click="openConfirmModal(
+                                            'Delete Category', 
+                                            'This category will no longer be selectable for new items. Existing records will not be affected.', 
+                                            () => { deleteCategory(category.id) },
+                                            'Delete'
+                                        )"
                                         class="w-full px-4 py-2 bg-white text-red-700 rounded-lg hover:shadow-[0_0_6px] hover:shadow-red-500/90"
                                         type="button" 
                                     >
@@ -205,21 +210,6 @@
             </div>
         </form>
     </Modal>
-
-    <teleport to="body">        
-        <ConfirmModal 
-            :inUse="viewingConfirmModal" 
-            @cancel="viewingConfirmModal = !viewingConfirmModal"
-            @yes="deleteCategory"
-        >
-            <template v-slot:title>
-                {{ confirmTitle }}
-            </template>
-            <template v-slot:body>
-                {{ confirmBody }}
-            </template>
-        </ConfirmModal>
-    </teleport>
     
 </template>
 
@@ -231,21 +221,13 @@ import { useLoading } from '../../composables/useLoading.js';
 import axiosClient from '../../axios.js'
 import ButtonYellow from '../../components/buttons/ButtonYellow.vue';
 import ButtonWhite from '../../components/buttons/ButtonWhite.vue';
-import ConfirmModal from '../../components/ConfirmModal.vue';
 import Modal from '../../components/Modal.vue';
 import TextInput from '../../components/TextInput.vue';
 import TextArea from '../../components/TextArea.vue';
 
 const { showLoading, closeLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-
-const { 
-    viewingConfirmModal, 
-    confirmTitle,
-    confirmBody,
-    confirmId,
-    openConfirmModal 
-} = useConfirmModal()
+const { openConfirmModal } = useConfirmModal()
 
 const dataStatus = ref(null)
 const searchValue = ref('')
@@ -336,13 +318,12 @@ async function submitUpdateForm(id){
     }
 }
 
-async function deleteCategory(){
+async function deleteCategory(id){
     showLoading()
 
     try {
-        const response = await axiosClient.delete(`/api/delete-category/${confirmId.value}`)
+        const response = await axiosClient.delete(`/api/delete-category/${id}`)
 
-        viewingConfirmModal.value = false
         showSuccessMsg("Success", response.data.message)
         await getCategoriesListData()
     } 

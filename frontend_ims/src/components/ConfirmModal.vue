@@ -63,7 +63,7 @@ defineProps({
   },
   btnRedText: {
     type: String,
-    default: "Delete"
+    default: "Confirm"
   }
 })
 

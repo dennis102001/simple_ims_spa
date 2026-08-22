@@ -49,6 +49,22 @@
         </template>
       </SuccessBanner>
     </Transition>
+
+    <ConfirmModal 
+      :inUse="viewingConfirmModal" 
+      :btnRedText="confirmButtonText"
+      @cancel="closeConfirmModal"
+      @yes="confirm"
+    >
+      <template v-slot:title>
+        {{ confirmTitle }}
+      </template>
+
+      <template v-slot:body>
+        {{ confirmBody }}
+      </template>
+    </ConfirmModal>
+
   </teleport>
 
   <RouterView />
@@ -62,6 +78,8 @@ import ErrorBanner from './components/alerts/ErrorBanner.vue';
 import { useLoading } from './composables/useLoading';
 import { useAlertLoadingTransition } from './composables/useTransition';
 import { useAlertMessages } from './composables/useAlertMessages';
+import ConfirmModal from './components/ConfirmModal.vue';
+import { useConfirmModal } from './composables/useConfirmModal';
 
 const alertLoadingTransition = useAlertLoadingTransition()
 const { isLoading } = useLoading()
@@ -74,6 +92,15 @@ const {
   errorMsgBody,
   closeErrorMsg, 
 } = useAlertMessages()
+
+const { 
+  viewingConfirmModal, 
+  confirmTitle,
+  confirmBody,
+  confirmButtonText,
+  confirm,
+  closeConfirmModal
+} = useConfirmModal()
 
 
 </script>

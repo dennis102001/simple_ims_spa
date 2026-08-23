@@ -96,7 +96,7 @@ import axiosClient from '../axios.js'
 import router from '../router.js';
 
 const authFormTransition = useAuthFormTransition()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 
 const loginMounted = ref(false)
@@ -107,6 +107,8 @@ const data = ref({
 })
 
 async function submit() {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {

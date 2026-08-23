@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useMainContentTransition, usePopUpTransition, useAlertLoadingTransition } from '../../composables/useTransition';
+import { useMainContentTransition } from '../../composables/useTransition';
 import Categories from './Categories.vue';
 import UnitMeasurement from './UnitMeasurement.vue';
 

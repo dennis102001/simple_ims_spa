@@ -494,7 +494,7 @@ import TextArea from '../components/TextArea.vue';
 import SelectDropdown from '../components/SelectDropdown.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
@@ -578,14 +578,16 @@ const filteredItemsListData = computed(() => {
 })
 
 async function submitUpdateForm(id){
+  if (isLoading.value) return
+
   showLoading()
 
   try {
-    const response = await axiosClient.put(`api/update-item/${id}`, updateFormData.value)
+    const response = await axiosClient.put(`/api/update-item/${id}`, updateFormData.value)
     
-    showSuccessMsg("Success", response.data.message)      
     await getItemsListData()
     showItemsList()
+    showSuccessMsg("Success", response.data.message)      
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || 'Failed to update item') 
@@ -597,14 +599,16 @@ async function submitUpdateForm(id){
 }
 
 async function submitAddForm(){
+  if (isLoading.value) return
+
   showLoading()
   
   try {
     const response = await axiosClient.post('/api/store-item', addFormData.value)
     
-    showSuccessMsg("Success", response.data.message)
     await getItemsListData()
     showItemsList()
+    showSuccessMsg("Success", response.data.message)
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || 'Failed to add item')         
@@ -616,13 +620,15 @@ async function submitAddForm(){
 }
 
 async function deleteItem(id){
+  if (isLoading.value) return
+
   showLoading()
 
   try {
     const response = await axiosClient.delete(`/api/delete-item/${id}`)
     
-    showSuccessMsg("Success", response.data.message)
     await getItemsListData()
+    showSuccessMsg("Success", response.data.message)
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || "Failed to delete item") 

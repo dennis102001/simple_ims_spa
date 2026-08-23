@@ -228,7 +228,7 @@ import TextInput from '../../components/TextInput.vue';
 import TextArea from '../../components/TextArea.vue';
 import Modal from '../../components/Modal.vue';
 
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { openConfirmModal } = useConfirmModal()
 
@@ -285,14 +285,16 @@ async function getUnitsListData() {
 }
 
 async function submitAddForm(){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-unit', addFormData.value)
 
-        showSuccessMsg("Success", response.data.message)
         await getUnitsListData()
         closeAddUpModal()
+        showSuccessMsg("Success", response.data.message)
     }
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to add unit measurement')
@@ -304,14 +306,16 @@ async function submitAddForm(){
 }
 
 async function submitUpdateForm(id){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-unit/${id}`, updateFormData.value)
 
-        showSuccessMsg("Success", response.data.message)
         await getUnitsListData()
         closeAddUpModal()
+        showSuccessMsg("Success", response.data.message)
     }
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update unit measurement')
@@ -323,13 +327,15 @@ async function submitUpdateForm(id){
 }
 
 async function deleteUnit(id){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-unit/${id}`)
 
-        showSuccessMsg("Success", response.data.message)
         await getUnitsListData()
+        showSuccessMsg("Success", response.data.message)
     }
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to delete unit measurement')

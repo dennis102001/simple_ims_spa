@@ -467,7 +467,7 @@ import ButtonWhite from '../components/buttons/ButtonWhite.vue';
 import TextInput from '../components/TextInput.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 
 const mainContentTransition = useMainContentTransition()
@@ -534,14 +534,16 @@ async function getUsersListData() {
 }
 
 async function submitUpdateForm(id){
+  if (isLoading.value) return
+  
   showLoading()
 
   try {
     await axiosClient.put(`/api/update-user/${id}`, updateFormData.value)
     
-    showSuccessMsg("Success", "User updated successfully")      
     await getUsersListData()
     showUsersList()
+    showSuccessMsg("Success", "User updated successfully")      
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || 'Failed to update user')
@@ -553,14 +555,16 @@ async function submitUpdateForm(id){
 }
 
 async function submitAddForm(){
+  if (isLoading.value) return
+  
   showLoading()
 
   try {
     await axiosClient.post('/api/add-user', addFormData.value)
 
-    showSuccessMsg("Success", "User added successfully")
     await getUsersListData()
     showUsersList()
+    showSuccessMsg("Success", "User added successfully")
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || 'Failed to add user')
@@ -572,13 +576,15 @@ async function submitAddForm(){
 }
 
 async function deleteUser(id){
+  if (isLoading.value) return
+  
   showLoading()
 
   try {
     await axiosClient.delete(`/api/delete-user/${id}`)
 
-    showSuccessMsg("Success", "User deleted successfully")
     await getUsersListData()
+    showSuccessMsg("Success", "User deleted successfully")
   } 
   catch (error) {
     showErrorMsg(error.response?.data?.message || 'Failed to delete user')

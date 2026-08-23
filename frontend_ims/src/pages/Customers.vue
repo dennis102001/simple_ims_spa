@@ -381,7 +381,7 @@ import TextInput from '../components/TextInput.vue';
 import TextArea from '../components/TextArea.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 
 const mainContentTransition = useMainContentTransition()
@@ -447,14 +447,16 @@ async function getCustomersListData() {
 }
 
 async function submitAddForm(){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-customer', addFormData.value)
         
-        showSuccessMsg("Success", response.data.message)
         await getCustomersListData()
         showCustomersList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to add customer')
@@ -466,14 +468,16 @@ async function submitAddForm(){
 }
 
 async function submitUpdateForm(customerId){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-customer/${customerId}`, updateFormData.value)
         
-        showSuccessMsg("Success", response.data.message)      
         await getCustomersListData()
         showCustomersList()
+        showSuccessMsg("Success", response.data.message)      
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update customer')
@@ -485,13 +489,15 @@ async function submitUpdateForm(customerId){
 }
 
 async function deleteCustomer(id){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-customer/${id}`)
         
-        showSuccessMsg("Success", response.data.message)
         await getCustomersListData()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to delete customer')

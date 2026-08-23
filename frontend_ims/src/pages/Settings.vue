@@ -283,7 +283,7 @@ import router from '../router';
 const mainContentTransition = useMainContentTransition()
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { openConfirmModal } = useConfirmModal()
 
@@ -344,6 +344,8 @@ function showColorUpdateModal(type){
 }
 
 async function getColorsListData() {
+    if (isLoading.value) return
+
     showLoading()
 
     try {
@@ -372,17 +374,20 @@ async function getColorsListData() {
 }
 
 async function submitUpdateColorForm() {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/set-color', colorFormData.value)
 
-        showSuccessMsg('Success', response.data.message)
-
+        await getColorsListData()
+        
         viewingUpdateColorModal.value = false
         colorFormData.value.type = null
         colorFormData.value.color = null
-        await getColorsListData()
+
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update color')
@@ -412,21 +417,24 @@ function showChangePassModal(){
 }
 
 async function submitUpdateInfoForm(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
-        const response = await axiosClient.put('/api/update-account-info', updateInfoFormData.value)
+        await axiosClient.put('/api/update-account-info', updateInfoFormData.value)
         
-        showSuccessMsg("Success", "Account updated successfully")      
+        await userStore.fetchUser()
 
         viewingUpdateInfoModal.value = false
         updateInfoFormData.value.id = null
         updateInfoFormData.value.name = null
         updateInfoFormData.value.email = null
-        userStore.fetchUser()
-
+        
         errors.value.name = []
         errors.value.email = []
+        
+        showSuccessMsg("Success", "Account updated successfully")      
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update user information')
@@ -438,6 +446,8 @@ async function submitUpdateInfoForm(){
 }
 
 async function submitChangePassForm(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {

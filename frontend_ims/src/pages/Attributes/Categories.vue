@@ -225,7 +225,7 @@ import Modal from '../../components/Modal.vue';
 import TextInput from '../../components/TextInput.vue';
 import TextArea from '../../components/TextArea.vue';
 
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
 const { openConfirmModal } = useConfirmModal()
 
@@ -281,14 +281,16 @@ async function getCategoriesListData() {
 }
 
 async function submitAddForm(){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-category', addFormData.value)
 
-        showSuccessMsg("Success", response.data.message)
         await getCategoriesListData()
         closeAddUpModal()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to add category')
@@ -300,14 +302,16 @@ async function submitAddForm(){
 }
 
 async function submitUpdateForm(id){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-category/${id}`, updateFormData.value)
 
-        showSuccessMsg("Success", response.data.message)
         await getCategoriesListData()
         closeAddUpModal()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update category')
@@ -319,13 +323,15 @@ async function submitUpdateForm(id){
 }
 
 async function deleteCategory(id){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-category/${id}`)
 
-        showSuccessMsg("Success", response.data.message)
         await getCategoriesListData()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to delete category')

@@ -413,7 +413,7 @@ import TextArea from '../components/TextArea.vue';
 import TextInput from '../components/TextInput.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 
 const userStore = useUserStore()
 const user = computed(() => userStore.user)
@@ -512,14 +512,16 @@ async function getItemsListData() {
 }
 
 async function submitPO(){
+    if (isLoading.value) return
+
     showLoading()
 
     try {
         const response = await axiosClient.post('/api/save-purchase-order', formData.value)
         
-        showSuccessMsg(response.data.poNumber, response.data.message)
         await getItemsListData()
         showItemsList("clear")
+        showSuccessMsg(response.data.poNumber, response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Saving failed')

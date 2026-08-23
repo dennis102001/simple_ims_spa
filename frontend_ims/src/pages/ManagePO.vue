@@ -1803,7 +1803,7 @@ import TextArea from '../components/TextArea.vue';
 import TextDisplay from '../components/TextDisplay.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
@@ -1979,14 +1979,16 @@ async function getPOsListData() {
 }
 
 async function receivePO(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/receive-po', receivingFormData.value)
         
-        showSuccessMsg('Success', response.data.message)
         await getPOsListData()
         showPOsList() 
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to receive purchase order')  
@@ -1997,14 +1999,16 @@ async function receivePO(){
 }
 
 async function updateReceivedPO(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-received-po', receivedUpdateFormData.value)
         
-        showSuccessMsg('Success', response.data.message)
         await getPOsListData()
         showPOsList() 
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')  
@@ -2015,14 +2019,16 @@ async function updateReceivedPO(){
 }
 
 async function updatePendingPO () {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-pending-po', pendingUpdateFormData.value)
         
-        showSuccessMsg('Success', response.data.message)
         await getPOsListData()
         showPOsList()  
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update purchase order')
@@ -2033,14 +2039,16 @@ async function updatePendingPO () {
 }
 
 async function cancelPO(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/cancel-po', cancelFormData.value)
 
-        showSuccessMsg('Success', response.data.message)
         await getPOsListData()
         showPOsList()  
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to cancel purchase order')
@@ -2051,14 +2059,16 @@ async function cancelPO(){
 }
 
 async function returnPO(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/return-po', returnFormData.value)
         
-        showSuccessMsg('Success', response.data.message)
         await getPOsListData()
         showPOsList()  
+        showSuccessMsg('Success', response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to return purchase order')
@@ -2103,6 +2113,8 @@ async function getItemsListData() {
 }
 
 async function showReceivingForm(po) {
+    if (isLoading.value) return
+    
     showLoading()
     receivingFormData.value.hdrId = po.hdrId
     receivingFormData.value.poNumber = po.poNumber
@@ -2134,6 +2146,8 @@ async function showReceivingForm(po) {
 }
 
 async function showReceivedUpdateForm(po) {
+    if (isLoading.value) return
+    
     showLoading()
     receivedUpdateFormData.value.hdrId = po.hdrId
     receivedUpdateFormData.value.poNumber = po.poNumber
@@ -2163,6 +2177,8 @@ async function showReceivedUpdateForm(po) {
 }
 
 async function showPendingUpdateForm(po) {
+    if (isLoading.value) return
+    
     showLoading()
     pendingUpdateFormData.value.hdrId = po.hdrId
     pendingUpdateFormData.value.poNumber = po.poNumber
@@ -2193,6 +2209,8 @@ async function showPendingUpdateForm(po) {
 }
 
 async function showPODetails(po){
+    if (isLoading.value) return
+    
     showLoading()
     poDetails.value.hdrId = po.hdrId
     poDetails.value.poNumber = po.poNumber
@@ -2222,6 +2240,8 @@ async function showPODetails(po){
 }
 
 async function showCancelForm(po){
+    if (isLoading.value) return
+    
     showLoading()
     cancelFormData.value.hdrId = po.hdrId
     cancelFormData.value.poNumber = po.poNumber
@@ -2249,6 +2269,8 @@ async function showCancelForm(po){
 }
 
 async function showReturnForm(po){
+    if (isLoading.value) return
+    
     showLoading()
     returnFormData.value.hdrId = po.hdrId
     returnFormData.value.poNumber = po.poNumber

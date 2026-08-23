@@ -412,7 +412,7 @@ import TextArea from '../components/TextArea.vue';
 import axiosClient from '../axios';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 const mainContentTransition = useMainContentTransition()
 const formTransition = useFormTransition()
@@ -480,14 +480,16 @@ async function getSuppliersListData() {
 }
 
 async function submitAddForm(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.post('/api/add-supplier', addFormData.value)
 
-        showSuccessMsg("Success", response.data.message)
         await getSuppliersListData()
         showSuppliersList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to add supplier')
@@ -499,14 +501,16 @@ async function submitAddForm(){
 }
 
 async function submitUpdateForm(supplierId){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put(`/api/update-supplier/${supplierId}`, updateFormData.value)
 
-        showSuccessMsg("Success", response.data.message)      
         await getSuppliersListData()
         showSuppliersList()
+        showSuccessMsg("Success", response.data.message)      
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update supplier')
@@ -518,13 +522,15 @@ async function submitUpdateForm(supplierId){
 }
 
 async function deleteSupplier(id){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.delete(`/api/delete-supplier/${id}`)
 
-        showSuccessMsg("Success", response.data.message)
         await getSuppliersListData()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to delete supplier')

@@ -1476,7 +1476,7 @@ import SelectDropdown from '../components/SelectDropdown.vue';
 import TextArea from '../components/TextArea.vue';
 
 const { showSuccessMsg, showErrorMsg } = useAlertMessages()
-const { showLoading, closeLoading } = useLoading()
+const { showLoading, closeLoading, isLoading } = useLoading()
 const { openConfirmModal } = useConfirmModal()
 const { formatDate } = useFormatDate()
 const userStore = useUserStore()
@@ -1670,14 +1670,16 @@ async function getItemsListData() {
 }
 
 async function updateSale() {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/update-sale', updateFormData.value)
         
-        showSuccessMsg("Success", response.data.message)
         await getSalesListData()
         showSalesList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to update sale order')
@@ -1688,14 +1690,16 @@ async function updateSale() {
 }
 
 async function paySale() {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/pay-sale', payFormData.value)
         
-        showSuccessMsg("Success", response.data.message)
         await getSalesListData()
         showSalesList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to pay sale order')
@@ -1706,14 +1710,16 @@ async function paySale() {
 }
 
 async function returnSale(){
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/return-sale', returnFormData.value)
         
-        showSuccessMsg("Success", response.data.message)
         await getSalesListData()
         showSalesList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to return sale order')
@@ -1724,14 +1730,16 @@ async function returnSale(){
 }
 
 async function cancelSale() {
+    if (isLoading.value) return
+    
     showLoading()
 
     try {
         const response = await axiosClient.put('/api/cancel-sale', cancelFormData.value)    
 
-        showSuccessMsg("Success", response.data.message)
         await getSalesListData()
         showSalesList()
+        showSuccessMsg("Success", response.data.message)
     } 
     catch (error) {
         showErrorMsg(error.response?.data?.message || 'Failed to cancel sale order')
@@ -1742,6 +1750,8 @@ async function cancelSale() {
 }
 
 async function showUpdateForm(sale) {
+    if (isLoading.value) return
+    
     showLoading()
     updateFormData.value.hdrId = sale.hdrId
     updateFormData.value.soNumber = sale.soNumber
@@ -1773,6 +1783,8 @@ async function showUpdateForm(sale) {
 }
 
 async function showPayForm(sale) {
+    if (isLoading.value) return
+    
     showLoading()
     payFormData.value.hdrId = sale.hdrId
     payFormData.value.soNumber = sale.soNumber
@@ -1800,6 +1812,8 @@ async function showPayForm(sale) {
 }
 
 async function showReturnForm(sale) {
+    if (isLoading.value) return
+    
     showLoading()
     returnFormData.value.hdrId = sale.hdrId
     returnFormData.value.soNumber = sale.soNumber
@@ -1829,6 +1843,8 @@ async function showReturnForm(sale) {
 }
 
 async function showCancelForm(sale) {
+    if (isLoading.value) return
+    
     showLoading()
     cancelFormData.value.hdrId = sale.hdrId
     cancelFormData.value.soNumber = sale.soNumber
@@ -1856,6 +1872,8 @@ async function showCancelForm(sale) {
 }
 
 async function showSaleDetails(sale) {
+    if (isLoading.value) return
+    
     showLoading()
     saleDetails.value.hdrId = sale.hdrId
     saleDetails.value.soNumber = sale.soNumber
